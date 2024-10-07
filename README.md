@@ -1,2 +1,2 @@
-# percupuff
-Percupuff is a drum synthesizer
+# Percupuff
+Percupuff is a drum synthesizer!
