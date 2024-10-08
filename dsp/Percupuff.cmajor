@@ -1,0 +1,21 @@
+namespace Percupuff
+{
+    graph Percupuff  [[main]]
+    {
+        input event std::midi::Message midiIn;
+
+        output stream float out;
+
+        node
+        {
+            bassDrum = Drums::BassDrum;
+            gainLimiter = std::levels::ConstantGain (float, 0.2f);
+        }
+    
+        connection
+        {
+            midiIn -> std::midi::MPEConverter -> bassDrum;
+            bassDrum -> gainLimiter -> out;
+        }
+    }
+}

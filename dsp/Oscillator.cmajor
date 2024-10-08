@@ -1,0 +1,43 @@
+namespace Percupuff
+{
+    processor Oscillator {
+        input stream float frequencyIn;
+        output stream float out;
+
+        const int tableSize = 4096;
+        const float phaseToIndexMultiplier = float(tableSize) / PI_PI;
+
+        float[tableSize] sineTable;
+
+        float phase = 0.0f;
+        float phaseIncrement = 0.0f;
+
+        void init() {
+            for (wrap<tableSize> i) {
+                sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+            }
+        }
+
+        void main() {
+            loop {
+                phaseIncrement = (PI_PI * frequencyIn) / float(processor.frequency);
+                phase += phaseIncrement;
+
+                if (phase >= PI_PI) {
+                    phase -= PI_PI;
+                }
+
+                let indexFloat = phase * phaseToIndexMultiplier;
+                let index = int(indexFloat);
+                let nextIndex = index + 1;
+                let frac = indexFloat - index;
+
+                let currentSample = sineTable[wrap<tableSize>(index)];
+                let nextSample = sineTable[wrap<tableSize>(nextIndex)];
+                let sample = currentSample * (1.0f - frac) + nextSample * frac;
+                out <- sample;
+                advance();
+            }
+        }
+    }
+}

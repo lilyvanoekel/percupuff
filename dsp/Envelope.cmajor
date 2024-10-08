@@ -1,0 +1,61 @@
+namespace Percupuff
+{
+    processor Envelope {
+        input event float decay;
+        input event void triggerIn;
+
+        output stream float gainOut;
+
+        float currentLevel = 0.0f;
+        float decaySeconds = 0.5f;
+        float minimumLevel = 0.001f;
+        float targetLevel = 1.0f;
+        float attackSeconds = 0.01f;
+        bool triggerNote = false;
+
+        event decay(float decayValue) {
+            decaySeconds = max(0.01f, decayValue);
+        }
+
+        event triggerIn() {
+            triggerNote = true;
+        }
+
+        float calculateMultiplier(float startLevel, float endLevel, int32 lengthInSamples) {
+            return 1.0f + (log(endLevel) - log(startLevel)) / float(lengthInSamples);
+        }
+
+        void main() {
+            loop {
+                while (!triggerNote)
+                    advance();
+
+                triggerNote = false;
+
+                int32 attackSamples = int32(attackSeconds * float(processor.frequency));
+                float stepSize = (targetLevel - minimumLevel) / float(attackSamples);
+                currentLevel = max(minimumLevel, currentLevel);
+
+                while (attackSamples > 0) {
+                    currentLevel += stepSize;
+                    gainOut <- currentLevel;
+                    advance();
+                    attackSamples -= 1;
+                }
+
+                int32 decaySamples = int32(decaySeconds * float(processor.frequency));
+                float multiplier = calculateMultiplier(currentLevel, minimumLevel, decaySamples);
+
+                while (decaySamples > 0 && !triggerNote) {
+                    gainOut <- currentLevel;
+                    currentLevel *= multiplier;
+                    advance();
+                    decaySamples -= 1;
+                }
+
+                gainOut <- currentLevel;
+                advance();
+            }
+        }
+    }
+}

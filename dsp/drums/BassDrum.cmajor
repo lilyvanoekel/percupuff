@@ -1,0 +1,48 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor BassDrum {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float out;
+            
+            float triggerVelocity = 0.0f;
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == BASS_DRUM_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                }
+            }
+
+            node osc = Oscillator;
+            node envelope = Envelope;
+
+            void main()
+            {
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    triggerVelocity = 0.0f;
+
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        osc.frequencyIn <- 200.0f * gain;
+                        osc.advance();
+                        out <- tanh(osc.out * gain * 2.0f);
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}

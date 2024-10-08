@@ -1,0 +1,6 @@
+namespace Percupuff
+{
+    let BASS_DRUM_MIDI_PITCH = 36;
+    let PI = 3.141592653589793f;
+    let PI_PI = PI * 2.0f;
+}

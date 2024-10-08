@@ -1,0 +1,21 @@
+{
+  "CmajorVersion": 1,
+  "ID": "com.lily.percupuff",
+  "version": "0.0.1",
+  "name": "Percupuff",
+  "description": "Percupuff is a drum synth!",
+  "category": "generator",
+  "manufacturer": "Lily's Nonexistent Company",
+  "isInstrument": true,
+  "plugin": {
+    "pluginCode": "B89V",
+    "manufacturerCode": "7Uw2"
+  },
+  "source": [
+    "dsp/Constants.cmajor",
+    "dsp/Oscillator.cmajor",
+    "dsp/Envelope.cmajor",
+    "dsp/drums/BassDrum.cmajor",
+    "dsp/Percupuff.cmajor"
+  ]
+}
