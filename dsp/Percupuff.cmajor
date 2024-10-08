@@ -9,7 +9,7 @@ namespace Percupuff
         node
         {
             bassDrum = Drums::BassDrum;
-            gainLimiter = std::levels::ConstantGain (float, 0.2f);
+            gainLimiter = std::levels::ConstantGain (float, 1.0f);
         }
     
         connection

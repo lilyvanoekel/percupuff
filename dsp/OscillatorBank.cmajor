@@ -1,0 +1,80 @@
+namespace Percupuff
+{
+    processor OscillatorBank {
+        input event float<8> frequencyIn;
+        input event float<8> levelIn;
+        input stream float frequencyModIn;
+        output stream float out;
+
+        const int tableSize = 4096;
+        const float phaseToIndexMultiplier = float(tableSize) / PI_PI;
+
+        float[tableSize] sineTable;
+
+        float<8> phase = 0.0f;
+        float<8> phaseIncrement = 0.0f;
+        float<8> level = (1.0f);
+
+        event frequencyIn(float<8> frequency) {
+            //phase = (0.0f);
+            phaseIncrement = (PI_PI * frequency) / float<8>(processor.frequency);
+        }
+
+        event levelIn(float<8> l) {
+            level = l / sum(l);
+        }
+
+        void init() {
+            for (wrap<tableSize> i) {
+                sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+            }
+        }
+
+        void main() {
+            loop {
+                // phase += phaseIncrement + frequencyModIn;
+                // phase = phase % PI_PI;
+                // for (wrap<8> i) {
+                //     if (phase[i] < 0.0f) {
+                //         phase[i] += PI_PI;
+                //     }
+                // }
+
+                phase += phaseIncrement + frequencyModIn;
+                phase -= PI_PI * float<8>(int<8>(phase / PI_PI));
+
+                let indexFloat = phase * phaseToIndexMultiplier;
+                let index = int<8>(indexFloat);
+                let nextIndex = index + 1;
+                let frac = indexFloat - index;
+
+                float<8> currentSamples = (
+                    sineTable[wrap<tableSize>(index[0])],
+                    sineTable[wrap<tableSize>(index[1])],
+                    sineTable[wrap<tableSize>(index[2])],
+                    sineTable[wrap<tableSize>(index[3])],
+                    sineTable[wrap<tableSize>(index[4])],
+                    sineTable[wrap<tableSize>(index[5])],
+                    sineTable[wrap<tableSize>(index[6])],
+                    sineTable[wrap<tableSize>(index[7])]
+                );
+
+                float<8> nextSamples = (
+                    sineTable[wrap<tableSize>(nextIndex[0])],
+                    sineTable[wrap<tableSize>(nextIndex[1])],
+                    sineTable[wrap<tableSize>(nextIndex[2])],
+                    sineTable[wrap<tableSize>(nextIndex[3])],
+                    sineTable[wrap<tableSize>(nextIndex[4])],
+                    sineTable[wrap<tableSize>(nextIndex[5])],
+                    sineTable[wrap<tableSize>(nextIndex[6])],
+                    sineTable[wrap<tableSize>(nextIndex[7])]
+                );
+                
+                float<8> sample = currentSamples * (1.0f - frac) + nextSamples * frac;
+                sample *= level;
+                out <- sum(sample);
+                advance();
+            }
+        }
+    }
+}

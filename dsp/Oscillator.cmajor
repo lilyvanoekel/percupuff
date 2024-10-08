@@ -1,7 +1,8 @@
 namespace Percupuff
 {
     processor Oscillator {
-        input stream float frequencyIn;
+        input event float frequencyIn;
+        input stream float frequencyModIn;
         output stream float out;
 
         const int tableSize = 4096;
@@ -12,6 +13,10 @@ namespace Percupuff
         float phase = 0.0f;
         float phaseIncrement = 0.0f;
 
+        event frequencyIn(float frequency) {
+            phaseIncrement = (PI_PI * frequency) / float(processor.frequency);
+        }
+
         void init() {
             for (wrap<tableSize> i) {
                 sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
@@ -20,9 +25,11 @@ namespace Percupuff
 
         void main() {
             loop {
-                phaseIncrement = (PI_PI * frequencyIn) / float(processor.frequency);
-                phase += phaseIncrement;
-
+                phase += phaseIncrement + frequencyModIn;
+                
+                if (phase < 0) {
+                    phase += PI_PI;
+                }
                 if (phase >= PI_PI) {
                     phase -= PI_PI;
                 }

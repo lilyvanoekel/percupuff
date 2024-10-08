@@ -1,20 +1,20 @@
 namespace Percupuff
 {
     processor Envelope {
-        input event float decay;
+        input event float releaseIn;
         input event void triggerIn;
 
         output stream float gainOut;
 
         float currentLevel = 0.0f;
-        float decaySeconds = 0.5f;
+        float releaseSeconds = 0.5f;
         float minimumLevel = 0.001f;
         float targetLevel = 1.0f;
         float attackSeconds = 0.01f;
         bool triggerNote = false;
 
-        event decay(float decayValue) {
-            decaySeconds = max(0.01f, decayValue);
+        event releaseIn(float r) {
+            releaseSeconds = max(0.001f, r);
         }
 
         event triggerIn() {
@@ -22,7 +22,10 @@ namespace Percupuff
         }
 
         float calculateMultiplier(float startLevel, float endLevel, int32 lengthInSamples) {
-            return 1.0f + (log(endLevel) - log(startLevel)) / float(lengthInSamples);
+            //return 1.0f + (log(endLevel) - log(startLevel)) / float(lengthInSamples);
+            let exponentFactor = 6.0f;
+            float t = 1.0f / float(lengthInSamples);  // Incremental step over the envelope
+            return startLevel + (endLevel - startLevel) * ((1.0f - exp(-exponentFactor * t)) / (1.0f - exp(-exponentFactor)));
         }
 
         void main() {
@@ -33,9 +36,9 @@ namespace Percupuff
                 triggerNote = false;
 
                 int32 attackSamples = int32(attackSeconds * float(processor.frequency));
-                float stepSize = (targetLevel - minimumLevel) / float(attackSamples);
                 currentLevel = max(minimumLevel, currentLevel);
-
+                float stepSize = (targetLevel - currentLevel) / float(attackSamples);
+                
                 while (attackSamples > 0) {
                     currentLevel += stepSize;
                     gainOut <- currentLevel;
@@ -43,14 +46,14 @@ namespace Percupuff
                     attackSamples -= 1;
                 }
 
-                int32 decaySamples = int32(decaySeconds * float(processor.frequency));
-                float multiplier = calculateMultiplier(currentLevel, minimumLevel, decaySamples);
+                int32 releaseSamples = int32(releaseSeconds * float(processor.frequency));
+                float multiplier = calculateMultiplier(currentLevel, minimumLevel, releaseSamples);
 
-                while (decaySamples > 0 && !triggerNote) {
+                while (releaseSamples > 0 && !triggerNote) {
                     gainOut <- currentLevel;
                     currentLevel *= multiplier;
                     advance();
-                    decaySamples -= 1;
+                    releaseSamples -= 1;
                 }
 
                 gainOut <- currentLevel;
