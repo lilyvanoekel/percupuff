@@ -45,8 +45,7 @@ namespace Percupuff
             node carrier = Oscillator;
             node modulator = Oscillator;
             node highPass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 250.0f);
-            node lowPass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::lowPass, 1000.0f);
-
+            
             Lpf lpf = (0.0f, 0.0f);
 
             void main()
@@ -66,7 +65,7 @@ namespace Percupuff
                 );
 
                 osc.levelIn <- float<8>(
-                    1.0f,
+                    1.5f,
                     0.5f,
                     0.4f,
                     0.3f,
@@ -76,8 +75,8 @@ namespace Percupuff
                     0
                 );
 
-                envelope.releaseIn <- .2f;
-                envelope2.releaseIn <- .1f;
+                envelope.releaseIn <- .3f;
+                envelope2.releaseIn <- .05f;
 
                 carrier.frequencyIn <- 500.0f;
                 modulator.frequencyIn <- 166.0f;
@@ -107,18 +106,17 @@ namespace Percupuff
                         carrier.advance();
 
                         highPass.in <- car;
-                        float lpSample = lpf.getSample(highPass.out, 1000.0f + 5000.0f * envelope2.gainOut, 0.0f, 0.0f, float(processor.frequency));
+                        float lpSample = lpf.getSample(highPass.out, 1000.0f + 2500.0f * envelope2.gainOut, 0.0f, 0.0f, float(processor.frequency));
 
                         osc.frequencyModIn <- gain * 0.01f;
                         osc.advance();
-                        out <- (osc.out + lpSample * 0.1f) * gain;
+                        out <- (sin(osc.out * 1.2f) + lpSample * 0.17f) * gain;
                         // out <- sin(osc.out * 2.0f) * gain;
                         
                         gain = envelope.gainOut;
                         envelope.advance();
                         envelope2.advance();
                         highPass.advance();
-                        lowPass.advance();
 
                         advance();
                     }

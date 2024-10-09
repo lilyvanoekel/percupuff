@@ -1,6 +1,12 @@
 namespace Percupuff
 {
-    processor OscillatorBank {
+    enum OscillatorShape
+    {
+        sine,
+        triangle
+    }
+
+    processor OscillatorBank(OscillatorShape shape = OscillatorShape::sine) {
         input event float<8> frequencyIn;
         input event float<8> levelIn;
         input stream float frequencyModIn;
@@ -16,7 +22,6 @@ namespace Percupuff
         float<8> level = (1.0f);
 
         event frequencyIn(float<8> frequency) {
-            //phase = (0.0f);
             phaseIncrement = (PI_PI * frequency) / float<8>(processor.frequency);
         }
 
@@ -25,21 +30,24 @@ namespace Percupuff
         }
 
         void init() {
-            for (wrap<tableSize> i) {
-                sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+            if (shape == OscillatorShape::triangle) {
+                for (wrap<tableSize> i) {
+                    float t = float(i) / float(tableSize);
+                    if (t < 0.5f) {
+                        sineTable[i] = 4.0f * t - 1.0f;
+                    } else {
+                        sineTable[i] = 3.0f - 4.0f * t;
+                    }
+                }
+            } else {
+                for (wrap<tableSize> i) {
+                    sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+                }
             }
         }
 
         void main() {
             loop {
-                // phase += phaseIncrement + frequencyModIn;
-                // phase = phase % PI_PI;
-                // for (wrap<8> i) {
-                //     if (phase[i] < 0.0f) {
-                //         phase[i] += PI_PI;
-                //     }
-                // }
-
                 phase += phaseIncrement + frequencyModIn;
                 phase -= PI_PI * float<8>(int<8>(phase / PI_PI));
 
