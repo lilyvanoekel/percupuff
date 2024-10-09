@@ -44,7 +44,6 @@ namespace Percupuff
             node envelope2 = Envelope;
             node carrier = Oscillator;
             node modulator = Oscillator;
-            node highPass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 250.0f);
             
             Lpf lpf = (0.0f, 0.0f);
 
@@ -60,19 +59,19 @@ namespace Percupuff
                     182,
                     225,
                     273,
-                    0,
-                    0
+                    73,
+                    60
                 );
 
                 osc.levelIn <- float<8>(
-                    1.5f,
+                    1.0f,
                     0.5f,
                     0.4f,
                     0.3f,
                     0.2f,
                     0.2f,
-                    0,
-                    0
+                    1.0f,
+                    1.0f
                 );
 
                 envelope.releaseIn <- .3f;
@@ -105,18 +104,17 @@ namespace Percupuff
                         let car = carrier.out;
                         carrier.advance();
 
-                        highPass.in <- car;
-                        float lpSample = lpf.getSample(highPass.out, 1000.0f + 2500.0f * envelope2.gainOut, 0.0f, 0.0f, float(processor.frequency));
+                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, 0.0f, 0.0f, float(processor.frequency));
 
                         osc.frequencyModIn <- gain * 0.01f;
                         osc.advance();
-                        out <- (sin(osc.out * 1.2f) + lpSample * 0.17f) * gain;
+                        out <- (sin(osc.out * 1.5f) + lpSample * 0.17f) * gain;
                         // out <- sin(osc.out * 2.0f) * gain;
                         
                         gain = envelope.gainOut;
                         envelope.advance();
                         envelope2.advance();
-                        highPass.advance();
+                   
 
                         advance();
                     }
