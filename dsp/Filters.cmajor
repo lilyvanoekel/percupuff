@@ -1,5 +1,12 @@
 namespace Percupuff
 {
+    float fastTanh(float x) {
+        if (x > 3.0f) return 1.0f;
+        if (x < -3.0f) return -1.0f;
+        float x2 = x * x;
+        return x * (27.0f + x2) / (27.0f + 9.0f * x2);
+    }
+    
     struct NotchFilter {
         float a0, a1, a2, b1, b2;
         float z1, z2;
@@ -34,6 +41,17 @@ namespace Percupuff
             // @todo: inverse sample rate so we can multiply instead of divide
             let cut_lp = clamp(cutoff * 2.0f / sampleRate, 0.0f, 0.99f);
             this.n3 = this.n3 + cut_lp * (in - this.n3);
+            this.n4 = this.n4 + cut_lp * (this.n3 - this.n4);
+            return this.n4;
+        }
+    }
+
+    struct LpfResonant {
+        float n3, n4;
+        float getSample(float in, float cutoff, float resonance, float invSampleRate) {
+            let cut_lp = clamp(cutoff * 2.0f * invSampleRate, 0.0f, 0.99f);
+            let fb_lp = resonance + resonance / (1.0f - cut_lp);
+            this.n3 = this.n3 + cut_lp * (in - this.n3 + fastTanh(fb_lp * (this.n3 - this.n4)));
             this.n4 = this.n4 + cut_lp * (this.n3 - this.n4);
             return this.n4;
         }

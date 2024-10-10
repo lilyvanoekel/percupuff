@@ -1,0 +1,71 @@
+// https://www.muzines.co.uk/articles/the-poor-mans-guide-to-clap-sounds/7876
+
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Clap {
+            input event (std::notes::NoteOn) eventIn;
+            input stream float noiseIn;
+            output stream float out;
+            
+            float triggerVelocity = 0.0f;
+            float feedback = 0.0f;
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == CLAP_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    envelope.attackIn <- 0.001f;
+                    envelope.releaseIn <- .13f;
+                }
+            }
+
+            node envelope = Envelope;
+            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 700.0f);
+            
+            LpfResonant lowpass = (0.0f, 0.0f);
+
+            void main()
+            {
+                let invSampleRate = 1.0f / float(processor.frequency);
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+                    int retriggers = 7;
+                    int retriggerCounter = int(float(processor.frequency) * 0.015);
+                    float repeatGain = 1.0f;
+
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        highpass.in <- noiseIn;
+                        let sample = lowpass.getSample(highpass.out, 2800.0f + (7 - retriggers) * 100.0f, 0.9f, invSampleRate);
+                        out <- (sample + (noiseIn * 0.1f)) * gain * (0.3f + vel * 0.3f) * repeatGain;
+
+                        if (retriggers > 0 && retriggerCounter == 0) {
+                            envelope.triggerIn <- void;
+                            retriggers -= 1;
+                            retriggerCounter = int(float(processor.frequency) * 0.015);;
+                            if (retriggers < 6) {
+                                repeatGain = repeatGain * 0.85f;
+                            }
+                        }
+
+                        retriggerCounter--;
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        highpass.advance();
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,7 @@
 namespace Percupuff
 {
     processor Envelope {
+        input event float attackIn;
         input event float releaseIn;
         input event void triggerIn;
 
@@ -12,6 +13,10 @@ namespace Percupuff
         float targetLevel = 1.0f;
         float attackSeconds = 0.01f;
         bool triggerNote = false;
+
+        event attackIn(float a) {
+            attackSeconds = max(0.001f, a);
+        }
 
         event releaseIn(float r) {
             releaseSeconds = max(0.001f, r);

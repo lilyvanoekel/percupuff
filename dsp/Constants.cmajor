@@ -2,10 +2,12 @@ namespace Percupuff
 {
     // let BASS_DRUM_MIDI_PITCH = 36;
     // let SNARE_MIDI_PITCH = 38
+    // let CLAP_MIDI_PITCH = 39
     // let HIHAT_CLOSED_MIDI_PITCH = 42;
     // let HIHAT_OPEN_MIDI_PITCH = 46;
     let BASS_DRUM_MIDI_PITCH = 48; // Temporary, for easy testing
     let SNARE_MIDI_PITCH = 50;
+    let CLAP_MIDI_PITCH = 51;
     let HIHAT_CLOSED_MIDI_PITCH = 54;
     let HIHAT_OPEN_MIDI_PITCH = 58;
     let PI = 3.141592653589793f;
