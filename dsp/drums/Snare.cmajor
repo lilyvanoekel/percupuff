@@ -71,7 +71,7 @@ namespace Percupuff
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         osc.frequencyModIn <- gain * 0.01f * fmAdjust;
 
-                        float lpSample = lpf.getSample(noise.out, 2000.0f + vel * 10000.0f, float(processor.frequency));
+                        float lpSample = lpf.getSample(noise.out, 4000.0f + vel * 10000.0f, float(processor.frequency));
                         lpSample = notch.getSample(lpSample);
 
                         out <- (sin(osc.out * (1.0f + vel * 0.5f)) + lpSample * 0.4f) * gain * (0.5f + vel * 0.5f);

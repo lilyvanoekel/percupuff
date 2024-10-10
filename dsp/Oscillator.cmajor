@@ -1,6 +1,12 @@
 namespace Percupuff
 {
-    processor Oscillator {
+    enum OscillatorShape
+    {
+        sine,
+        triangle
+    }
+
+    processor Oscillator(OscillatorShape shape = OscillatorShape::sine) {
         input event float frequencyIn;
         input stream float frequencyModIn;
         output stream float out;
@@ -18,8 +24,19 @@ namespace Percupuff
         }
 
         void init() {
-            for (wrap<tableSize> i) {
-                sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+            if (shape == OscillatorShape::triangle) {
+                for (wrap<tableSize> i) {
+                    float t = float(i) / float(tableSize);
+                    if (t < 0.5f) {
+                        sineTable[i] = 4.0f * t - 1.0f;
+                    } else {
+                        sineTable[i] = 3.0f - 4.0f * t;
+                    }
+                }
+            } else {
+                for (wrap<tableSize> i) {
+                    sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+                }
             }
         }
 

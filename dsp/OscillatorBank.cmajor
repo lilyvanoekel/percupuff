@@ -1,11 +1,5 @@
 namespace Percupuff
 {
-    enum OscillatorShape
-    {
-        sine,
-        triangle
-    }
-
     processor OscillatorBank(OscillatorShape shape = OscillatorShape::sine) {
         input event float<8> frequencyIn;
         input event float<8> levelIn;

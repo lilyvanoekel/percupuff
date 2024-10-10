@@ -7,6 +7,7 @@ namespace Percupuff
     {
         processor Hihat {
             input event (std::notes::NoteOn) eventIn;
+            input stream float noiseIn;
             output stream float out;
             
             float triggerVelocity = 0.0f;
@@ -15,21 +16,24 @@ namespace Percupuff
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == HIHAT_CLOSED_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
+                    envelope.releaseIn <- .3f;
                 }
                 if (int (n.pitch) == HIHAT_OPEN_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
+                    envelope.releaseIn <- .9f;
                 }
             }
 
             node envelope = Envelope;
-            node osc1 = Oscillator;
-            node osc2 = Oscillator;
+            node osc1 = Oscillator(OscillatorShape::sine);
+            node osc2 = Oscillator(OscillatorShape::sine);
+            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 12000.0f);
 
-            Hpf hpf = (0.0f, 0.0f);
-            
+            let invSampleRate = 1.0f / float(processor.frequency);
+
             void main()
             {
-                envelope.releaseIn <- .5f;
+                
                 osc1.frequencyIn <- 1047.0f;
                 osc2.frequencyIn <- 2490.0f;
 
@@ -47,13 +51,16 @@ namespace Percupuff
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         osc1.frequencyModIn <- feedback * 0.0f;
-                        osc2.frequencyModIn <- osc1.out * 0.8f;
+                        osc2.frequencyModIn <- osc1.out * 1.8f;
                         feedback = osc2.out;
-                        let sample = hpf.getSample(osc2.out, 21000.0f, float(processor.frequency));
-                        out <- sample * gain * (0.5f + vel * 0.5f);
+                        highpass.in <- osc2.out + noiseIn * 0.3f;
+
+                        let sample = highpass.out;
+                        out <- sample * gain * (0.15f + vel * 0.15f);
 
                         osc1.advance();
                         osc2.advance();
+                        highpass.advance();
                         
                         gain = envelope.gainOut;
                         envelope.advance();

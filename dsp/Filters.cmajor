@@ -38,18 +38,4 @@ namespace Percupuff
             return this.n4;
         }
     }
-
-    struct Hpf {
-        float n1, n2;
-
-        float getSample(float in, float cutoff, float sampleRate) {
-            let invSampleRate = 1.0f / sampleRate;
-
-            let cut_hp = clamp(cutoff * 2.0f * invSampleRate, 0.0f, 0.99f);
-
-            this.n1 = this.n1 + cut_hp * (in - this.n1);
-            return in - this.n1;
-        }
-    }
-
 }
