@@ -9,7 +9,6 @@ namespace Percupuff
             float alpha = sin(omega) / (2.0f * Q);
             float cos_omega = cos(omega);
 
-            // Calculate coefficients based on frequency and Q
             this.a0 = 1.0f / (1.0f + alpha);
             this.a1 = -2.0f * cos_omega * this.a0;
             this.a2 = this.a0;
@@ -29,14 +28,28 @@ namespace Percupuff
         }
     }
 
-    
     struct Lpf {
         float n3, n4;
         float getSample(float in, float cutoff, float sampleRate) {
+            // @todo: inverse sample rate so we can multiply instead of divide
             let cut_lp = clamp(cutoff * 2.0f / sampleRate, 0.0f, 0.99f);
             this.n3 = this.n3 + cut_lp * (in - this.n3);
             this.n4 = this.n4 + cut_lp * (this.n3 - this.n4);
             return this.n4;
         }
     }
+
+    struct Hpf {
+        float n1, n2;
+
+        float getSample(float in, float cutoff, float sampleRate) {
+            let invSampleRate = 1.0f / sampleRate;
+
+            let cut_hp = clamp(cutoff * 2.0f * invSampleRate, 0.0f, 0.99f);
+
+            this.n1 = this.n1 + cut_hp * (in - this.n1);
+            return in - this.n1;
+        }
+    }
+
 }

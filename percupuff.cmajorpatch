@@ -19,6 +19,7 @@
     "dsp/Envelope.cmajor",
     "dsp/drums/BassDrum.cmajor",
     "dsp/drums/Snare.cmajor",
+    "dsp/drums/Hihat.cmajor",
     "dsp/Percupuff.cmajor"
   ]
 }

@@ -1,0 +1,65 @@
+// https://www.soundonsound.com/techniques/synthesizing-drums-snare-drum
+
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Hihat {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float out;
+            
+            float triggerVelocity = 0.0f;
+            float feedback = 0.0f;
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == HIHAT_CLOSED_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                }
+                if (int (n.pitch) == HIHAT_OPEN_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                }
+            }
+
+            node envelope = Envelope;
+            node osc1 = Oscillator;
+            node osc2 = Oscillator;
+
+            Hpf hpf = (0.0f, 0.0f);
+            
+            void main()
+            {
+                envelope.releaseIn <- .5f;
+                osc1.frequencyIn <- 1047.0f;
+                osc2.frequencyIn <- 2490.0f;
+
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        osc1.frequencyModIn <- feedback * 0.0f;
+                        osc2.frequencyModIn <- osc1.out * 0.8f;
+                        feedback = osc2.out;
+                        let sample = hpf.getSample(osc2.out, 21000.0f, float(processor.frequency));
+                        out <- sample * gain * (0.5f + vel * 0.5f);
+
+                        osc1.advance();
+                        osc2.advance();
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,6 +10,7 @@ namespace Percupuff
         {
             bassDrum = Drums::BassDrum;
             snare = Drums::Snare;
+            hihat = Drums::Hihat;
             gainLimiter = std::levels::ConstantGain (float, 1.0f);
         }
     
@@ -17,8 +18,10 @@ namespace Percupuff
         {
             midiIn -> std::midi::MPEConverter -> bassDrum;
             midiIn -> std::midi::MPEConverter -> snare;
+            midiIn -> std::midi::MPEConverter -> hihat;
             bassDrum -> gainLimiter;
             snare -> gainLimiter;
+            hihat -> gainLimiter;
             gainLimiter -> out;
         }
     }

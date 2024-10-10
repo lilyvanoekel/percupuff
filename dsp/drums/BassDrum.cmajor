@@ -55,6 +55,9 @@ namespace Percupuff
                 carrier.frequencyIn <- 500.0f;
                 modulator.frequencyIn <- 166.0f;
 
+                let referenceSampleRate = 44100.0f;
+                let fmAdjust = (referenceSampleRate / float(processor.frequency));
+
                 loop
                 {
                     while (triggerVelocity == 0) {
@@ -72,7 +75,7 @@ namespace Percupuff
                     float gain = envelope.gainOut;
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        modulator.frequencyModIn <- gain * 0.01f;
+                        modulator.frequencyModIn <- gain * 0.01f * fmAdjust;
                         let mod = modulator.out;
                         modulator.advance();
 
@@ -82,7 +85,7 @@ namespace Percupuff
 
                         float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, float(processor.frequency));
 
-                        osc.frequencyModIn <- gain * 0.01f;
+                        osc.frequencyModIn <- gain * 0.01f * fmAdjust;
                         osc.advance();
                         out <- (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain;
                         // out <- sin(osc.out * 2.0f) * gain;

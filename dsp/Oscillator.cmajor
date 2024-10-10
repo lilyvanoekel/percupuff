@@ -24,8 +24,10 @@ namespace Percupuff
         }
 
         void main() {
+            let referenceSampleRate = 44100.0f;
+            let fmAdjust = (referenceSampleRate / float(processor.frequency));
             loop {
-                phase += phaseIncrement + frequencyModIn;
+                phase += phaseIncrement + frequencyModIn * fmAdjust;
                 
                 if (phase < 0) {
                     phase += PI_PI;

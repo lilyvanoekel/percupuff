@@ -1,7 +1,5 @@
 // https://www.soundonsound.com/techniques/synthesizing-drums-snare-drum
 
-
-
 namespace Percupuff
 {
     namespace Drums
@@ -24,6 +22,8 @@ namespace Percupuff
             
             Lpf lpf = (0.0f, 0.0f);
             NotchFilter notch;
+
+            
 
             void main()
             {
@@ -50,6 +50,9 @@ namespace Percupuff
                     0.4f,
                     0.3f
                 );
+
+                let referenceSampleRate = 44100.0f;
+                let fmAdjust = (referenceSampleRate / float(processor.frequency));
                 
                 loop
                 {
@@ -63,10 +66,10 @@ namespace Percupuff
                     envelope.advance();
                     float gain = envelope.gainOut;
 
-                    notch.setCoefficients(100000.0f, 1.0f, float(processor.frequency));
+                    notch.setCoefficients(10000.0f, 0.9f, float(processor.frequency));
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        osc.frequencyModIn <- gain * 0.01f;
+                        osc.frequencyModIn <- gain * 0.01f * fmAdjust;
 
                         float lpSample = lpf.getSample(noise.out, 2000.0f + vel * 10000.0f, float(processor.frequency));
                         lpSample = notch.getSample(lpSample);
