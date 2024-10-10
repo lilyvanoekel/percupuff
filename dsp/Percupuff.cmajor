@@ -14,15 +14,18 @@ namespace Percupuff
             hihat = Drums::Hihat;
             clap = Drums::Clap;
             gainLimiter = std::levels::ConstantGain (float, 1.0f);
+            mpe = std::midi::MPEConverter;
         }
     
         connection
         {
-            midiIn -> std::midi::MPEConverter -> bassDrum;
-            midiIn -> std::midi::MPEConverter -> snare;
-            midiIn -> std::midi::MPEConverter -> hihat.eventIn;
-            midiIn -> std::midi::MPEConverter -> clap.eventIn;
+            midiIn -> mpe;
+            mpe -> bassDrum;
+            mpe -> snare.eventIn;
+            mpe -> hihat.eventIn;
+            mpe -> clap.eventIn;
             noise -> hihat.noiseIn;
+            noise -> snare.noiseIn;
             noise -> clap.noiseIn;
             bassDrum -> gainLimiter;
             snare -> gainLimiter;

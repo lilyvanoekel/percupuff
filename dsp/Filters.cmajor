@@ -37,9 +37,8 @@ namespace Percupuff
 
     struct Lpf {
         float n3, n4;
-        float getSample(float in, float cutoff, float sampleRate) {
-            // @todo: inverse sample rate so we can multiply instead of divide
-            let cut_lp = clamp(cutoff * 2.0f / sampleRate, 0.0f, 0.99f);
+        float getSample(float in, float cutoff, float invSampleRate) {
+            let cut_lp = clamp(cutoff * 2.0f * invSampleRate, 0.0f, 0.99f);
             this.n3 = this.n3 + cut_lp * (in - this.n3);
             this.n4 = this.n4 + cut_lp * (this.n3 - this.n4);
             return this.n4;

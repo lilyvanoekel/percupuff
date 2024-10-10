@@ -57,6 +57,7 @@ namespace Percupuff
 
                 let referenceSampleRate = 44100.0f;
                 let fmAdjust = (referenceSampleRate / float(processor.frequency));
+                let invSampleRate = 1.0f / float(processor.frequency);
 
                 loop
                 {
@@ -83,7 +84,7 @@ namespace Percupuff
                         let car = carrier.out;
                         carrier.advance();
 
-                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, float(processor.frequency));
+                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, invSampleRate);
 
                         osc.frequencyModIn <- gain * 0.01f * fmAdjust;
                         osc.advance();

@@ -6,6 +6,7 @@ namespace Percupuff
     {
         processor Snare {
             input event (std::notes::NoteOn) eventIn;
+            input stream float noiseIn;
             output stream float out;
             
             float triggerVelocity = 0.0f;
@@ -17,13 +18,10 @@ namespace Percupuff
             }
 
             node envelope = Envelope;
-            node noise = std::noise::White;
             node osc = OscillatorBank(OscillatorShape::triangle);
             
             Lpf lpf = (0.0f, 0.0f);
             NotchFilter notch;
-
-            
 
             void main()
             {
@@ -53,6 +51,7 @@ namespace Percupuff
 
                 let referenceSampleRate = 44100.0f;
                 let fmAdjust = (referenceSampleRate / float(processor.frequency));
+                let invSampleRate = 1.0f / float(processor.frequency);
                 
                 loop
                 {
@@ -71,7 +70,7 @@ namespace Percupuff
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         osc.frequencyModIn <- gain * 0.01f * fmAdjust;
 
-                        float lpSample = lpf.getSample(noise.out, 4000.0f + vel * 10000.0f, float(processor.frequency));
+                        float lpSample = lpf.getSample(noiseIn, 4000.0f + vel * 10000.0f, invSampleRate);
                         lpSample = notch.getSample(lpSample);
 
                         out <- (sin(osc.out * (1.0f + vel * 0.5f)) + lpSample * 0.4f) * gain * (0.5f + vel * 0.5f);
@@ -80,7 +79,6 @@ namespace Percupuff
                         
                         gain = envelope.gainOut;
                         envelope.advance();
-                        noise.advance();
                         advance();
                     }
                 }
