@@ -2,31 +2,6 @@ namespace Percupuff
 {
     namespace Drums
     {
-        float fastTanh(float x) {
-            if (x > 3.0f) return 1.0f;
-            if (x < -3.0f) return -1.0f;
-            float x2 = x * x;
-            return x * (27.0f + x2) / (27.0f + 9.0f * x2);
-        }
-
-        struct Lpf {
-            float n3, n4;
-
-            float getSample(float in, float cutoff, float resonance, float freqModIn, float sampleRate) {
-                let cut_lp = clamp(cutoff * (1.0f + freqModIn) * 2.0f / sampleRate, 0.0f, 0.99f);
-
-
-                let fb_lp = resonance + resonance / (1.0f - cut_lp);
-
-                this.n3 = this.n3 + cut_lp * (in - this.n3 + fastTanh(fb_lp * (this.n3 - this.n4)));
-                this.n4 = this.n4 + cut_lp * (this.n3 - this.n4);
-
-                return this.n4;
-            }
-        }
-
-
-
         processor BassDrum {
             input event (std::notes::NoteOn) eventIn;
             output stream float out;
@@ -64,7 +39,7 @@ namespace Percupuff
                 );
 
                 osc.levelIn <- float<8>(
-                    1.0f,
+                    2.0f,
                     0.5f,
                     0.4f,
                     0.3f,
@@ -74,7 +49,7 @@ namespace Percupuff
                     1.0f
                 );
 
-                envelope.releaseIn <- .3f;
+                envelope.releaseIn <- .25f;
                 envelope2.releaseIn <- .05f;
 
                 carrier.frequencyIn <- 500.0f;
@@ -86,6 +61,7 @@ namespace Percupuff
                         advance();
                     }
 
+                    let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
 
                     envelope.triggerIn <- void;
@@ -104,11 +80,11 @@ namespace Percupuff
                         let car = carrier.out;
                         carrier.advance();
 
-                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, 0.0f, 0.0f, float(processor.frequency));
+                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, float(processor.frequency));
 
                         osc.frequencyModIn <- gain * 0.01f;
                         osc.advance();
-                        out <- (sin(osc.out * 1.5f) + lpSample * 0.17f) * gain;
+                        out <- (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain;
                         // out <- sin(osc.out * 2.0f) * gain;
                         
                         gain = envelope.gainOut;

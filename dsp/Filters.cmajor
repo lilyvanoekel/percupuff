@@ -1,0 +1,42 @@
+namespace Percupuff
+{
+    struct NotchFilter {
+        float a0, a1, a2, b1, b2;
+        float z1, z2;
+
+        void setCoefficients(float frequency, float Q, float sampleRate) {
+            float omega = 2.0f * PI * frequency / sampleRate;
+            float alpha = sin(omega) / (2.0f * Q);
+            float cos_omega = cos(omega);
+
+            // Calculate coefficients based on frequency and Q
+            this.a0 = 1.0f / (1.0f + alpha);
+            this.a1 = -2.0f * cos_omega * this.a0;
+            this.a2 = this.a0;
+            this.b1 = -2.0f * cos_omega * this.a0;
+            this.b2 = (1.0f - alpha) * this.a0;
+            this.z1 = 0.0f;
+            this.z2 = 0.0f;
+        }
+
+        float getSample(float in) {
+            let res = this.a0 * in + this.a1 * this.z1 + this.a2 * this.z2
+                        - this.b1 * this.z1 - this.b2 * this.z2;
+
+            this.z2 = this.z1;
+            this.z1 = res;
+            return res;
+        }
+    }
+
+    
+    struct Lpf {
+        float n3, n4;
+        float getSample(float in, float cutoff, float sampleRate) {
+            let cut_lp = clamp(cutoff * 2.0f / sampleRate, 0.0f, 0.99f);
+            this.n3 = this.n3 + cut_lp * (in - this.n3);
+            this.n4 = this.n4 + cut_lp * (this.n3 - this.n4);
+            return this.n4;
+        }
+    }
+}

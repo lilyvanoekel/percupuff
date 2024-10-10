@@ -9,13 +9,17 @@ namespace Percupuff
         node
         {
             bassDrum = Drums::BassDrum;
+            snare = Drums::Snare;
             gainLimiter = std::levels::ConstantGain (float, 1.0f);
         }
     
         connection
         {
             midiIn -> std::midi::MPEConverter -> bassDrum;
-            bassDrum -> gainLimiter -> out;
+            midiIn -> std::midi::MPEConverter -> snare;
+            bassDrum -> gainLimiter;
+            snare -> gainLimiter;
+            gainLimiter -> out;
         }
     }
 }

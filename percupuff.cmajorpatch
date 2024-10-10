@@ -13,10 +13,12 @@
   },
   "source": [
     "dsp/Constants.cmajor",
+    "dsp/Filters.cmajor",
     "dsp/Oscillator.cmajor",
     "dsp/OscillatorBank.cmajor",
     "dsp/Envelope.cmajor",
     "dsp/drums/BassDrum.cmajor",
+    "dsp/drums/Snare.cmajor",
     "dsp/Percupuff.cmajor"
   ]
 }

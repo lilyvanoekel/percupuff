@@ -1,1 +1,87 @@
 // https://www.soundonsound.com/techniques/synthesizing-drums-snare-drum
+
+
+
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Snare {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float out;
+            
+            float triggerVelocity = 0.0f;
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == SNARE_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                }
+            }
+
+            node envelope = Envelope;
+            node noise = std::noise::White;
+            node osc = OscillatorBank(OscillatorShape::triangle);
+            
+            Lpf lpf = (0.0f, 0.0f);
+            NotchFilter notch;
+
+            void main()
+            {
+                envelope.releaseIn <- .2f;
+
+                osc.frequencyIn <- float<8>(
+                    176.0f,
+                    224.0f,
+                    287.0f,
+                    330.0f,
+                    370.0f,
+                    424.0f,
+                    480.0f,
+                    536.0f
+                );
+
+                osc.levelIn <- float<8>(
+                    0.8f,
+                    0.7f,
+                    0.9f,
+                    0.75f,
+                    0.6f,
+                    0.5f,
+                    0.4f,
+                    0.3f
+                );
+                
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+
+                    notch.setCoefficients(100000.0f, 1.0f, float(processor.frequency));
+
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        osc.frequencyModIn <- gain * 0.01f;
+
+                        float lpSample = lpf.getSample(noise.out, 2000.0f + vel * 10000.0f, float(processor.frequency));
+                        lpSample = notch.getSample(lpSample);
+
+                        out <- (sin(osc.out * (1.0f + vel * 0.5f)) + lpSample * 0.4f) * gain * (0.5f + vel * 0.5f);
+
+                        osc.advance();
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        noise.advance();
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}
