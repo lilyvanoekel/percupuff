@@ -12,22 +12,33 @@ namespace Percupuff
             
             float triggerVelocity = 0.0f;
             float feedback = 0.0f;
+            float noiseLevel = 0.3f;
 
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == HIHAT_CLOSED_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .3f;
+                    noiseLevel = 0.5f;
+                    highpass.frequency <- 11000.0f;
+                }
+                if (int (n.pitch) == PEDAL_HIHAT_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    envelope.releaseIn <- .2f;
+                    noiseLevel = 0.0f;
+                    highpass.frequency <- 10000.0f;
                 }
                 if (int (n.pitch) == HIHAT_OPEN_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
-                    envelope.releaseIn <- .9f;
+                    envelope.releaseIn <- .8f;
+                    noiseLevel = 0.3f;
+                    highpass.frequency <- 11000.0f;
                 }
             }
 
             node envelope = Envelope;
             node osc1 = Oscillator(OscillatorShape::sine);
             node osc2 = Oscillator(OscillatorShape::sine);
-            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 12000.0f);
+            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 11000.0f);
 
             let invSampleRate = 1.0f / float(processor.frequency);
 
@@ -53,7 +64,7 @@ namespace Percupuff
                         osc1.frequencyModIn <- feedback * 0.0f;
                         osc2.frequencyModIn <- osc1.out * 1.8f;
                         feedback = osc2.out;
-                        highpass.in <- osc2.out + noiseIn * 0.3f;
+                        highpass.in <- osc2.out + noiseIn * noiseLevel;
 
                         let sample = highpass.out;
                         out <- sample * gain * (0.15f + vel * 0.15f);

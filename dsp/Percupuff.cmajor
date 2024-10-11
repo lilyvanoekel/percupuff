@@ -13,6 +13,7 @@ namespace Percupuff
             snare = Drums::Snare;
             hihat = Drums::Hihat;
             clap = Drums::Clap;
+            cowbell = Drums::Cowbell;
             gainLimiter = std::levels::ConstantGain (float, 1.0f);
             mpe = std::midi::MPEConverter;
         }
@@ -24,6 +25,7 @@ namespace Percupuff
             mpe -> snare.eventIn;
             mpe -> hihat.eventIn;
             mpe -> clap.eventIn;
+            mpe -> cowbell.eventIn;
             noise -> hihat.noiseIn;
             noise -> snare.noiseIn;
             noise -> clap.noiseIn;
@@ -31,6 +33,7 @@ namespace Percupuff
             snare -> gainLimiter;
             hihat -> gainLimiter;
             clap -> gainLimiter;
+            cowbell -> gainLimiter;
             gainLimiter -> out;
         }
     }

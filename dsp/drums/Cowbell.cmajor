@@ -1,0 +1,77 @@
+// https://www.soundonsound.com/techniques/synthesizing-cowbells-claves
+
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Cowbell {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float out;
+            
+            float triggerVelocity = 0.0f;
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == COWBELL_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                }
+            }
+
+            node envelope = Envelope;
+            node osc1 = Oscillator(OscillatorShape::triangle);
+            node osc2 = Oscillator(OscillatorShape::triangle);
+            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 700.0f);
+            
+            void main()
+            {
+                envelope.releaseIn <- .3f;
+                envelope.attackIn <- .001f;
+
+                osc1.frequencyIn <- 587.0f;
+                osc2.frequencyIn <- 845.0f;
+
+                let referenceSampleRate = 44100.0f;
+                let fmAdjust = (referenceSampleRate / float(processor.frequency));
+                let invSampleRate = 1.0f / float(processor.frequency);
+                let rampDownSamples = int(processor.frequency * 0.02);
+                let rampdownAmount = 0.7f / float(rampDownSamples);
+                
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+
+                    int r = rampDownSamples;
+                    float gainReduce = 0.0f;
+
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        let sample = sin((osc1.out + osc2.out) * 1.0f);
+                        highpass.in <- sample;
+                        
+                        out <- highpass.out * (gain * (1.0f - gainReduce)) * (0.5f + vel * 0.5f);
+
+                        if (r > 0) {
+                            gainReduce += rampdownAmount;
+                        }
+
+                        osc1.advance();
+                        osc2.advance();
+                        highpass.advance();
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        advance();
+
+                        r--;
+                    }
+                }
+            }
+        }
+    }
+}

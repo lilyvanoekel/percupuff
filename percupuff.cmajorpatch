@@ -21,6 +21,7 @@
     "dsp/drums/Snare.cmajor",
     "dsp/drums/Hihat.cmajor",
     "dsp/drums/Clap.cmajor",
+    "dsp/drums/Cowbell.cmajor",
     "dsp/Percupuff.cmajor"
   ]
 }
