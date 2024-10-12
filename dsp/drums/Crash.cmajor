@@ -1,0 +1,137 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor BandPassFilter {
+            input stream float in;
+            output stream float out;
+
+            const float R56 = 82000.0f; // 82kΩ
+            const float R57 = 82000.0f; // 82kΩ
+            const float R52 = 560.0f;   // 560Ω
+            const float C10 = 3.3e-9f;  // 0.0033μF
+            const float C13 = 6.8e-9f;  // 0.0068μF
+            const float C14 = 6.8e-9f;  // 0.0068μF
+
+            const float T = 1.0f / float(processor.frequency);
+            const float K = 2.0f / T;
+            float b0, b1, b2, a0, a1, a2;
+
+            void init()
+            {
+                b0 = 0.2929f;
+                b1 = 0.0f;
+                b2 = -0.2929f;
+                a0 = 1.0f;
+                a1 = 0.0f;
+                a2 = -0.4142f;
+            }
+
+            float x1 = 0.0f, x2 = 0.0f;
+            float y1 = 0.0f, y2 = 0.0f;
+
+            void main()
+            {
+                loop
+                {
+                    let xn = in;
+                    let yn = (b0 * xn + b1 * x1 + b2 * x2) - (a1 * y1 + a2 * y2);
+
+                    x2 = x1;
+                    x1 = xn;
+
+                    y2 = y1;
+                    y1 = yn;
+
+                    out <- yn;
+
+                    advance();
+                }
+            }
+        }
+
+
+        processor Crash {
+            input event (std::notes::NoteOn) eventIn;
+            input stream float noiseIn;
+            output stream float out;
+            
+            float triggerVelocity = 0.0f;
+            float feedback = 0.0f;
+            float noiseLevel = 0.3f;
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == 49 + 12) {
+                    triggerVelocity = n.velocity;
+                    envelope.releaseIn <- .8f;
+                    envelope.attackIn <- .02f;
+                    noiseLevel = 0.8f;
+                    highpass.frequency <- 4000.0f;
+                }
+            }
+
+            node envelope = Envelope;
+            node osc0 = Oscillator;
+            node osc = PolyblepOscillatorBank;
+            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 4000.0f);
+            node bandpass = BandPassFilter;
+
+            let invSampleRate = 1.0f / float(processor.frequency);
+
+            void main()
+            {
+                
+                osc0.frequencyIn <- 300.0f;
+                osc.frequencyIn <- float<8>(
+                    205.3f,
+                    369.6f,
+                    304.4f,
+                    522.7f,
+                    359.4f,
+                    400.9f,
+                    568.3f,
+                    627.2f
+                    // 359.4–1149.9,
+                    // 254.3–627.2 
+                );
+
+                osc.levelIn <- float<8>(1.0f);
+
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+                    float feedback = 0.0f;
+
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        //osc.frequencyModIn <- osc0.out * 0.01f;
+                        
+                        highpass.in <- osc.out + noiseIn;
+                        bandpass.in <- osc.out + noiseIn;
+
+                        //let sample = highpass.out + osc.out * 0.1f;
+                        let sample = highpass.out;
+                        out <- sample * gain * (0.15f + vel * 0.15f);
+
+                        
+                        highpass.advance();
+                        osc0.advance();
+                        osc.advance();
+                        bandpass.advance();
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}

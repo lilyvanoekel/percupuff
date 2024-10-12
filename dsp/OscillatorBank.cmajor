@@ -43,7 +43,8 @@ namespace Percupuff
         void main() {
             loop {
                 phase += phaseIncrement + frequencyModIn;
-                phase -= PI_PI * float<8>(int<8>(phase / PI_PI));
+                phase = fmod(phase, float<8>(PI_PI)); 
+                phase = select(phase < 0.0f, phase + PI_PI, phase);
 
                 let indexFloat = phase * phaseToIndexMultiplier;
                 let index = int<8>(indexFloat);
@@ -75,6 +76,63 @@ namespace Percupuff
                 float<8> sample = currentSamples * (1.0f - frac) + nextSamples * frac;
                 sample *= level;
                 out <- sum(sample);
+                advance();
+            }
+        }
+    }
+
+    processor PolyblepOscillatorBank {
+        input event float<8> frequencyIn;
+        input event float<8> levelIn;
+        input stream float<8> frequencyModIn;
+        output stream float out;
+
+        float<8> phase;
+        float<8> increment;
+        float<8> level = float<8>(1.0f) / sum(float<8>(1.0f));
+
+        event frequencyIn (float<8> f) {
+            increment = fmod (f / float(processor.frequency), float<8>(1.0f));
+        }
+
+        event levelIn(float<8> l) {
+            level = l / sum(l);
+        }
+
+        float<8> polyblep (float<8> phase, float<8> increment) {
+            float<8> result;
+
+            bool<8> condition1 = phase < increment;
+            float<8> p1 = phase / increment;
+            float<8> value1 = (p1 + p1) - (p1 * p1) - 1.0f;
+
+            bool<8> condition2 = phase > (1.0f - increment);
+            float<8> p2 = (phase - 1.0f) / increment;
+            float<8> value2 = (p2 + p2) + (p2 * p2) + 1.0f;
+
+            result = select(condition1, value1, float<8>(0.0f));
+            result = select(condition2, value2, result);
+            result *= level;
+
+            return result;
+        }
+
+        void main() {
+            let referenceSampleRate = 44100.0f;
+            let fmAdjust = (referenceSampleRate / float(processor.frequency));
+
+            loop
+            {
+                phase = phase + increment + frequencyModIn * fmAdjust;
+                phase = fmod(phase, float<8>(1.0f));
+                phase = select(phase < 0.0f, phase + 1.0f, phase);
+
+                float<8> halfPhase = fmod(phase + 0.5f, float<8>(1.0f));
+                float<8> squareWave = select(phase < 0.5f, float<8>(-1.0f), float<8>(1.0f));
+                float<8> polyblep1 = polyblep(phase, increment);
+                float<8> polyblep2 = polyblep(halfPhase, increment);
+                out <- sum(squareWave - polyblep1 + polyblep2);
+
                 advance();
             }
         }
