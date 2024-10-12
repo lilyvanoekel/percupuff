@@ -46,7 +46,7 @@ namespace Percupuff
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         highpass.in <- noiseIn;
                         let sample = lowpass.getSample(highpass.out, 2800.0f + (7 - retriggers) * 100.0f, 0.9f, invSampleRate);
-                        out <- (sample + (noiseIn * 0.1f)) * gain * (0.3f + vel * 0.3f) * repeatGain;
+                        out <- (sample + (noiseIn * 0.15f)) * gain * (0.3f + vel * 0.3f) * repeatGain;
 
                         if (retriggers > 0 && retriggerCounter == 0) {
                             envelope.triggerIn <- void;
