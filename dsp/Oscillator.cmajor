@@ -66,4 +66,55 @@ namespace Percupuff
             }
         }
     }
+
+    processor PolyblepOscillator {
+        input event float frequencyIn;
+        input stream float frequencyModIn;
+        output stream float out;
+
+        float phase;
+        float increment;
+
+        event frequencyIn (float f) {
+            increment = fmod (f / float(processor.frequency), 1.0f);
+        }
+
+        float polyblep (float phase, float increment) {
+            if (phase < increment) {
+                let p = phase / increment;
+                return (p + p) - (p * p) - 1.0f;
+            }
+
+            if (phase > 1.0f - increment) {
+                let p = (phase - 1.0f) / increment;
+                return (p + p) + (p * p) + 1.0f;
+            }
+
+            return 0.0f;
+        }
+
+        void main() {
+            let referenceSampleRate = 44100.0f;
+            let fmAdjust = (referenceSampleRate / float(processor.frequency));
+
+            loop
+            {
+                phase = phase + increment + frequencyModIn * fmAdjust;
+
+                if (phase >= 1) {
+                    phase -= 1;
+                }
+
+                if (phase < 0) {
+                    phase += 1;
+                }
+
+                out <- (phase < 0.5f ? -1.0f : 1.0f) 
+                    - polyblep (phase, increment)
+                    + polyblep (fmod(phase + 0.5f, 1.0f), increment);
+
+                advance();
+            }
+        }
+    }
 }
