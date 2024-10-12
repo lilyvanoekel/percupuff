@@ -23,7 +23,7 @@ namespace Percupuff
             
             void main()
             {
-                envelope.releaseIn <- .3f;
+                envelope.releaseIn <- .5f;
                 envelope.attackIn <- .001f;
 
                 osc1.frequencyIn <- 587.0f;
@@ -43,12 +43,14 @@ namespace Percupuff
 
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
+                    envelope.releaseIn <- .2f + vel * 0.4f;
                     envelope.triggerIn <- void;
                     envelope.advance();
                     float gain = envelope.gainOut;
 
                     int r = rampDownSamples;
                     float gainReduce = 0.0f;
+                    
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         let sample = sin((osc1.out + osc2.out) * 1.0f);

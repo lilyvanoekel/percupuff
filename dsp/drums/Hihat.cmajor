@@ -18,20 +18,20 @@ namespace Percupuff
                 if (int (n.pitch) == HIHAT_CLOSED_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .3f;
-                    noiseLevel = 0.5f;
-                    highpass.frequency <- 11000.0f;
+                    noiseLevel = 0.8f;
+                    highpass.frequency <- 9000.0f;
                 }
                 if (int (n.pitch) == PEDAL_HIHAT_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .2f;
-                    noiseLevel = 0.0f;
-                    highpass.frequency <- 10000.0f;
+                    noiseLevel = 0.2f;
+                    highpass.frequency <- 7000.0f;
                 }
                 if (int (n.pitch) == HIHAT_OPEN_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .8f;
-                    noiseLevel = 0.3f;
-                    highpass.frequency <- 11000.0f;
+                    noiseLevel = 0.5f;
+                    highpass.frequency <- 9000.0f;
                 }
             }
 
