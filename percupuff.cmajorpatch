@@ -23,6 +23,8 @@
     "dsp/drums/Clap.cmajor",
     "dsp/drums/Cowbell.cmajor",
     "dsp/drums/Crash.cmajor",
+    "dsp/drums/Claves.cmajor",
+    "dsp/drums/Bongos.cmajor",
     "dsp/Percupuff.cmajor"
   ]
 }

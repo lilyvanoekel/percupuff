@@ -1,0 +1,104 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Claves {
+            input event std::notes::NoteOn eventIn;
+            input stream float noiseIn;
+            output stream float out;
+
+            const float fs = float(processor.frequency);
+            float b0, b1, a1, a2;
+
+            float y1 = 0.0f, y2 = 0.0f;
+
+            float triggerVelocity = 0.0f;
+            float velocity = 0.0f;
+            float gain = 0.0f;
+
+            event eventIn(std::notes::NoteOn n) {
+                // if (int(n.pitch) == HIGH_BONGO_MIDI_PITCH) {
+                //     triggerVelocity = n.velocity;
+                //     envelope.attackIn <- 0.002f;
+                //     envelope.releaseIn <- .15f;
+                //     setFrequency(650.0f, 70.0f);
+                // }
+                // if (int(n.pitch) == LOW_BONGO_MIDI_PITCH) {
+                //     triggerVelocity = n.velocity;
+                //     envelope.attackIn <- 0.002f;
+                //     envelope.releaseIn <- .15f;
+                //     setFrequency(450.0f, 70.0f);
+                // }
+                if (int(n.pitch) == CLAVES_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    envelope.attackIn <- 0.001f;
+                    envelope.releaseIn <- .25f;
+                    setFrequency(2300.0f, 50.0f);
+                }
+                if (int(n.pitch) == HI_WOOD_BLOCK_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    envelope.attackIn <- 0.001f;
+                    envelope.releaseIn <- .12f;
+                    setFrequency(2000.0f, 75.0f);
+                }
+                if (int(n.pitch) == LOW_WOOD_BLOCK_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    envelope.attackIn <- 0.001f;
+                    envelope.releaseIn <- .12f;
+                    setFrequency(1500.0f, 75.0f);
+                }
+            }
+
+            void init() {
+                setFrequency(2300.0f, 50.0f);
+            }
+
+            void setFrequency(float f, float q) {
+                float omega_0 = f * 2.0f * float(pi);
+
+                float alpha = sin(omega_0 / fs) / (2.0f * q);
+                float cosw0 = cos(omega_0 / fs);
+
+                b0 = alpha;
+                b1 = 0.0f;
+                a1 = -2.0f * cosw0;
+                a2 = 1.0f - alpha;
+            }
+
+            node envelope = Envelope;
+
+            void main()
+            {
+                loop
+                {
+                    float sample = 0.0f;
+
+                    if (triggerVelocity > 0.0f)
+                    {
+                        velocity = triggerVelocity;
+                        triggerVelocity = 0.0f;
+                        envelope.triggerIn <- void;
+                        envelope.advance();
+                        gain = envelope.gainOut;
+                    }
+
+                    if (gain > 0.0001f)
+                    {
+                        float xn = (noiseIn - 0.5f) * 2.0f;
+                        float yn = b0 * xn - a1 * y1 - a2 * y2;
+
+                        y2 = y1;
+                        y1 = yn;
+
+                        sample = yn * velocity * gain;
+                        envelope.advance();
+                        gain = envelope.gainOut;
+                    }
+
+                    out <- sample;
+                    advance();
+                }
+            }
+        }
+    }
+}

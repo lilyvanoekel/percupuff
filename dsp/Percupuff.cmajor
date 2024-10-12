@@ -15,6 +15,8 @@ namespace Percupuff
             clap = Drums::Clap;
             cowbell = Drums::Cowbell;
             crash = Drums::Crash;
+            claves = Drums::Claves;
+            bongos = Drums::Bongos;
             gainLimiter = std::levels::ConstantGain (float, 1.0f);
             mpe = std::midi::MPEConverter;
         }
@@ -28,16 +30,21 @@ namespace Percupuff
             mpe -> clap.eventIn;
             mpe -> cowbell.eventIn;
             mpe -> crash.eventIn;
+            mpe -> claves.eventIn;
+            mpe -> bongos.eventIn;
             noise -> hihat.noiseIn;
             noise -> snare.noiseIn;
             noise -> clap.noiseIn;
             noise -> crash.noiseIn;
+            noise -> claves.noiseIn;
             bassDrum -> gainLimiter;
             snare -> gainLimiter;
             hihat -> gainLimiter;
             clap -> gainLimiter;
             cowbell -> gainLimiter;
             crash -> gainLimiter;
+            claves -> gainLimiter;
+            bongos -> gainLimiter;
             gainLimiter -> out;
         }
     }

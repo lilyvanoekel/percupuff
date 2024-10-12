@@ -6,7 +6,14 @@ namespace Percupuff
     // let HIHAT_CLOSED_MIDI_PITCH = 42;
     // let PEDAL_HIHAT_MIDI_PITCH = 44;
     // let HIHAT_OPEN_MIDI_PITCH = 46;
+    let CRASH_CYMBAL_1_MIDI_PITCH = 49;
     // let COWBELL_MIDI_PITCH = 56;
+    let HIGH_BONGO_MIDI_PITCH = 60;
+    let LOW_BONGO_MIDI_PITCH = 61;
+    let CLAVES_MIDI_PITCH = 75;
+    let HI_WOOD_BLOCK_MIDI_PITCH = 76;
+    let LOW_WOOD_BLOCK_MIDI_PITCH = 77;
+
     let BASS_DRUM_MIDI_PITCH = 48; // Temporary, for easy testing
     let SNARE_MIDI_PITCH = 50;
     let CLAP_MIDI_PITCH = 51;

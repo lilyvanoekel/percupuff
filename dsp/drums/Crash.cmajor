@@ -50,7 +50,7 @@ namespace Percupuff
             }
         }
 
-
+        // @todo: doesn't sound good yet, probably rething approach
         processor Crash {
             input event (std::notes::NoteOn) eventIn;
             input stream float noiseIn;
@@ -61,7 +61,7 @@ namespace Percupuff
             float noiseLevel = 0.3f;
 
             event eventIn(std::notes::NoteOn n) {
-                if (int (n.pitch) == 49 + 12) {
+                if (int (n.pitch) == CRASH_CYMBAL_1_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .8f;
                     envelope.attackIn <- .02f;
