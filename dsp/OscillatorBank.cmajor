@@ -112,7 +112,6 @@ namespace Percupuff
 
             result = select(condition1, value1, float<8>(0.0f));
             result = select(condition2, value2, result);
-            result *= level;
 
             return result;
         }
@@ -131,7 +130,9 @@ namespace Percupuff
                 float<8> squareWave = select(phase < 0.5f, float<8>(-1.0f), float<8>(1.0f));
                 float<8> polyblep1 = polyblep(phase, increment);
                 float<8> polyblep2 = polyblep(halfPhase, increment);
-                out <- sum(squareWave - polyblep1 + polyblep2);
+                var sample = squareWave - polyblep1 + polyblep2;
+                sample *= level;
+                out <- sum(sample);
 
                 advance();
             }
