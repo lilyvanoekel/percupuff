@@ -2,12 +2,12 @@ namespace Percupuff
 {
     namespace Drums
     {
-        // @todo: lots of problems and sample rate dependent
         processor Bongos {
             input event std::notes::NoteOn eventIn;
             output stream float out;
 
             const float64 fs = processor.frequency;
+            float64 energyPerSample = 44100.0 / fs;
             float64 b0, b1, a1, a2;
 
             float64 y1 = 0.0f, y2 = 0.0f;
@@ -44,15 +44,17 @@ namespace Percupuff
             }
 
             void setFrequency(float64 f, float64 q) {
-                float64 omega_0 = f * 2.0f * pi;
+                float64 K = tan(pi * f / fs);
+                float64 norm = 1.0 / (1.0 + K / q + K * K);
+                
+                b0 = K / q * norm;
+                b1 = 0.0;
+                a1 = 2.0 * (K * K - 1.0) * norm;
+                a2 = (1.0 - K / q + K * K) * norm;
 
-                float64 alpha = sin(omega_0 / fs) / (2.0f * q);
-                float64 cosw0 = cos(omega_0 / fs);
-
-                b0 = alpha;
-                b1 = 0.0f;
-                a1 = -2.0f * cosw0;
-                a2 = 1.0f - alpha;
+                float64 magnitude = abs(b0 + b1 + a1 + a2);
+                b0 /= magnitude;
+                b1 /= magnitude;
             }
 
             node envelope = Envelope;
@@ -74,13 +76,13 @@ namespace Percupuff
 
                     if (gain > 0.0001f)
                     {
-                        float64 xn = rng.getBipolar();
-                        float64 yn = b0 * xn - a1 * y1 - a2 * y2;
+                        float64 xn = rng.getBipolar() * sqrt(energyPerSample);
+                        float64 yn = b0 * xn + b1 * y1 - a1 * y1 - a2 * y2;
 
                         y2 = y1;
                         y1 = yn;
 
-                        sample = yn * velocity * gain;
+                        sample = yn * velocity * gain * 3.0f;
                         envelope.advance();
                         gain = envelope.gainOut;
                     }
