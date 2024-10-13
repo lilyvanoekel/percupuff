@@ -4,8 +4,23 @@ namespace Percupuff
 {
     namespace Drums
     {
-        processor Experiment {
+        T polyblepVectorized<T> (T phase, T increment) {
+            T result;
+
+            T p1 = phase / increment;
+            T value1 = (p1 + p1) - (p1 * p1) - 1.0f;
+
+            T p2 = (phase - 1.0f) / increment;
+            T value2 = (p2 + p2) + (p2 * p2) + 1.0f;
+
+            result = select(phase < increment, value1, T(0.0f));
+            result = select(phase > (1.0f - increment), value2, result);
+            return result;
+        }
+        
+        processor MetalicSoundGenerator {
             output stream float out;
+            input event float frequencyMultiplierIn;
 
             float<6> phase;
             float<6> increment;
@@ -17,29 +32,12 @@ namespace Percupuff
                 1397.0f,
                 2690.0f
             );
+            float frequencyMultiplier = 0.6f;
             float<6> fs = (processor.frequency);
             float<6> previousSample = (0.0f);
-            float pmModFactor = 0.05f;
-            float fmModFactor = 2.0f;
-
-            // event pmModIn(float f) {    pmModFactor = f;    }
-            // event fmModIn(float f) {    fmModFactor = f;    }
-
-            float<6> polyblep (float<6> phase, float<6> increment) {
-                float<6> result;
-
-                bool<6> condition1 = phase < increment;
-                float<6> p1 = phase / increment;
-                float<6> value1 = (p1 + p1) - (p1 * p1) - 1.0f;
-
-                bool<6> condition2 = phase > (1.0f - increment);
-                float<6> p2 = (phase - 1.0f) / increment;
-                float<6> value2 = (p2 + p2) + (p2 * p2) + 1.0f;
-
-                result = select(condition1, value1, float<6>(0.0f));
-                result = select(condition2, value2, result);
-
-                return result;
+            
+            event frequencyMultiplierIn(float f) {
+                frequencyMultiplier = f;
             }
 
             void main() {
@@ -48,7 +46,8 @@ namespace Percupuff
 
                 loop
                 {
-                    
+                    float pmModFactor = 0.05f;
+                    float fmModFactor = 2.0f;
                     float<6> frequencyModIn = (
                         0.0f,
                         previousSample[0] * pmModFactor,
@@ -65,7 +64,7 @@ namespace Percupuff
                         frequency[4],
                         frequency[5] + previousSample[3] * frequency[5] * fmModFactor
                     );
-                    moddedFrequency *= 0.6f;
+                    moddedFrequency *= frequencyMultiplier;
                     increment = fmod (moddedFrequency / fs, float<6>(1.0f));
                     phase = phase + increment + frequencyModIn * fmAdjust;
                     phase = fmod(phase, float<6>(1.0f));
@@ -73,8 +72,8 @@ namespace Percupuff
 
                     float<6> halfPhase = fmod(phase + 0.5f, float<6>(1.0f));
                     float<6> squareWave = select(phase < 0.5f, float<6>(-1.0f), float<6>(1.0f));
-                    float<6> polyblep1 = polyblep(phase, increment);
-                    float<6> polyblep2 = polyblep(halfPhase, increment);
+                    float<6> polyblep1 = polyblepVectorized(phase, increment);
+                    float<6> polyblep2 = polyblepVectorized(halfPhase, increment);
                     
                     let sample = squareWave - polyblep1 + polyblep2;
                     previousSample = sample;
@@ -85,144 +84,47 @@ namespace Percupuff
             }
         }
         
-        
-        // processor BandPassFilter {
-        //     input stream float in;
-        //     output stream float out;
-
-        //     float b0, b1, b2, a0, a1, a2;
-
-        //     void init()
-        //     {
-        //         b0 = 0.2929f;
-        //         b1 = 0.0f;
-        //         b2 = -0.2929f;
-        //         a0 = 1.0f;
-        //         a1 = 0.0f;
-        //         a2 = -0.4142f;
-        //     }
-
-        //     float x1 = 0.0f, x2 = 0.0f;
-        //     float y1 = 0.0f, y2 = 0.0f;
-
-        //     void main()
-        //     {
-        //         loop
-        //         {
-        //             let xn = in;
-        //             let yn = (b0 * xn + b1 * x1 + b2 * x2) - (a1 * y1 + a2 * y2);
-
-        //             x2 = x1;
-        //             x1 = xn;
-
-        //             y2 = y1;
-        //             y1 = yn;
-
-        //             out <- yn;
-
-        //             advance();
-        //         }
-        //     }
-        // }
-
-        processor BandPassFilter {
-            input stream float in;
-            output stream float out;
-
-            float b0, b1, b2, a0, a1, a2;
-            float x1 = 0.0f, x2 = 0.0f;
-            float y1 = 0.0f, y2 = 0.0f;
-
-            void init() {
-                updateCoefficients(9561.0f, float(processor.frequency));
-            }
-
-            void updateCoefficients(float cutoffFreq, float sampleRate) {
-                float omega = 2.0f * 3.14159265359f * cutoffFreq / sampleRate;
-                float cosOmega = cos(omega);
-                float alpha = sin(omega) / 2.0f;  // Adjust for filter Q (quality) as needed
-
-                b0 = alpha;
-                b1 = 0.0f;
-                b2 = -alpha;
-                a0 = 1.0f + alpha;
-                a1 = -2.0f * cosOmega;
-                a2 = 1.0f - alpha;
-
-                b0 /= a0;
-                b1 /= a0;
-                b2 /= a0;
-                a1 /= a0;
-                a2 /= a0;
-            }
-
-            void main() {
-                loop {
-                    let xn = in;
-                    let yn = (b0 * xn + b1 * x1 + b2 * x2) - (a1 * y1 + a2 * y2);
-
-                    x2 = x1;
-                    x1 = xn;
-
-                    y2 = y1;
-                    y1 = yn;
-
-                    out <- yn;
-
-                    advance();
-                }
-            }
-        }
-
-
-        // @todo: doesn't sound good yet, probably rething approach
         processor Crash {
             input event (std::notes::NoteOn) eventIn;
             input stream float noiseIn;
             output stream float out;
 
             float triggerVelocity = 0.0f;
-            float feedback = 0.0f;
-            float noiseLevel = 0.3f;
 
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == CRASH_CYMBAL_1_MIDI_PITCH) {
                     triggerVelocity = n.velocity;
-                    envelope.releaseIn <- 1.2f;
-                    envelope.attackIn <- .02f;
-                    noiseLevel = 0.8f;
-                    highpass.frequency <- 2000.0f;
+                    highpass.frequency <- 4500.0f;
+                    generator.frequencyMultiplierIn <- 0.75f;
+                }
+                if (int (n.pitch) == CRASH_CYMBAL_2_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    highpass.frequency <- 4000.0f;
+                    generator.frequencyMultiplierIn <- 0.6f;
+                }
+                if (int (n.pitch) == CHINESE_CYMBAL_MIDI_PITCH) {
+                    triggerVelocity = n.velocity;
+                    highpass.frequency <- 4000.0f;
+                    generator.frequencyMultiplierIn <- 0.4f;
                 }
             }
 
             node envelope = Envelope;
-            node osc0 = Oscillator;
-            node osc = PolyblepOscillatorBank;
-            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 1000.0f);
-            node bandpass = BandPassFilter;
-            node experiment = Experiment;
+            node envelope2 = Envelope;
+            node highpass = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::highPass,
+                1000.0f
+            );
+            node generator = MetalicSoundGenerator;
 
             let invSampleRate = 1.0f / float(processor.frequency);
 
             void main()
             {
-                
-                osc0.frequencyIn <- 300.0f;
-                osc.frequencyIn <- float<8>(
-                    205.3f,
-                    369.6f,
-                    304.4f,
-                    522.7f,
-                    359.4f,
-                    400.9f,
-                    568.3f,
-                    627.2f
-                    // 359.4–1149.9,
-                    // 254.3–627.2 
-                );
-
-                osc.levelIn <- float<8>(1.0f);
-
+                envelope.releaseIn <- 1.0f;
+                envelope.attackIn <- .02f;
+                envelope2.attackIn <- 0.001f;
+                envelope2.releaseIn <- 0.4f;
                 loop
                 {
                     while (triggerVelocity == 0) {
@@ -232,28 +134,21 @@ namespace Percupuff
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
                     envelope.triggerIn <- void;
+                    envelope2.triggerIn <- void;
                     envelope.advance();
                     float gain = envelope.gainOut;
-                    float feedback = 0.0f;
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        //osc.frequencyModIn <- osc0.out * 0.01f;
-                        
-                        bandpass.in <- (experiment.out) * 0.3f;
+                        let sample = generator.out;
+                        highpass.in <- sample * 0.13f;
 
-                        //let sample = highpass.out + osc.out * 0.1f;
-                        
-                        // out <- sample * gain * (0.15f + vel * 0.15f);
+                        out <- highpass.out * gain + sample * envelope2.gainOut * 0.05f;
 
-                        out <- sin((bandpass.out + noiseIn * 0.05f + experiment.out * 0.05f) * 0.5f) * gain;
-
-                        
                         highpass.advance();
-                        bandpass.advance();
-                        experiment.advance();
-                        
+                        generator.advance();
                         gain = envelope.gainOut;
                         envelope.advance();
+                        envelope2.advance();
                         advance();
                     }
                 }
