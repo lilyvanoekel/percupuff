@@ -1,9 +1,8 @@
 import React from "react";
-
 import { css } from "@emotion/react";
 
 const inactive = css({
-  fill: "#555555",
+  fill: "#444444",
 });
 
 const activeGreen = css({
@@ -24,7 +23,8 @@ export const Digit: React.FC<{ number: number; color: "red" | "green" }> = ({
   number,
   color,
 }) => {
-  const active = color == "red" ? activeRed : activeGreen;
+  const active = color === "red" ? activeRed : activeGreen;
+
   return (
     <div>
       <svg
@@ -34,54 +34,61 @@ export const Digit: React.FC<{ number: number; color: "red" | "green" }> = ({
         height="240"
         viewBox="-30 -30 320 540"
       >
+        {/* Horizontal Segments */}
         <use
           xlinkHref="#unit-h"
           className="segment a"
-          x="30"
+          x="56"
           y="0"
           css={[0, 2, 3, 5, 6, 7, 8, 9].includes(number) ? active : inactive}
         ></use>
         <use
+          xlinkHref="#unit-h"
+          className="segment g"
+          x="36"
+          y="220"
+          css={[2, 3, 4, 5, 6, 8, 9].includes(number) ? active : inactive}
+        ></use>
+        <use
+          xlinkHref="#unit-h"
+          className="segment d"
+          x="13"
+          y="440"
+          css={[2, 3, 5, 6, 8, 9].includes(number) ? active : inactive}
+        ></use>
+
+        {/* Slanted Vertical Segments */}
+        <use
           xlinkHref="#unit-v"
           className="segment b"
-          x="220"
+          x="250"
           y="30"
+          transform="skewX(-6)"
           css={[1, 2, 3, 4, 7, 8, 9].includes(number) ? active : inactive}
         ></use>
         <use
           xlinkHref="#unit-v"
           className="segment c"
-          x="220"
+          x="250"
           y="250"
+          transform="skewX(-6)"
           css={[1, 3, 4, 5, 6, 7, 8, 9].includes(number) ? active : inactive}
-        ></use>
-        <use
-          xlinkHref="#unit-h"
-          className="segment d"
-          x="30"
-          y="440"
-          css={[2, 3, 5, 6, 8, 9].includes(number) ? active : inactive}
         ></use>
         <use
           xlinkHref="#unit-v"
           className="segment e"
-          x="0"
+          x="30"
           y="250"
+          transform="skewX(-6)"
           css={[2, 6, 8].includes(number) ? active : inactive}
         ></use>
         <use
           xlinkHref="#unit-v"
           className="segment f"
-          x="0"
-          y="30"
-          css={[4, 5, 6, 8, 9].includes(number) ? active : inactive}
-        ></use>
-        <use
-          xlinkHref="#unit-h"
-          className="segment g"
           x="30"
-          y="220"
-          css={[2, 3, 4, 5, 6, 8, 9].includes(number) ? active : inactive}
+          y="30"
+          transform="skewX(-6)"
+          css={[4, 5, 6, 8, 9].includes(number) ? active : inactive}
         ></use>
       </svg>
     </div>

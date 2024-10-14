@@ -16,8 +16,14 @@ function App() {
       </svg>
       <div>Bello!</div>
       <Slider param="mainLevel" />
-      <Digit number={9} color="red" />
-      <Digit number={9} color="green" />
+      <div style={{ display: "flex" }}>
+        <Digit number={1} color="red" />
+        <Digit number={2} color="green" />
+        <Digit number={3} color="red" />
+        <Digit number={4} color="green" />
+        <Digit number={5} color="green" />
+        <Digit number={8} color="green" />
+      </div>
     </>
   );
 }
