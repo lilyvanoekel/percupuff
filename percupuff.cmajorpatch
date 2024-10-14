@@ -26,5 +26,11 @@
     "dsp/drums/Claves.cmajor",
     "dsp/drums/Bongos.cmajor",
     "dsp/Percupuff.cmajor"
-  ]
+  ],
+  "view": {
+    "src": "view/dist/index.js",
+    "width": 800,
+    "height": 520,
+    "resizable": true
+  }
 }

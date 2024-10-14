@@ -1,8 +1,31 @@
 namespace Percupuff
 {
+    processor MultiplyStreams {
+        input stream float stream1;
+        input stream float stream2;
+        output stream float out;
+
+        void main() {
+            loop {
+                out <- stream1 * stream2;
+                advance();
+            }
+        }
+    }
+
+    processor DivideEventBy100() {
+        input event float in;
+        output event float out;
+
+        event in(float f) {
+            out <- f * 0.01f;
+        }
+    }
+
     graph Percupuff  [[main]]
     {
         input event std::midi::Message midiIn;
+        input event float mainLevel     [[ name: "mainLevel", min: 0, max: 100, init: 50 ]];
 
         output stream float out;
 
@@ -19,10 +42,13 @@ namespace Percupuff
             bongos = Drums::Bongos;
             gainLimiter = std::levels::ConstantGain (float, 1.0f);
             mpe = std::midi::MPEConverter;
+            levelSmoother = std::smoothing::SmoothedValueStream (0.02f);
+            mul = MultiplyStreams;
         }
     
         connection
         {
+            mainLevel -> DivideEventBy100 -> levelSmoother;
             midiIn -> mpe;
             mpe -> bassDrum;
             mpe -> snare.eventIn;
@@ -45,7 +71,9 @@ namespace Percupuff
             crash -> gainLimiter;
             claves -> gainLimiter;
             bongos -> gainLimiter;
-            gainLimiter -> out;
+            levelSmoother -> mul.stream1;
+            gainLimiter -> mul.stream2;
+            mul -> out;
         }
     }
 }
