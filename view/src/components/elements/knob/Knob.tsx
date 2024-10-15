@@ -2,6 +2,20 @@ import React, { useEffect, useRef } from "react";
 import { css } from "@emotion/react";
 import { KnobDial } from "./KnobDial";
 
+const interpolateColor = (
+  startColor: number[],
+  endColor: number[],
+  t: number
+) => {
+  const easedT = t * t;
+
+  const r = Math.round((1 - easedT) * startColor[0] + easedT * endColor[0]);
+  const g = Math.round((1 - easedT) * startColor[1] + easedT * endColor[1]);
+  const b = Math.round((1 - easedT) * startColor[2] + easedT * endColor[2]);
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 export const Knob: React.FC<{
   value: number;
   setValue: (value: number) => void;
@@ -99,6 +113,15 @@ export const Knob: React.FC<{
   const originX = knobWidth * 0.5 + knobMarginX;
   const originY = knobHeight * 0.5 + knobMarginY;
 
+  const gradientId = `knobGradient-${Math.round(value)}`;
+  const green = [170, 255, 170];
+  const red = [255, 170, 170];
+  const interpolatedColor = interpolateColor(
+    green,
+    red,
+    Math.round(value) / 100
+  );
+
   return (
     <div
       css={css(`
@@ -121,47 +144,14 @@ export const Knob: React.FC<{
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
       >
-        {/* <g>{lines}</g> */}
-        <circle
-          cx="60"
-          cy="60"
-          r="46"
-          fill="url(#knobGradient)"
-          stroke="rgba(255, 255, 255, 0.4)"
-          strokeWidth="0"
-        />
-        {/* Making sure the below commented code gets committed at least once */}
-        {/* <path
-          id="path1"
-          style={{
-            fill: "#000000",
-            filter: `drop-shadow(0 0 3px rgba(255, 255, 255, 1.0))`,
-            stroke: "#DDDDDD",
-            strokeWidth: 1,
-            transformOrigin: "54.5px 49.5px",
-            transform: `translate(6px, 10px) rotate(${Math.round(
-              angle
-            )}deg) scale(0.6)`,
-          }}
-          d="M 27.408632,97.1325 C 19.490423,92.53809 18.294091,81.26516 13.736617,73.33161 9.179092,65.39796 0.03919895,58.67794 0.06364395,49.53085 0.08807395,40.3838 9.263586,33.711858 13.863536,25.802337 18.463457,17.892832 19.720452,6.6264319 27.663237,2.0737779 c 7.942795,-4.552651 18.314821,0.04817 27.472217,0.07226 9.1574,0.02409 19.55391,-4.522107 27.47221,0.07227 7.91832,4.59438 9.115,15.8672191 13.67252,23.8008261 4.557486,7.933596 13.696976,14.653766 13.672496,23.800766 -0.0245,9.14702 -9.19981,15.81901 -13.799706,23.72852 -4.59991,7.90952 -5.85691,19.17593 -13.79971,23.7286 -7.94278,4.55266 -18.31481,-0.0482 -27.472217,-0.0723 -9.157475,-0.0241 -19.554074,4.52221 -27.472415,-0.0723 z"
-        />
-        <rect
-          style={{
-            fill: "#ffffff",
-            fillOpacity: 1,
-            fillRule: "evenodd",
-            transformOrigin: "54.5px 49.5px",
-            transform: `translate(6px, 10px) rotate(${Math.round(
-              angle
-            )}deg) scale(0.6)`,
-          }}
-          id="rect2"
-          width="33.485294"
-          height="5.8235292"
-          x="0.99469805"
-          y="46.428532"
-          ry="2.9117646"
-        /> */}
+        <defs>
+          <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor={interpolatedColor} />{" "}
+            <stop offset="40%" stopColor={interpolatedColor} />{" "}
+            <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />{" "}
+          </radialGradient>
+        </defs>
+        <circle cx="60" cy="60" r="46" fill={`url(#${gradientId})`} />
       </svg>
       <div
         css={css(`
@@ -183,7 +173,7 @@ export const Knob: React.FC<{
           <path
             style={{
               fill: "#000000",
-              filter: `drop-shadow(0 0 3px rgba(255, 255, 255, 1.0))`,
+              filter: `drop-shadow(0 0 3px ${interpolatedColor})`,
             }}
             d="M 27.408632,97.1325 C 19.490423,92.53809 18.294091,81.26516 13.736617,73.33161 9.179092,65.39796 0.03919895,58.67794 0.06364395,49.53085 0.08807395,40.3838 9.263586,33.711858 13.863536,25.802337 18.463457,17.892832 19.720452,6.6264319 27.663237,2.0737779 c 7.942795,-4.552651 18.314821,0.04817 27.472217,0.07226 9.1574,0.02409 19.55391,-4.522107 27.47221,0.07227 7.91832,4.59438 9.115,15.8672191 13.67252,23.8008261 4.557486,7.933596 13.696976,14.653766 13.672496,23.800766 -0.0245,9.14702 -9.19981,15.81901 -13.799706,23.72852 -4.59991,7.90952 -5.85691,19.17593 -13.79971,23.7286 -7.94278,4.55266 -18.31481,-0.0482 -27.472217,-0.0723 -9.157475,-0.0241 -19.554074,4.52221 -27.472415,-0.0723 z"
           />

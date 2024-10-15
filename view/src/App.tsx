@@ -38,6 +38,7 @@ function App() {
         <Knob value={100} width={180} height={180} />
         <Knob value={100} width={60} height={60} /> */}
         <ParamKnob param="mainLevel" />
+        <ParamKnob param="mainLevel" width={60} height={77} />
       </div>
       <div style={{ display: "flex" }}>
         <Digit number={1} color="red" width={160} height={240} />
