@@ -1,7 +1,9 @@
 import React, { useRef, useState } from "react";
 // import { css } from "@emotion/react";
 
-export const Knob: React.FC<{ value: number }> = ({ value: initialValue }) => {
+export const KnobOld: React.FC<{ value: number }> = ({
+  value: initialValue,
+}) => {
   const [value, setValue] = useState(initialValue);
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
 

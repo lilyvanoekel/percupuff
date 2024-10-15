@@ -1,5 +1,6 @@
 import { Digit } from "./components/elements/Digit";
-import { Knob } from "./components/elements/Knob";
+import { KnobOld } from "./components/elements/Knob";
+import { ParamKnob } from "./components/elements/ParamKnob";
 import { Slider } from "./components/elements/Slider";
 
 function App() {
@@ -13,9 +14,10 @@ function App() {
           <g id="unit-v">
             <path d="M20 0 L0 20 L0 180 L20 200 L40 180 L40 20 Z"></path>
           </g>
-          <radialGradient id="knobGradient" cx="50%" cy="50%" r="90%">
-            <stop offset="0%" stopColor="#333333" />
-            <stop offset="100%" stopColor="#111111" />
+          <radialGradient id="knobGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(255, 255, 255, 1)" />{" "}
+            <stop offset="40%" stopColor="rgba(255, 255, 255, 1)" />{" "}
+            <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />{" "}
           </radialGradient>
           <linearGradient id="glassEffect" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
@@ -31,20 +33,19 @@ function App() {
       <div>Bello!</div>
       <Slider param="mainLevel" />
       <div style={{ display: "flex" }}>
-        <Knob value={0} />
-        <Knob value={20} />
-        <Knob value={40} />
-        <Knob value={60} />
-        <Knob value={80} />
-        <Knob value={100} />
+        <KnobOld value={80} />
+        {/* <Knob value={100} setValue={() => {}} />
+        <Knob value={100} width={180} height={180} />
+        <Knob value={100} width={60} height={60} /> */}
+        <ParamKnob param="mainLevel" />
       </div>
       <div style={{ display: "flex" }}>
-        <Digit number={1} color="red" />
-        <Digit number={2} color="green" />
-        <Digit number={3} color="red" />
-        <Digit number={4} color="green" />
-        <Digit number={5} color="green" />
-        <Digit number={8} color="green" />
+        <Digit number={1} color="red" width={160} height={240} />
+        <Digit number={2} color="green" width={160} height={240} />
+        <Digit number={3} color="red" width={160} height={240} />
+        <Digit number={4} color="green" width={160} height={240} />
+        <Digit number={5} color="green" width={160} height={240} />
+        <Digit number={8} color="green" width={160} height={240} />
       </div>
     </>
   );
