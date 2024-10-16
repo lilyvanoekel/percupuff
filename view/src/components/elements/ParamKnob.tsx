@@ -22,7 +22,8 @@ export const ParamKnob: React.FC<{
 
   const digitHeight = height - width;
   const digitWidth = (digitHeight / 3) * 2;
-  const marginAdjust = height / 20;
+  const marginAdjust = height / 40;
+  const digitPadding = height / 40;
 
   const digits = getLastFourDigits(Math.round(state[param]));
 
@@ -37,6 +38,15 @@ export const ParamKnob: React.FC<{
   //       onChange={pipe(getNumberFromEvent, updateParam(param))}
   //     />
   //   );
+
+  /*
+        line-height: 1;
+    padding: 2px 2px 0px;
+    background: black;
+    border: 1px solid #333333;
+    drop-shadow: 1px 1px 1px #000000;
+    box-shadow: 2px 2px 10px 1px #000000;
+  */
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
@@ -55,30 +65,40 @@ export const ParamKnob: React.FC<{
           marginTop: `-${marginAdjust}px`,
         }}
       >
-        <Digit
-          number={digits[0]}
-          color="green"
-          width={digitWidth}
-          height={digitHeight}
-        />
-        <Digit
-          number={digits[1]}
-          color="green"
-          width={digitWidth}
-          height={digitHeight}
-        />
-        <Digit
-          number={digits[2]}
-          color="green"
-          width={digitWidth}
-          height={digitHeight}
-        />
-        <Digit
-          number={digits[3]}
-          color="green"
-          width={digitWidth}
-          height={digitHeight}
-        />
+        <div
+          style={{
+            lineHeight: "1",
+            background: "#222222",
+            border: "1px solid #333333",
+            padding: `${digitPadding}px ${digitPadding}px 0px`,
+            boxShadow: "1px 1px 3px 0px #000000 inset",
+          }}
+        >
+          <Digit
+            number={digits[0]}
+            color="green"
+            width={digitWidth}
+            height={digitHeight}
+          />
+          <Digit
+            number={digits[1]}
+            color="green"
+            width={digitWidth}
+            height={digitHeight}
+          />
+          <Digit
+            number={digits[2]}
+            color="green"
+            width={digitWidth}
+            height={digitHeight}
+          />
+          <Digit
+            number={digits[3]}
+            color="green"
+            width={digitWidth}
+            height={digitHeight}
+          />
+        </div>
       </div>
     </div>
   );

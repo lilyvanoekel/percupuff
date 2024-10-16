@@ -1,3 +1,8 @@
+/clap
+/web
+/juce
+.DS_Store
+
 # Logs
 logs
 *.log

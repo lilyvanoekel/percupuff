@@ -107,50 +107,6 @@ const defaultBlackPixel =
 
 const imageCache = new Map<string, string>();
 
-// export const Digit: React.FC<{
-//   color: "red" | "green";
-//   number?: number;
-//   width?: number;
-//   height?: number;
-// }> = ({ number, color, width = 160, height = 240 }) => {
-//   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-//   useEffect(() => {
-//     const cacheKey = `${number}-${color}-${width}-${height}`;
-
-//     const canvas = canvasRef.current;
-//     const ctx = canvas?.getContext("2d", { alpha: false });
-//     if (!canvas || !ctx) {
-//       return;
-//     }
-
-//     const svgString = ReactDOMServer.renderToStaticMarkup(
-//       <DigitSvg number={number} color={color} width={width} height={height} />
-//     );
-
-//     const svgBlob = new Blob([svgString], {
-//       type: "image/svg+xml;charset=utf-8",
-//     });
-//     const url = URL.createObjectURL(svgBlob);
-//     const image = new Image();
-//     image.onload = () => {
-//       ctx.clearRect(0, 0, width, height);
-//       ctx.fillStyle = "black";
-//       ctx.fillRect(0, 0, canvas.width, canvas.height);
-//       ctx.drawImage(image, 0, 0, width, height);
-//       URL.revokeObjectURL(url);
-//     };
-//     image.src = url;
-//   }, [number, color, width, height]);
-
-//   return (
-//     <>
-//       <canvas ref={canvasRef} width={width} height={height}></canvas>
-//       <img width={width} height={height} src={defaultBlackPixel} />
-//     </>
-//   );
-// };
-
 export const Digit: React.FC<{
   color: "red" | "green";
   number?: number;
@@ -185,7 +141,7 @@ export const Digit: React.FC<{
       const ctx = canvas.getContext("2d", { alpha: false });
 
       if (ctx) {
-        ctx.fillStyle = "black";
+        ctx.fillStyle = "#222222";
         ctx.fillRect(0, 0, width, height);
         ctx.drawImage(image, 0, 0, width, height);
       }

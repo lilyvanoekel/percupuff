@@ -151,7 +151,14 @@ export const Knob: React.FC<{
             <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />{" "}
           </radialGradient>
         </defs>
-        <circle cx="60" cy="60" r="46" fill={`url(#${gradientId})`} />
+        <circle
+          cx="60"
+          cy="60"
+          r="46"
+          fill={`url(#${gradientId})`}
+          stroke="#333333"
+          strokeWidth="1"
+        />
       </svg>
       <div
         css={css(`

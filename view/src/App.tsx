@@ -1,11 +1,9 @@
-import { Digit } from "./components/elements/Digit";
-import { KnobOld } from "./components/elements/Knob";
+// import { Group } from "./components/elements/Group";
 import { ParamKnob } from "./components/elements/ParamKnob";
-import { Slider } from "./components/elements/Slider";
 
 function App() {
   return (
-    <>
+    <div>
       <svg width="0" height="0" viewBox="0 0 0 0">
         <defs>
           <g id="unit-h">
@@ -30,25 +28,75 @@ function App() {
           </radialGradient>
         </defs>
       </svg>
-      <div>Bello!</div>
-      <Slider param="mainLevel" />
+
       <div style={{ display: "flex" }}>
-        <KnobOld value={80} />
-        {/* <Knob value={100} setValue={() => {}} />
-        <Knob value={100} width={180} height={180} />
-        <Knob value={100} width={60} height={60} /> */}
         <ParamKnob param="mainLevel" />
-        <ParamKnob param="mainLevel" width={60} height={77} />
+        <div style={{ marginLeft: "50px" }}>
+          <ParamKnob param="mainLevel" width={60} height={77} />
+        </div>
+        <div style={{ marginLeft: "50px" }}>
+          <div
+            style={{
+              textAlign: "center",
+              fontSize: "12px",
+              textTransform: "uppercase",
+              lineHeight: "28px",
+              maskSize: "24px",
+            }}
+            className="noise-mask"
+          >
+            Main Volume
+          </div>
+          <ParamKnob param="mainLevel" width={90} height={115.5} />
+        </div>
       </div>
-      <div style={{ display: "flex" }}>
+      {/* <div
+        style={{
+          marginTop: "50px",
+          textShadow:
+            "0 0 2px rgba(255, 255, 255, 0.8), 0 0 5px rgba(255, 255, 255, 0.6)",
+          color: "rgb(255, 255, 255)",
+          // filter: "blur(1.0px)",
+          fontSize: "36px",
+        }}
+      >
+        POTATO
+      </div> */}
+      <div
+        style={{
+          textAlign: "center",
+          fontSize: "12px",
+          fontWeight: "bold",
+          textTransform: "uppercase",
+          maskSize: "24px",
+        }}
+        className="noise-mask"
+      >
+        Main Volume
+      </div>
+      <div
+        style={{
+          textAlign: "center",
+          fontSize: "16px",
+          fontWeight: "bold",
+          textTransform: "uppercase",
+          maskSize: "32px",
+        }}
+        className="noise-mask"
+      >
+        Main Volume
+      </div>
+
+      {/* <Group /> */}
+      {/* <div style={{ display: "flex" }}>
         <Digit number={1} color="red" width={160} height={240} />
         <Digit number={2} color="green" width={160} height={240} />
         <Digit number={3} color="red" width={160} height={240} />
         <Digit number={4} color="green" width={160} height={240} />
         <Digit number={5} color="green" width={160} height={240} />
         <Digit number={8} color="green" width={160} height={240} />
-      </div>
-    </>
+      </div> */}
+    </div>
   );
 }
 
