@@ -1,5 +1,7 @@
 // import { Group } from "./components/elements/Group";
+import { DigitSvg } from "./components/elements/Digit";
 import { ParamKnob } from "./components/elements/ParamKnob";
+import { SixteenSegment } from "./components/elements/SixteenSegment";
 
 function App() {
   return (
@@ -86,6 +88,8 @@ function App() {
       >
         Main Volume
       </div>
+      <SixteenSegment color="green" />
+      <DigitSvg color="green" />
 
       {/* <Group /> */}
       {/* <div style={{ display: "flex" }}>

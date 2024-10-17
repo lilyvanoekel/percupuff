@@ -40,7 +40,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: url("/src/assets/noise2.png");
-  background-size: 200px 200px;
+  background-size: 400px 400px;
 }
 
 h1 {
