@@ -103,7 +103,7 @@ export const DigitSvg: React.FC<{
 };
 
 const defaultBlackPixel =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
 
 const imageCache = new Map<string, string>();
 
@@ -161,7 +161,6 @@ export const Digit: React.FC<{
       width={width}
       height={height}
       alt={`Digit ${number}`}
-      style={{ backgroundColor: "black" }}
     />
   );
 };

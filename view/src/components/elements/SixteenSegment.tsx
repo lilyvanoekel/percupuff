@@ -1,7 +1,19 @@
 import React from "react";
+import { sixteenSegmentASCII } from "../../external/sixteenSegmentASCII";
+import { SvgRasterizeAndCache } from "../SvgRasterizeAndCache";
+
+const getSegmentValue = (char: string): number => {
+  const asciiIndex = char.charCodeAt(0);
+
+  if (asciiIndex >= 32 && asciiIndex <= 127) {
+    return sixteenSegmentASCII[asciiIndex - 32];
+  }
+
+  return 0x0000;
+};
 
 const inactive: React.CSSProperties = {
-  fill: "#444444",
+  fill: "#393939",
 };
 
 const activeGreen: React.CSSProperties = {
@@ -18,13 +30,62 @@ const activeRed: React.CSSProperties = {
            drop-shadow(0 0 20px rgba(255, 50, 50, 0.9))`,
 };
 
-export const SixteenSegment: React.FC<{
+const createSegment = (s: React.CSSProperties) => (i: number) => {
+  const skew = "skewX(-6)";
+  const sh = "#segment-h";
+  const sv = "#segment-v";
+  const v1 = "#segment-v1";
+  const v2 = "#segment-v2";
+  const h1 = "#segment-h1";
+  const h2 = "#segment-h2";
+  const x1 = "#segment-x1";
+  const x2 = "#segment-x2";
+  const x3 = "#segment-x3";
+  const x4 = "#segment-x4";
+  return [
+    <use href={sh} x="56" y="0" style={s} key={i}></use>,
+    <use href={sh} x="164" y="0" style={s} key={i}></use>,
+    <use href={sv} x="250" y="30" transform={skew} style={s} key={i}></use>,
+    <use href={sv} x="250" y="250" transform={skew} style={s} key={i}></use>,
+    <use href={sh} x="121" y="440" style={s} key={i}></use>,
+    <use href={sh} x="13" y="440" style={s} key={i}></use>,
+    <use href={sv} x="30" y="250" transform={skew} style={s} key={i}></use>,
+    <use href={sv} x="30" y="30" transform={skew} style={s} key={i}></use>,
+    <use href={h1} x="61" y="220" style={s} transform={skew} key={i}></use>,
+    <use href={h2} x="165" y="220" style={s} transform={skew} key={i}></use>,
+    <use href={x1} x="76" y="48" style={s} transform={skew} key={i}></use>,
+    <use href={v1} x="140" y="30" transform={skew} style={s} key={i}></use>,
+    <use href={x2} x="164" y="49" style={s} transform={skew} key={i}></use>,
+    <use href={x4} x="164" y="244" style={s} transform={skew} key={i}></use>,
+    <use href={v2} x="140" y="250" transform={skew} style={s} key={i}></use>,
+    <use href={x3} x="76" y="246" style={s} transform={skew} key={i}></use>,
+  ][i];
+};
+
+export const SixteenSegmentSvg: React.FC<{
   color: "red" | "green";
-  number?: number;
+  character?: string;
   width?: number;
   height?: number;
-}> = ({ number = -1, color, width = 160, height = 240 }) => {
+}> = ({ character, color, width = 160, height = 240 }) => {
   const active = color === "red" ? activeRed : activeGreen;
+
+  const binaryNumber = getSegmentValue(character ?? " ");
+
+  const convert = (i: number) =>
+    [8, 15, 14, 13, 9, 12, 11, 10, 7, 6, 5, 4, 3, 2, 1, 0][i];
+
+  const mask = binaryNumber & 0xffff;
+  const activeSegments = [...Array(16).keys()]
+    .filter((i) => mask & (1 << (15 - i)))
+    .map(convert);
+
+  const inActiveSegments = [...Array(16).keys()]
+    .filter((i) => !(mask & (1 << (15 - i))))
+    .map(convert);
+
+  const createActiveSegment = createSegment(active);
+  const createInactiveSegment = createSegment(inactive);
 
   return (
     <svg
@@ -65,119 +126,32 @@ export const SixteenSegment: React.FC<{
           <path d="M0 0 L18 80 L46 156 L80 186 L80 142 L30 20 Z"></path>
         </g>
       </defs>
-      {/* Horizontal Segments */}
-      <use
-        href="#segment-h"
-        x="56"
-        y="0"
-        style={[0, 2, 3, 5, 6, 7, 8, 9].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-h"
-        x="164"
-        y="0"
-        style={[0, 2, 3, 5, 6, 7, 8, 9].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-h1"
-        x="61"
-        y="220"
-        style={[2, 3, 4, 5, 6, 8, 9].includes(number) ? active : inactive}
-        transform="skewX(-6)"
-      ></use>
-      <use
-        href="#segment-h2"
-        x="165"
-        y="220"
-        style={[2, 3, 4, 5, 6, 8, 9].includes(number) ? active : inactive}
-        transform="skewX(-6)"
-      ></use>
-      <use
-        href="#segment-h"
-        x="13"
-        y="440"
-        style={[0, 2, 3, 5, 6, 8, 9].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-h"
-        x="121"
-        y="440"
-        style={[0, 2, 3, 5, 6, 8, 9].includes(number) ? active : inactive}
-      ></use>
-
-      {/* Slanted Vertical Segments */}
-      <use
-        href="#segment-v"
-        x="30"
-        y="30"
-        transform="skewX(-6)"
-        style={[0, 4, 5, 6, 8, 9].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-v1"
-        x="140"
-        y="30"
-        transform="skewX(-6)"
-        style={[99].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-v"
-        x="250"
-        y="30"
-        transform="skewX(-6)"
-        style={[0, 1, 2, 3, 4, 7, 8, 9].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-v"
-        x="30"
-        y="250"
-        transform="skewX(-6)"
-        style={[0, 2, 6, 8].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-v2"
-        x="140"
-        y="250"
-        transform="skewX(-6)"
-        style={[99].includes(number) ? active : inactive}
-      ></use>
-      <use
-        href="#segment-v"
-        x="250"
-        y="250"
-        transform="skewX(-6)"
-        style={[0, 1, 3, 4, 5, 6, 7, 8, 9].includes(number) ? active : inactive}
-      ></use>
-
-      {/* X Segments */}
-      <use
-        href="#segment-x1"
-        x="76"
-        y="48"
-        style={[99].includes(number) ? active : inactive}
-        transform="skewX(-6)"
-      ></use>
-      <use
-        href="#segment-x2"
-        x="164"
-        y="49"
-        style={[99].includes(number) ? active : inactive}
-        transform="skewX(-6)"
-      ></use>
-      <use
-        href="#segment-x3"
-        x="76"
-        y="246"
-        style={[99].includes(number) ? active : inactive}
-        transform="skewX(-6)"
-      ></use>
-      <use
-        href="#segment-x4"
-        x="164"
-        y="244"
-        style={[99].includes(number) ? active : inactive}
-        transform="skewX(-6)"
-      ></use>
+      {inActiveSegments.map(createInactiveSegment)}
+      {activeSegments.map(createActiveSegment)}
     </svg>
+  );
+};
+
+export const SixteenSegment: React.FC<{
+  color: "red" | "green";
+  character?: string;
+  width?: number;
+  height?: number;
+}> = ({ character, color, width = 160, height = 240 }) => {
+  const cacheKey = `${character}-${color}-${width}-${height}`;
+  return (
+    <SvgRasterizeAndCache
+      cacheKey={cacheKey}
+      width={width}
+      height={height}
+      backgroundColor="#222222"
+    >
+      <SixteenSegmentSvg
+        color={color}
+        character={character}
+        width={width}
+        height={height}
+      />
+    </SvgRasterizeAndCache>
   );
 };

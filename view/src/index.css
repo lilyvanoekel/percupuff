@@ -10,6 +10,14 @@
   mask-mode: luminance;
 }
 
+.glass {
+  background-image: linear-gradient(
+    190deg,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 80%
+  );
+}
+
 :root {
   font-family: "Saira", sans-serif;
   line-height: 1.5;

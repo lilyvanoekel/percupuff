@@ -72,6 +72,7 @@ export const ParamKnob: React.FC<{
             border: "1px solid #333333",
             padding: `${digitPadding}px ${digitPadding}px 0px`,
             boxShadow: "1px 1px 3px 0px #000000 inset",
+            position: "relative",
           }}
         >
           <Digit
@@ -98,6 +99,16 @@ export const ParamKnob: React.FC<{
             width={digitWidth}
             height={digitHeight}
           />
+          <div
+            className="glass"
+            style={{
+              width: "calc(100% - 2px)",
+              height: "calc(100% - 2px)",
+              position: "absolute",
+              left: "1px",
+              top: "1px",
+            }}
+          ></div>
         </div>
       </div>
     </div>

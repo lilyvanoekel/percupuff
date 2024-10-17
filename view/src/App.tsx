@@ -88,7 +88,87 @@ function App() {
       >
         Main Volume
       </div>
-      <SixteenSegment color="green" />
+
+      <div
+        style={{
+          lineHeight: "1",
+          background: "#222222",
+          border: "1px solid #333333",
+          padding: `4px 4px 2px 4px`,
+          boxShadow: "1px 1px 3px 0px #000000 inset",
+
+          width: "188px",
+          //height: "38px",
+          boxSizing: "border-box",
+          marginLeft: "50px",
+          marginTop: "20px",
+          marginBottom: "20px",
+          position: "relative",
+        }}
+      >
+        <div style={{ display: "flex" }}>
+          <SixteenSegment color="green" character="F" width={20} height={30} />
+          <SixteenSegment color="green" character="R" width={20} height={30} />
+          <SixteenSegment color="green" character="E" width={20} height={30} />
+          <SixteenSegment color="green" character="Q" width={20} height={30} />
+          <SixteenSegment color="green" character="U" width={20} height={30} />
+          <SixteenSegment color="green" character="E" width={20} height={30} />
+          <SixteenSegment color="green" character="N" width={20} height={30} />
+          <SixteenSegment color="green" character="C" width={20} height={30} />
+          <SixteenSegment color="green" character="Y" width={20} height={30} />
+        </div>
+        <div style={{ display: "flex", marginTop: "2px" }}>
+          <SixteenSegment color="green" character="\" width={20} height={30} />
+          <SixteenSegment color="green" character="o" width={20} height={30} />
+          <SixteenSegment color="green" character="_" width={20} height={30} />
+          <SixteenSegment color="green" character="o" width={20} height={30} />
+          <SixteenSegment color="green" character="|" width={20} height={30} />
+          <SixteenSegment color="green" character="T" width={20} height={30} />
+          <SixteenSegment color="green" character="O" width={20} height={30} />
+          <SixteenSegment color="green" character="F" width={20} height={30} />
+          <SixteenSegment color="green" character="F" width={20} height={30} />
+        </div>
+      </div>
+      <div
+        style={{
+          lineHeight: "1",
+          background: "#222222",
+          border: "1px solid #333333",
+          padding: `4px 4px 2px 4px`,
+          boxShadow: "1px 1px 3px 0px #000000 inset",
+
+          width: "172px",
+          //height: "38px",
+          boxSizing: "border-box",
+          marginLeft: "50px",
+          marginTop: "20px",
+          marginBottom: "20px",
+          position: "relative",
+        }}
+      >
+        <div style={{ display: "flex" }}>
+          <SixteenSegment color="green" character="P" width={16} height={24} />
+          <SixteenSegment color="green" character="R" width={16} height={24} />
+          <SixteenSegment color="green" character="E" width={16} height={24} />
+          <SixteenSegment color="green" character="Q" width={16} height={24} />
+          <SixteenSegment color="green" character="U" width={16} height={24} />
+          <SixteenSegment color="green" character="E" width={16} height={24} />
+          <SixteenSegment color="green" character="N" width={16} height={24} />
+          <SixteenSegment color="green" character="C" width={16} height={24} />
+          <SixteenSegment color="green" character="Y" width={16} height={24} />
+        </div>
+        <div style={{ display: "flex", marginTop: "2px" }}>
+          <SixteenSegment color="green" character="" width={16} height={24} />
+          <SixteenSegment color="green" character="" width={16} height={24} />
+          <SixteenSegment color="green" character="" width={16} height={24} />
+          <SixteenSegment color="green" character="C" width={16} height={24} />
+          <SixteenSegment color="green" character="U" width={16} height={24} />
+          <SixteenSegment color="green" character="T" width={16} height={24} />
+          <SixteenSegment color="green" character="O" width={16} height={24} />
+          <SixteenSegment color="green" character="F" width={16} height={24} />
+          <SixteenSegment color="green" character="F" width={16} height={24} />
+        </div>
+      </div>
       <DigitSvg color="green" />
 
       {/* <Group /> */}
