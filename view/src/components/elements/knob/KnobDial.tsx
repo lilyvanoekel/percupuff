@@ -1,4 +1,3 @@
-import { css } from "@emotion/react";
 import React, { memo } from "react";
 
 export const KnobDial: React.FC<{ width: number; height: number }> = memo(
@@ -52,7 +51,7 @@ export const KnobDial: React.FC<{ width: number; height: number }> = memo(
         width={width}
         height={height}
         viewBox={`0 0 120 120`}
-        css={css("position: absolute; left: 0px; top: 0px;")}
+        style={{ position: "absolute", left: "0px", top: "0px" }}
       >
         <g>{lines}</g>
       </svg>

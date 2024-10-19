@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { css } from "@emotion/react";
 import { KnobDial } from "./KnobDial";
 
 const interpolateColor = (
@@ -124,11 +123,11 @@ export const Knob: React.FC<{
 
   return (
     <div
-      css={css(`
-      position: relative;
-      width: ${width}px;
-      height: ${height}px;
-    `)}
+      style={{
+        position: "relative",
+        width: `${width}px`,
+        height: `${height}px`,
+      }}
     >
       <KnobDial width={width} height={height} />
       <svg
@@ -161,14 +160,14 @@ export const Knob: React.FC<{
         />
       </svg>
       <div
-        css={css(`
-          position: absolute;
-          left: ${knobLeftAdjustment}px;
-          top: ${knobTopAdjustment}px;
-          transform-origin: ${originX}px ${originY}px;
-          transform: rotate(${angle}deg) scale(0.6);
-          cursor: move;
-        `)}
+        style={{
+          position: "absolute",
+          left: `${knobLeftAdjustment}px`,
+          top: `${knobTopAdjustment}px`,
+          transformOrigin: `${originX}px ${originY}px`,
+          transform: `rotate(${angle}deg) scale(0.6)`,
+          cursor: "move",
+        }}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
       >

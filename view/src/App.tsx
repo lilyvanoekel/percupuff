@@ -1,37 +1,17 @@
 // import { Group } from "./components/elements/Group";
 import { Button } from "./components/elements/Button";
 import { Button2 } from "./components/elements/Button2";
-import { DigitSvg } from "./components/elements/Digit";
 import { ParamKnob } from "./components/elements/ParamKnob";
 import { SixteenSegment } from "./components/elements/SixteenSegment";
+import { InstrumentPicker } from "./components/InstrumentPicker";
+import { Logo } from "./components/Logo";
 
 function App() {
   return (
     <div>
-      <svg width="0" height="0" viewBox="0 0 0 0">
-        <defs>
-          <g id="unit-h">
-            <path d="M0 20 L20 40 L180 40 L200 20 L180 0 L20 0 Z"></path>
-          </g>
-          <g id="unit-v">
-            <path d="M20 0 L0 20 L0 180 L20 200 L40 180 L40 20 Z"></path>
-          </g>
-          <radialGradient id="knobGradient" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(255, 255, 255, 1)" />{" "}
-            <stop offset="40%" stopColor="rgba(255, 255, 255, 1)" />{" "}
-            <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />{" "}
-          </radialGradient>
-          <linearGradient id="glassEffect" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.6)" />
-            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
-          </linearGradient>
-          <radialGradient id="glassGradient" cx="30%" cy="36%" r="70%">
-            <stop offset="0%" stopColor="rgba(255, 255, 255, 0.3)" />{" "}
-            <stop offset="60%" stopColor="rgba(255, 255, 255, 0.2)" />{" "}
-            <stop offset="100%" stopColor="rgba(255, 255, 255, 0.1)" />{" "}
-          </radialGradient>
-        </defs>
-      </svg>
+      <Logo />
+
+      <InstrumentPicker />
 
       <div style={{ display: "flex" }}>
         <ParamKnob param="mainLevel" />
@@ -108,17 +88,6 @@ function App() {
           position: "relative",
         }}
       >
-        <div style={{ display: "flex" }}>
-          <SixteenSegment color="green" character="F" width={20} height={30} />
-          <SixteenSegment color="green" character="R" width={20} height={30} />
-          <SixteenSegment color="green" character="E" width={20} height={30} />
-          <SixteenSegment color="green" character="Q" width={20} height={30} />
-          <SixteenSegment color="green" character="U" width={20} height={30} />
-          <SixteenSegment color="green" character="E" width={20} height={30} />
-          <SixteenSegment color="green" character="N" width={20} height={30} />
-          <SixteenSegment color="green" character="C" width={20} height={30} />
-          <SixteenSegment color="green" character="Y" width={20} height={30} />
-        </div>
         <div style={{ display: "flex", marginTop: "2px" }}>
           <SixteenSegment color="green" character="\" width={20} height={30} />
           <SixteenSegment color="green" character="o" width={20} height={30} />

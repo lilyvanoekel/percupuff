@@ -1,10 +1,10 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import { debounce } from "./common/debounce";
-import { getPatchConnection } from "./common/patchConnection";
-
 /**
  * Manage parameter state/syncing globally.
  */
+
+import React, { createContext, useState, useContext, useEffect } from "react";
+import { debounce } from "./common/debounce";
+import { getPatchConnection } from "./common/patchConnection";
 
 export interface ParamState {
   mainLevel: number;
@@ -93,7 +93,7 @@ export const ParamStoreProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useParamStore = (): ParamStoreContextType => {
   const context = useContext(ParamStoreContext);
   if (!context) {
-    throw new Error("useParamStore must be used within a StoreProvider");
+    throw new Error("useParamStore must be used within a ParamStoreProvider");
   }
   return context;
 };
