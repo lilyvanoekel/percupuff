@@ -1,4 +1,6 @@
 // import { Group } from "./components/elements/Group";
+import { Button } from "./components/elements/Button";
+import { Button2 } from "./components/elements/Button2";
 import { DigitSvg } from "./components/elements/Digit";
 import { ParamKnob } from "./components/elements/ParamKnob";
 import { SixteenSegment } from "./components/elements/SixteenSegment";
@@ -64,7 +66,7 @@ function App() {
       >
         POTATO
       </div> */}
-      <div
+      {/* <div
         style={{
           textAlign: "center",
           fontSize: "12px",
@@ -87,7 +89,7 @@ function App() {
         className="noise-mask"
       >
         Main Volume
-      </div>
+      </div> */}
 
       <div
         style={{
@@ -123,10 +125,10 @@ function App() {
           <SixteenSegment color="green" character="_" width={20} height={30} />
           <SixteenSegment color="green" character="o" width={20} height={30} />
           <SixteenSegment color="green" character="|" width={20} height={30} />
-          <SixteenSegment color="green" character="T" width={20} height={30} />
-          <SixteenSegment color="green" character="O" width={20} height={30} />
-          <SixteenSegment color="green" character="F" width={20} height={30} />
-          <SixteenSegment color="green" character="F" width={20} height={30} />
+          <SixteenSegment color="green" character="" width={20} height={30} />
+          <SixteenSegment color="green" character="\" width={20} height={30} />
+          <SixteenSegment color="green" character="o" width={20} height={30} />
+          <SixteenSegment color="green" character="/" width={20} height={30} />
         </div>
       </div>
       <div
@@ -137,7 +139,7 @@ function App() {
           padding: `4px 4px 2px 4px`,
           boxShadow: "1px 1px 3px 0px #000000 inset",
 
-          width: "172px",
+          width: "152px",
           //height: "38px",
           boxSizing: "border-box",
           marginLeft: "50px",
@@ -148,28 +150,35 @@ function App() {
       >
         <div style={{ display: "flex" }}>
           <SixteenSegment color="green" character="P" width={16} height={24} />
+          <SixteenSegment color="green" character="E" width={16} height={24} />
           <SixteenSegment color="green" character="R" width={16} height={24} />
-          <SixteenSegment color="green" character="E" width={16} height={24} />
-          <SixteenSegment color="green" character="Q" width={16} height={24} />
-          <SixteenSegment color="green" character="U" width={16} height={24} />
-          <SixteenSegment color="green" character="E" width={16} height={24} />
-          <SixteenSegment color="green" character="N" width={16} height={24} />
           <SixteenSegment color="green" character="C" width={16} height={24} />
-          <SixteenSegment color="green" character="Y" width={16} height={24} />
+          <SixteenSegment color="green" character="U" width={16} height={24} />
+          <SixteenSegment color="green" character="P" width={16} height={24} />
+          <SixteenSegment color="green" character="U" width={16} height={24} />
+          <SixteenSegment color="green" character="F" width={16} height={24} />
+          <SixteenSegment color="green" character="F" width={16} height={24} />
         </div>
         <div style={{ display: "flex", marginTop: "2px" }}>
-          <SixteenSegment color="green" character="" width={16} height={24} />
-          <SixteenSegment color="green" character="" width={16} height={24} />
-          <SixteenSegment color="green" character="" width={16} height={24} />
-          <SixteenSegment color="green" character="C" width={16} height={24} />
-          <SixteenSegment color="green" character="U" width={16} height={24} />
-          <SixteenSegment color="green" character="T" width={16} height={24} />
+          <SixteenSegment color="red" character="P" width={16} height={24} />
           <SixteenSegment color="green" character="O" width={16} height={24} />
-          <SixteenSegment color="green" character="F" width={16} height={24} />
-          <SixteenSegment color="green" character="F" width={16} height={24} />
+          <SixteenSegment color="red" character="T" width={16} height={24} />
+          <SixteenSegment color="green" character="A" width={16} height={24} />
+          <SixteenSegment color="red" character="T" width={16} height={24} />
+          <SixteenSegment color="green" character="O" width={16} height={24} />
+          <SixteenSegment color="red" character="?" width={16} height={24} />
+          <SixteenSegment color="green" character="?" width={16} height={24} />
+          <SixteenSegment color="red" character="?" width={16} height={24} />
         </div>
       </div>
-      <DigitSvg color="green" />
+
+      <div style={{ marginLeft: "50px" }}>
+        <Button />
+      </div>
+
+      <div style={{ marginLeft: "150px" }}>
+        <Button2 />
+      </div>
 
       {/* <Group /> */}
       {/* <div style={{ display: "flex" }}>
