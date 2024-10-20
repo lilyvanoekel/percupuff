@@ -17,7 +17,7 @@ type ParamUpdater = <K extends keyof ParamState>(
 ) => (value: ParamState[K]) => void;
 
 interface ParamStoreContextType {
-  state: ParamState;
+  paramState: ParamState;
   setParams: (value: Partial<ParamState>) => void;
   updateParam: ParamUpdater;
 }
@@ -84,7 +84,9 @@ export const ParamStoreProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <ParamStoreContext.Provider value={{ state, setParams, updateParam }}>
+    <ParamStoreContext.Provider
+      value={{ paramState: state, setParams, updateParam }}
+    >
       {children}
     </ParamStoreContext.Provider>
   );

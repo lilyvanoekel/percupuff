@@ -1,19 +1,44 @@
+import { useId } from "react";
+import { HSL } from "../../common/color/hsl";
+
 export const Button2: React.FC<{
+  color: HSL;
   width?: number;
   height?: number;
-}> = ({ width = 50, height = 70 }) => {
+  active?: boolean;
+  onClick?: () => void;
+}> = ({ color, width = 50, height = 70, active = false, onClick }) => {
+  const id = useId();
+
+  const c = HSL(color.h, active ? 100 : color.s, active ? 50 : color.l);
+
   const moat = height / 20;
   const borderRadius = height / 3.5;
   return (
-    <svg width={width} height={height} xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width={width}
+      height={height}
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ cursor: "pointer" }}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick?.();
+      }}
+    >
       <defs>
-        <linearGradient id="borderGradient3a" x1="0%" y1="0%" x2="0%" y2="100%">
+        <linearGradient
+          id={`borderGradient${id}`}
+          x1="0%"
+          y1="0%"
+          x2="0%"
+          y2="100%"
+        >
           <stop offset="0%" stopColor="rgba(0,0,0,0.0)" />
           <stop offset="10%" stopColor="rgba(0,0,0,0)" />
           <stop offset="90%" stopColor="rgba(0,0,0,0)" />
           <stop offset="100%" stopColor="rgba(0,0,0,0.3)" />
         </linearGradient>
-        <filter id="rounded-shadow">
+        <filter id={`roundedShadow${id}`}>
           <feFlood floodColor="black" />
           <feComposite operator="out" in2="SourceGraphic" />
           <feMorphology operator="dilate" radius="2" />
@@ -46,9 +71,9 @@ export const Button2: React.FC<{
         height={height - moat * 2}
         rx={borderRadius * 0.8}
         ry={borderRadius * 0.8}
-        fill="rgb(50, 123, 50)"
+        fill={c.toString()}
         // fill="rgb(100, 255, 100)"
-        filter="url(#rounded-shadow)"
+        filter={`url(#roundedShadow${id})`}
       />
       <rect
         x={moat}
@@ -57,7 +82,7 @@ export const Button2: React.FC<{
         height={height - moat * 2}
         rx={borderRadius * 0.8}
         ry={borderRadius * 0.8}
-        fill="url(#borderGradient3a)"
+        fill={`url(#borderGradient${id})`}
       />
     </svg>
   );

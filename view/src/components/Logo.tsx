@@ -9,7 +9,7 @@ export const Logo = () => (
         border: "1px solid #333333",
         padding: `4px 4px 2px 4px`,
         boxShadow: "1px 1px 3px 0px #000000 inset",
-        width: "188px",
+        width: "242px",
         boxSizing: "border-box",
         marginBottom: "20px",
         display: "flex",

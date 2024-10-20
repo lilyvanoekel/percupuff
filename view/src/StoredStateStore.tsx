@@ -5,18 +5,8 @@
  */
 
 import React, { createContext, useState, useContext } from "react";
+import { InstrumentId } from "./instruments";
 
-const instruments = {
-  0: ["Accoustic Kick"],
-  1: ["Electric Kick"],
-  2: ["Accoustic Snare"],
-  3: ["Electric Snare"],
-  4: ["Closed Hihat"],
-  5: ["Pedal Hihat"],
-  6: ["Open Hihat"],
-} as const;
-
-export type InstrumentId = keyof typeof instruments;
 export interface StoredState {
   selectedInstrument: InstrumentId;
 }
@@ -24,7 +14,7 @@ export interface StoredState {
 export type StoredStateItem = keyof StoredState;
 
 const initialState: StoredState = {
-  selectedInstrument: 1,
+  selectedInstrument: 0,
 };
 
 type StoredStateUpdater = <K extends keyof StoredState>(
@@ -32,7 +22,7 @@ type StoredStateUpdater = <K extends keyof StoredState>(
 ) => (value: StoredState[K]) => void;
 
 interface StoredStateStoreContextType {
-  state: StoredState;
+  storedState: StoredState;
   setStoredState: (value: Partial<StoredState>) => void;
   updateStoredStateItem: StoredStateUpdater;
 }
@@ -55,7 +45,7 @@ export const StoredStatetoreProvider: React.FC<{
 
   return (
     <StoredStateStoreContext.Provider
-      value={{ state, setStoredState, updateStoredStateItem }}
+      value={{ storedState: state, setStoredState, updateStoredStateItem }}
     >
       {children}
     </StoredStateStoreContext.Provider>
