@@ -8,7 +8,8 @@ export const LetterDisplay: React.FC<{
   numberOfLines: number;
   text: string[];
   color: "green" | "red";
-  align?: "left" | "right";
+  align?: "left" | "right" | "center";
+  style?: React.CSSProperties;
 }> = ({
   letterWidth,
   letterHeight,
@@ -17,6 +18,7 @@ export const LetterDisplay: React.FC<{
   text,
   color,
   align,
+  style,
 }) => {
   return (
     <InlineBlock
@@ -26,19 +28,29 @@ export const LetterDisplay: React.FC<{
         border: "1px solid #333333",
         padding: `4px`,
         boxShadow: "1px 1px 3px 0px #000000 inset",
-        // width: `${letterWidth * lineLength + 8}px`,
-        // boxSizing: "border-box",
         position: "relative",
+        ...style,
       }}
     >
       {[...Array(numberOfLines).keys()].map((lineIndex) => {
         const lineText = text[lineIndex] || "";
-        const paddingSpaces =
-          align === "right" && lineText.length < lineLength
-            ? " ".repeat(lineLength - lineText.length)
-            : "";
+        let paddingSpaces = "";
+
+        if (align === "right" && lineText.length < lineLength) {
+          paddingSpaces = " ".repeat(lineLength - lineText.length);
+        } else if (align === "center" && lineText.length < lineLength) {
+          const totalPadding = lineLength - lineText.length;
+          const leftPadding =
+            lineIndex % 2
+              ? Math.ceil(totalPadding / 2)
+              : Math.floor(totalPadding / 2);
+          paddingSpaces = " ".repeat(leftPadding);
+        }
+
         const fullLineText =
-          align === "right" ? paddingSpaces + lineText : lineText;
+          align === "right" || align === "center"
+            ? paddingSpaces + lineText
+            : lineText;
 
         return (
           <div key={lineIndex} style={{ display: "flex" }}>

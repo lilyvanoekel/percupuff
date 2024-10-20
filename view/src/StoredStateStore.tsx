@@ -5,16 +5,16 @@
  */
 
 import React, { createContext, useState, useContext } from "react";
-import { InstrumentId } from "./instruments";
+import { InstrumentKey } from "./ParamStore";
 
 export interface StoredState {
-  selectedInstrument: InstrumentId;
+  selectedInstrument: InstrumentKey;
 }
 
 export type StoredStateItem = keyof StoredState;
 
 const initialState: StoredState = {
-  selectedInstrument: 0,
+  selectedInstrument: "bd1",
 };
 
 type StoredStateUpdater = <K extends keyof StoredState>(

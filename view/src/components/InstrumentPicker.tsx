@@ -1,12 +1,12 @@
 import { HSL } from "../common/color/hsl";
-import { InstrumentId } from "../instruments";
+import { InstrumentKey } from "../ParamStore";
 import { useStoredStateStore } from "../StoredStateStore";
 import { Button2 } from "./elements/Button2";
 import { Label } from "./elements/Label";
 
 export const InstrumentGroup: React.FC<{
   name: string;
-  instrumentIds: InstrumentId[];
+  instrumentIds: InstrumentKey[];
   hue: number;
 }> = ({ name, instrumentIds, hue }) => {
   const { storedState, updateStoredStateItem } = useStoredStateStore();
@@ -37,8 +37,8 @@ export const InstrumentGroup: React.FC<{
 
 export const InstrumentPicker: React.FC = () => (
   <div style={{ padding: "10px" }}>
-    <InstrumentGroup name="Kicks" instrumentIds={[0, 1]} hue={20} />
-    <InstrumentGroup name="Snares" instrumentIds={[2, 3]} hue={120} />
-    <InstrumentGroup name="Hihats" instrumentIds={[4, 5, 6]} hue={180} />
+    <InstrumentGroup name="Kicks" instrumentIds={["bd1", "bd2"]} hue={20} />
+    {/* <InstrumentGroup name="Snares" instrumentIds={[2, 3]} hue={120} />
+    <InstrumentGroup name="Hihats" instrumentIds={[4, 5, 6]} hue={180} /> */}
   </div>
 );

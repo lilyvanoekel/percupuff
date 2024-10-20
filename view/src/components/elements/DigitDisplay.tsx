@@ -17,7 +17,8 @@ export const DigitDisplay: React.FC<{
   lineLength: number;
   number: number;
   color: "green" | "red";
-}> = ({ digitWidth, digitHeight, lineLength, number, color }) => {
+  style?: React.CSSProperties;
+}> = ({ digitWidth, digitHeight, lineLength, number, color, style }) => {
   const digits = getLastXDigits(lineLength)(number);
   return (
     <InlineBlock
@@ -28,6 +29,7 @@ export const DigitDisplay: React.FC<{
         padding: `4px`,
         boxShadow: "1px 1px 3px 0px #000000 inset",
         position: "relative",
+        ...style,
       }}
     >
       {[...Array(lineLength).keys()].map((digitIndex) => (

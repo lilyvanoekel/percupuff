@@ -20,7 +20,8 @@ export const Knob: React.FC<{
   setValue: (value: number) => void;
   width?: number;
   height?: number;
-}> = ({ value, width, height, setValue }) => {
+  disabled?: boolean;
+}> = ({ value, width, height, setValue, disabled = false }) => {
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const valueRef = useRef<number | null>(null);
 
@@ -154,7 +155,7 @@ export const Knob: React.FC<{
           cx="60"
           cy="60"
           r="46"
-          fill={`url(#${gradientId})`}
+          fill={disabled ? "black" : `url(#${gradientId})`}
           stroke="#333333"
           strokeWidth="1"
         />

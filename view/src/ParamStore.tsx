@@ -6,8 +6,20 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { debounce } from "./common/debounce";
 import { getPatchConnection } from "./common/patchConnection";
 
-export interface ParamState {
+export const instruments = {
+  bd1: { name: "Acoustic Kick" },
+  bd2: { name: "Electric Kick" },
+} as const;
+
+export type InstrumentKey = keyof typeof instruments;
+type InstrumentParams =
+  | `${InstrumentKey}Level`
+  | `${InstrumentKey}Panning`
+  | `${InstrumentKey}Velocity`;
+
+export interface ParamState extends Record<InstrumentParams, number> {
   mainLevel: number;
+  bd1Decay: number;
 }
 
 export type Param = keyof ParamState;
@@ -22,15 +34,36 @@ interface ParamStoreContextType {
   updateParam: ParamUpdater;
 }
 
-const initialState: ParamState = {
-  mainLevel: 10,
-};
-
 type Min = number;
 type Max = number;
 type Step = number;
+
+const initialStateInstrumentParams = Object.fromEntries(
+  Object.keys(instruments).flatMap((instrumentKey) => [
+    [instrumentKey + "Level", 50],
+    [instrumentKey + "Panning", 0],
+    [instrumentKey + "Velocity", 100],
+  ])
+) as Record<InstrumentParams, number>;
+
+const instrumentParamsRange = Object.fromEntries(
+  Object.keys(instruments).flatMap((instrumentKey) => [
+    [instrumentKey + "Level", [0, 100, 1]],
+    [instrumentKey + "Panning", [-100, 100, 0]],
+    [instrumentKey + "Velocity", [0, 100, 1]],
+  ])
+) as Record<InstrumentParams, [Min, Max, Step]>;
+
+const initialState: ParamState = {
+  mainLevel: 10,
+  bd1Decay: 25,
+  ...initialStateInstrumentParams,
+};
+
 export const paramRange: Record<Param, [Min, Max, Step]> = {
   mainLevel: [0, 100, 1],
+  bd1Decay: [15, 60, 1],
+  ...instrumentParamsRange,
 };
 
 const ParamStoreContext = createContext<ParamStoreContextType | undefined>(

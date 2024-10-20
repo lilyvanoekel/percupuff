@@ -12,7 +12,7 @@ const getLastFourDigits = (num: number): (number | undefined)[] => {
 };
 
 export const ParamKnob: React.FC<{
-  param: Param;
+  param?: Param;
   width?: number;
   height?: number;
 }> = ({ param, width = 120, height = 154 }) => {
@@ -23,16 +23,22 @@ export const ParamKnob: React.FC<{
   const marginAdjust = height / 40;
   const digitPadding = height / 40;
 
-  const digits = getLastFourDigits(Math.round(paramState[param]));
+  const digits = param
+    ? getLastFourDigits(Math.round(paramState[param]))
+    : Array(4).fill(undefined);
+
+  const value = param ? paramState[param] : 0;
+  const setValue = param ? updateParam(param) : (_: number) => {};
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
       <div>
         <Knob
-          value={paramState[param]}
-          setValue={updateParam(param)}
+          value={value}
+          setValue={setValue}
           width={width}
           height={width}
+          disabled={!param}
         />
       </div>
       <div

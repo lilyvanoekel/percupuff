@@ -1,0 +1,9 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 120px);
+}
+
+.grid > div {
+  justify-self: center;
+  align-self: end;
+}

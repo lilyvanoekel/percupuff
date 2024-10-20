@@ -1,4 +1,4 @@
-import { InstrumentConfig } from "./components/InstrumentConfig";
+import { InstrumentConfig } from "./components/instrument-config/InstrumentConfig";
 import { InstrumentPicker } from "./components/InstrumentPicker";
 import { Logo } from "./components/Logo";
 
