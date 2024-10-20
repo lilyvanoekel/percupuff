@@ -13,7 +13,14 @@ export const Button: React.FC<{
   const borderWidthBottomLeft = height / 16;
   const borderRadius = height / 4;
   return (
-    <InlineBlock style={{ position: "relative", cursor: "pointer", ...style }}>
+    <InlineBlock
+      style={{
+        position: "relative",
+        cursor: "pointer",
+        lineHeight: "0",
+        ...style,
+      }}
+    >
       <svg width={width} height={height} xmlns="http://www.w3.org/2000/svg">
         <defs>
           <filter

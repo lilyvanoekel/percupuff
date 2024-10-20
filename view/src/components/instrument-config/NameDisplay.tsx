@@ -1,4 +1,4 @@
-import { instruments } from "../../ParamStore";
+import { instruments } from "../../params";
 import { useStoredStateStore } from "../../StoredStateStore";
 import { Label } from "../elements/Label";
 import { LetterDisplay } from "../elements/LetterDisplay";

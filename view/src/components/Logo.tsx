@@ -1,7 +1,7 @@
 import { SixteenSegment } from "./elements/SixteenSegment";
 
 export const Logo = () => (
-  <div style={{ padding: "10px" }}>
+  <div style={{ padding: "10px", paddingBottom: "20px" }}>
     <div
       style={{
         lineHeight: "1",
@@ -11,7 +11,6 @@ export const Logo = () => (
         boxShadow: "1px 1px 3px 0px #000000 inset",
         width: "242px",
         boxSizing: "border-box",
-        marginBottom: "20px",
         display: "flex",
       }}
     >

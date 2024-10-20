@@ -5,7 +5,7 @@
  */
 
 import React, { createContext, useState, useContext } from "react";
-import { InstrumentKey } from "./ParamStore";
+import { InstrumentKey } from "./params";
 
 export interface StoredState {
   selectedInstrument: InstrumentKey;
@@ -14,7 +14,7 @@ export interface StoredState {
 export type StoredStateItem = keyof StoredState;
 
 const initialState: StoredState = {
-  selectedInstrument: "bd1",
+  selectedInstrument: "kick1",
 };
 
 type StoredStateUpdater = <K extends keyof StoredState>(

@@ -95,11 +95,10 @@ export const Knob: React.FC<{
   const totalAngle = 360 - gapWidth;
   const angleStep = totalAngle / numLines;
 
+  // Intentionally not normalizing angle so that animation doesn't go through the knob's deadzone
   let angle = (value / 100) * (270 - angleStep);
   angle += 90 + gapWidth * 0.5 + angleStep * 0.5;
-
   angle += 180;
-  angle = angle % 360;
 
   // Adjust for the knob's size discrepancy within the SVG
   const knobWidth = 109.89 * (width / 120);
@@ -168,6 +167,8 @@ export const Knob: React.FC<{
           transformOrigin: `${originX}px ${originY}px`,
           transform: `rotate(${angle}deg) scale(0.6)`,
           cursor: "move",
+          transition:
+            lastPosRef.current === null ? "transform 0.5s ease" : "none",
         }}
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}

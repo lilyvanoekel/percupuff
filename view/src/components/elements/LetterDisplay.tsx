@@ -6,7 +6,7 @@ export const LetterDisplay: React.FC<{
   letterHeight: number;
   lineLength: number;
   numberOfLines: number;
-  text: string[];
+  text?: string[];
   color: "green" | "red";
   align?: "left" | "right" | "center";
   style?: React.CSSProperties;
@@ -33,7 +33,7 @@ export const LetterDisplay: React.FC<{
       }}
     >
       {[...Array(numberOfLines).keys()].map((lineIndex) => {
-        const lineText = text[lineIndex] || "";
+        const lineText = text?.[lineIndex] || "";
         let paddingSpaces = "";
 
         if (align === "right" && lineText.length < lineLength) {

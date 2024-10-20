@@ -1,5 +1,6 @@
-import React from "react";
-import { useParamStore, Param } from "../../ParamStore";
+import React, { useEffect, useRef } from "react";
+import { useParamStore } from "../../ParamStore";
+import { Param } from "../../params";
 import { Knob } from "./knob/Knob";
 import { Digit } from "./Digit";
 
@@ -18,6 +19,11 @@ export const ParamKnob: React.FC<{
 }> = ({ param, width = 120, height = 154 }) => {
   const { paramState, updateParam } = useParamStore();
 
+  const paramRef = useRef(param);
+  useEffect(() => {
+    paramRef.current = param;
+  }, [param]);
+
   const digitHeight = height - width;
   const digitWidth = (digitHeight / 3) * 2;
   const marginAdjust = height / 40;
@@ -28,14 +34,15 @@ export const ParamKnob: React.FC<{
     : Array(4).fill(undefined);
 
   const value = param ? paramState[param] : 0;
-  const setValue = param ? updateParam(param) : (_: number) => {};
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
       <div>
         <Knob
           value={value}
-          setValue={setValue}
+          setValue={(v) => {
+            paramRef.current && updateParam(paramRef.current, v);
+          }}
           width={width}
           height={width}
           disabled={!param}
