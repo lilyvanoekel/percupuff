@@ -9,15 +9,27 @@ function App() {
   return (
     <div className="background">
       <Logo />
-      <InlineBlock>
-        <InstrumentPicker />
-      </InlineBlock>
-      <InlineBlock style={{ textAlign: "center", marginLeft: "10px" }}>
+      <div
+        className="ridge"
+        style={{ marginTop: "-1px", marginBottom: "8px" }}
+      ></div>
+      <InlineBlock
+        style={{
+          textAlign: "center",
+          marginLeft: "15px",
+          marginRight: "15px",
+          marginTop: "12.5px",
+        }}
+      >
         <div style={{ marginBottom: "6px" }}>
           <Label>Main Level</Label>
         </div>
         <ParamKnob param="mainLevel" width={90} height={115.5} />
       </InlineBlock>
+      <InlineBlock>
+        <InstrumentPicker />
+      </InlineBlock>
+      <div className="ridge" style={{ marginBottom: "8px" }}></div>
       <InstrumentConfig />
     </div>
   );

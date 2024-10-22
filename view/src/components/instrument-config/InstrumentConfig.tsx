@@ -5,12 +5,11 @@ import { ParamGrid } from "./ParamGrid";
 
 export const InstrumentConfig: React.FC = () => {
   return (
-    <div style={{ padding: "4px 10px 10px 10px" }}>
-      <div className="ridge" style={{ marginBottom: "8px" }}></div>
+    <div style={{ padding: "0px 10px" }}>
       <InlineBlock>
         <NameDisplay />
       </InlineBlock>
-      <InlineBlock style={{ marginLeft: "10px" }}>
+      <InlineBlock style={{ marginLeft: "15px" }}>
         <MidiAssignment />
       </InlineBlock>
 

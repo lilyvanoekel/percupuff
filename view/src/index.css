@@ -43,8 +43,10 @@ body {
   background-size: 400px 400px;
   display: inline-block;
   margin: 0 auto;
-  width: 740px;
-  padding-bottom: 10px;
+  width: 760px;
+  padding: 10px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
 }
 
 h1 {

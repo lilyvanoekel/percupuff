@@ -17,7 +17,7 @@ export const InstrumentGroup: React.FC<{
   const { storedState, updateStoredStateItem } = useStoredStateStore();
 
   return (
-    <div style={{ display: "inline-block", marginRight: "10px" }}>
+    <div style={{ display: "inline-block", marginLeft: "9px" }}>
       <div style={{ textAlign: "center" }}>
         {name === "🐮" ? "🐮" : <Label>{name}</Label>}
       </div>
@@ -25,9 +25,9 @@ export const InstrumentGroup: React.FC<{
         {instrumentIds.map((id, index) => (
           <div key={id}>
             <Button2
-              style={index && !(index % 3) ? { marginLeft: "10px" } : undefined}
+              style={index && !(index % 3) ? { marginLeft: "9px" } : undefined}
               color={color}
-              width={45}
+              width={47}
               height={63}
               active={storedState.selectedInstrument === id}
               onClick={() => {
@@ -45,7 +45,7 @@ export const InstrumentPicker: React.FC = () => {
   // instrumentGroup
 
   return (
-    <div style={{ paddingLeft: "10px", width: "590px" }}>
+    <div style={{ width: "620px" }}>
       {instrumentGroups.map((groupName) => (
         <InstrumentGroup
           key={groupName}
