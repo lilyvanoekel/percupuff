@@ -7,13 +7,13 @@ export const NameDisplay = () => {
   const { storedState } = useStoredStateStore();
   return (
     <div>
-      <div>
+      <div style={{ marginBottom: "4px" }}>
         <Label>Selected Sound</Label>
       </div>
       <LetterDisplay
         letterWidth={20}
         letterHeight={30}
-        lineLength={18}
+        lineLength={20}
         numberOfLines={1}
         text={[
           instruments[storedState.selectedInstrument].name.toLocaleUpperCase(),

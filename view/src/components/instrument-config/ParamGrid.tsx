@@ -17,10 +17,10 @@ export const ParamGrid: React.FC = () => {
     instrumentToCustomParam[storedState.selectedInstrument] ?? [];
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      <div>
+    <div style={{ marginTop: "10px" }}>
+      {/* <div>
         <Label>Sound Params</Label>
-      </div>
+      </div> */}
       <div className={styles.grid}>
         <div>
           <Label>Level</Label>

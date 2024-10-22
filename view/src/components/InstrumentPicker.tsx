@@ -19,12 +19,13 @@ export const InstrumentGroup: React.FC<{
   return (
     <div style={{ display: "inline-block", marginRight: "10px" }}>
       <div style={{ textAlign: "center" }}>
-        <Label>{name}</Label>
+        {name === "🐮" ? "🐮" : <Label>{name}</Label>}
       </div>
       <div style={{ display: "flex" }}>
-        {instrumentIds.map((id) => (
+        {instrumentIds.map((id, index) => (
           <div key={id}>
             <Button2
+              style={index && !(index % 3) ? { marginLeft: "10px" } : undefined}
               color={color}
               width={45}
               height={63}
@@ -44,7 +45,7 @@ export const InstrumentPicker: React.FC = () => {
   // instrumentGroup
 
   return (
-    <div style={{ paddingLeft: "10px" }}>
+    <div style={{ paddingLeft: "10px", width: "590px" }}>
       {instrumentGroups.map((groupName) => (
         <InstrumentGroup
           key={groupName}

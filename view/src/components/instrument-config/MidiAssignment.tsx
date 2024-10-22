@@ -7,7 +7,7 @@ export const MidiAssignment: React.FC<{
   style?: React.CSSProperties;
 }> = ({ style }) => (
   <div style={style}>
-    <div>
+    <div style={{ marginBottom: "4px" }}>
       <Label>Midi Assignment</Label>
     </div>
     <DigitDisplay

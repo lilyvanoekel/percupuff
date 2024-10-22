@@ -23,7 +23,14 @@ export const instruments = {
   wood1: { name: "High Wood Block", group: "Wood Sounds" },
   wood2: { name: "Low Wood Block", group: "Wood Sounds" },
 
-  Cowbell: { name: "Cowbell", group: "Cow" },
+  tom1: { name: "Low Floor Tom", group: "Toms" },
+  tom2: { name: "High Floor Tom", group: "Toms" },
+  tom3: { name: "Low Tom", group: "Toms" },
+  tom4: { name: "Low Mid Tom", group: "Toms" },
+  tom5: { name: "High Mid Tom", group: "Toms" },
+  tom6: { name: "High Tom", group: "Toms" },
+
+  Cowbell: { name: "Cowbell", group: "🐮" },
 } as const;
 
 export const instrumentGroups = Array.from(
@@ -39,7 +46,8 @@ export const groupColors: Record<InstrumentGroup, HSL> = {
   ["Crash Cymbals"]: HSL(180, 42, 34),
   Bongos: HSL(180, 42, 34),
   ["Wood Sounds"]: HSL(180, 42, 34),
-  Cow: HSL(180, 42, 34),
+  ["🐮"]: HSL(180, 42, 34),
+  Toms: HSL(180, 42, 34),
 };
 
 export type InstrumentKey = keyof typeof instruments;

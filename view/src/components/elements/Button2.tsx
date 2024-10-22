@@ -7,7 +7,8 @@ export const Button2: React.FC<{
   height?: number;
   active?: boolean;
   onClick?: () => void;
-}> = ({ color, width = 50, height = 70, active = false, onClick }) => {
+  style?: React.CSSProperties;
+}> = ({ color, width = 50, height = 70, active = false, onClick, style }) => {
   const id = useId();
 
   const c = HSL(color.h, active ? 100 : color.s, active ? 50 : color.l);
@@ -19,7 +20,7 @@ export const Button2: React.FC<{
       width={width}
       height={height}
       xmlns="http://www.w3.org/2000/svg"
-      style={{ cursor: "pointer" }}
+      style={{ cursor: "pointer", ...style }}
       onClick={(e) => {
         e.preventDefault();
         onClick?.();
