@@ -1,36 +1,36 @@
 import { HSL } from "./common/color/hsl";
 
 export const instruments = {
-  kick1: { name: "Acoustic Kick", group: "Kicks" },
-  kick2: { name: "Electric Kick", group: "Kicks" },
+  kick1: { name: "Acoustic Kick", group: "Kicks", midi: 36 },
+  kick2: { name: "Electric Kick", group: "Kicks", midi: 35 },
 
-  snare1: { name: "Acoustic Snare", group: "Snares" },
-  snare2: { name: "Electric Snare", group: "Snares" },
-  clap1: { name: "Clap", group: "Snares" },
+  snare1: { name: "Acoustic Snare", group: "Snares", midi: 38 },
+  snare2: { name: "Electric Snare", group: "Snares", midi: 40 },
+  clap1: { name: "Clap", group: "Snares", midi: 39 },
 
-  hihat1: { name: "Closed Hihat", group: "Hihats" },
-  hihat2: { name: "Pedal Hihat", group: "Hihats" },
-  hihat3: { name: "Open Hihat", group: "Hihats" },
+  hihat1: { name: "Closed Hihat", group: "Hihats", midi: 42 },
+  hihat2: { name: "Pedal Hihat", group: "Hihats", midi: 44 },
+  hihat3: { name: "Open Hihat", group: "Hihats", midi: 46 },
 
-  crash1: { name: "Crash Cymbal 1", group: "Crash Cymbals" },
-  crash2: { name: "Crash Cymbal 2", group: "Crash Cymbals" },
-  crash3: { name: "Crash Cymbal 3", group: "Crash Cymbals" },
+  crash1: { name: "Crash Cymbal 1", group: "Crash Cymbals", midi: 49 },
+  crash2: { name: "Crash Cymbal 2", group: "Crash Cymbals", midi: 57 },
+  crash3: { name: "Crash Cymbal 3", group: "Crash Cymbals", midi: 52 },
 
-  bongo1: { name: "High Bongo", group: "Bongos" },
-  bongo2: { name: "Low Bongo", group: "Bongos" },
+  bongo1: { name: "High Bongo", group: "Bongos", midi: 60 },
+  bongo2: { name: "Low Bongo", group: "Bongos", midi: 61 },
 
-  claves1: { name: "Claves", group: "Wood Sounds" },
-  wood1: { name: "High Wood Block", group: "Wood Sounds" },
-  wood2: { name: "Low Wood Block", group: "Wood Sounds" },
+  claves1: { name: "Claves", group: "Wood Sounds", midi: 75 },
+  wood1: { name: "High Wood Block", group: "Wood Sounds", midi: 76 },
+  wood2: { name: "Low Wood Block", group: "Wood Sounds", midi: 77 },
 
-  tom1: { name: "Low Floor Tom", group: "Toms" },
-  tom2: { name: "High Floor Tom", group: "Toms" },
-  tom3: { name: "Low Tom", group: "Toms" },
-  tom4: { name: "Low Mid Tom", group: "Toms" },
-  tom5: { name: "High Mid Tom", group: "Toms" },
-  tom6: { name: "High Tom", group: "Toms" },
+  tom1: { name: "Low Floor Tom", group: "Toms", midi: 41 },
+  tom2: { name: "High Floor Tom", group: "Toms", midi: 43 },
+  tom3: { name: "Low Tom", group: "Toms", midi: 45 },
+  tom4: { name: "Low Mid Tom", group: "Toms", midi: 47 },
+  tom5: { name: "High Mid Tom", group: "Toms", midi: 48 },
+  tom6: { name: "High Tom", group: "Toms", midi: 50 },
 
-  Cowbell: { name: "Cowbell", group: "🐮" },
+  Cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 } as const;
 
 export const instrumentGroups = Array.from(
@@ -40,14 +40,14 @@ export const instrumentGroups = Array.from(
 export type InstrumentGroup = (typeof instrumentGroups)[number];
 
 export const groupColors: Record<InstrumentGroup, HSL> = {
-  Kicks: HSL(20, 42, 34),
-  Snares: HSL(120, 42, 34),
-  Hihats: HSL(180, 42, 34),
-  ["Crash Cymbals"]: HSL(180, 42, 34),
-  Bongos: HSL(180, 42, 34),
-  ["Wood Sounds"]: HSL(180, 42, 34),
-  ["🐮"]: HSL(180, 42, 34),
-  Toms: HSL(180, 42, 34),
+  Kicks: HSL(120, 58, 41),
+  Snares: HSL(60, 80, 40),
+  Hihats: HSL(120, 58, 41),
+  ["Crash Cymbals"]: HSL(60, 80, 40),
+  Bongos: HSL(60, 80, 40),
+  ["Wood Sounds"]: HSL(120, 58, 41),
+  Toms: HSL(10, 50, 45),
+  ["🐮"]: HSL(60, 80, 40),
 };
 
 export type InstrumentKey = keyof typeof instruments;
@@ -55,7 +55,8 @@ export type InstrumentKey = keyof typeof instruments;
 export type InstrumentParams =
   | `${InstrumentKey}Level`
   | `${InstrumentKey}Panning`
-  | `${InstrumentKey}Velocity`;
+  | `${InstrumentKey}Velocity`
+  | `${InstrumentKey}Midi`;
 
 export interface ParamState extends Record<InstrumentParams, number> {
   mainLevel: number;
@@ -73,6 +74,7 @@ const initialStateInstrumentParams = Object.fromEntries(
     [instrumentKey + "Level", 50],
     [instrumentKey + "Panning", 0],
     [instrumentKey + "Velocity", 100],
+    [instrumentKey + "Midi", instruments[instrumentKey as InstrumentKey].midi],
   ])
 ) as Record<InstrumentParams, number>;
 
@@ -81,6 +83,7 @@ const instrumentParamsRange = Object.fromEntries(
     [instrumentKey + "Level", [0, 100, 1]],
     [instrumentKey + "Panning", [-100, 100, 0]],
     [instrumentKey + "Velocity", [0, 100, 1]],
+    [instrumentKey + "Midi", [0, 127, 1]],
   ])
 ) as Record<InstrumentParams, [Min, Max, Step]>;
 
@@ -112,6 +115,12 @@ export const instrumentKeyToVelocityParam = <K extends InstrumentKey>(
   key: K
 ): Param => {
   return `${key}Velocity`;
+};
+
+export const instrumentKeyToMidiParam = <K extends InstrumentKey>(
+  key: K
+): Param => {
+  return `${key}Midi`;
 };
 
 type CustomParamName = string[];

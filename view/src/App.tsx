@@ -22,7 +22,7 @@ function App() {
         }}
       >
         <div style={{ marginBottom: "6px" }}>
-          <Label>Main Level</Label>
+          <Label>Output Level</Label>
         </div>
         <ParamKnob param="mainLevel" width={90} height={115.5} />
       </InlineBlock>

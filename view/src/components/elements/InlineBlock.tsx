@@ -1,8 +1,12 @@
 export const InlineBlock: React.FC<{
   children: React.ReactNode;
   style?: React.CSSProperties;
-}> = ({ children, style }) => (
-  <div style={{ display: "inline-block", verticalAlign: "top", ...style }}>
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+}> = ({ children, style, onClick }) => (
+  <div
+    style={{ display: "inline-block", verticalAlign: "top", ...style }}
+    onClick={onClick}
+  >
     {children}
   </div>
 );
