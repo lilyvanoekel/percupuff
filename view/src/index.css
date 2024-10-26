@@ -18,6 +18,11 @@
   );
 }
 
+html,
+body {
+  overflow: hidden;
+}
+
 :root {
   font-family: "Saira", sans-serif;
   line-height: 1.5;

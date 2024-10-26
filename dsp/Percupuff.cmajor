@@ -25,12 +25,13 @@ namespace Percupuff
     graph Percupuff  [[main]]
     {
         input event std::midi::Message midiIn;
-        input event float mainLevel     [[ name: "mainLevel", min: 0, max: 100, init: 50 ]];
+        input p.*;
 
         output stream float out;
 
         node
         {
+            p = ParamsProcessor;
             noise = std::noise::White;
             bassDrum = Drums::BassDrum;
             snare = Drums::Snare;
@@ -48,9 +49,10 @@ namespace Percupuff
     
         connection
         {
-            mainLevel -> DivideEventBy100 -> levelSmoother;
+            // mainLevel -> DivideEventBy100 -> levelSmoother;
+            p.paramsOut -> bassDrum.paramsIn;
             midiIn -> mpe;
-            mpe -> bassDrum;
+            mpe -> bassDrum.eventIn;
             mpe -> snare.eventIn;
             mpe -> hihat.eventIn;
             mpe -> clap.eventIn;
@@ -71,9 +73,9 @@ namespace Percupuff
             crash -> gainLimiter;
             claves -> gainLimiter;
             bongos -> gainLimiter;
-            levelSmoother -> mul.stream1;
-            gainLimiter -> mul.stream2;
-            mul -> out;
+            // levelSmoother -> mul.stream1;
+            // gainLimiter -> mul.stream2;
+            gainLimiter -> out;
         }
     }
 }

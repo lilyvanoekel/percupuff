@@ -7,11 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build && shx cp index.js dist/index.js",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build-params": "tsx src/commands/ParamBuilder.ts"
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "squirrelly": "^9.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
@@ -23,6 +25,7 @@
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.9.0",
     "shx": "^0.3.4",
+    "tsx": "^4.19.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.7.0",
     "vite": "^5.4.8"

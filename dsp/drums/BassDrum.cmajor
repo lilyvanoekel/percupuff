@@ -4,12 +4,18 @@ namespace Percupuff
     {
         processor BassDrum {
             input event (std::notes::NoteOn) eventIn;
+            input event Params paramsIn;
             output stream float out;
             
             float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.kick1Midi);
+            }
 
             event eventIn(std::notes::NoteOn n) {
-                if (int (n.pitch) == BASS_DRUM_MIDI_PITCH) {
+                if (int (n.pitch) == midiNotePitch) {
                     triggerVelocity = n.velocity;
                 }
             }

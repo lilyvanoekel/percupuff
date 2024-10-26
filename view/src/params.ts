@@ -30,7 +30,7 @@ export const instruments = {
   tom5: { name: "High Mid Tom", group: "Toms", midi: 48 },
   tom6: { name: "High Tom", group: "Toms", midi: 50 },
 
-  Cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
+  cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 } as const;
 
 export const instrumentGroups = Array.from(
@@ -91,7 +91,7 @@ export const paramDefaults: ParamState = {
   mainLevel: 10,
   kick1Decay: 25,
   ...initialStateInstrumentParams,
-};
+} as const;
 
 export const paramRange: Record<Param, [Min, Max, Step]> = {
   mainLevel: [0, 100, 1],

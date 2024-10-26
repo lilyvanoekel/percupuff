@@ -12,6 +12,7 @@
     "manufacturerCode": "7Uw2"
   },
   "source": [
+    "dsp/Params.cmajor",
     "dsp/Constants.cmajor",
     "dsp/Filters.cmajor",
     "dsp/Oscillator.cmajor",
@@ -29,8 +30,8 @@
   ],
   "view": {
     "src": "view/dist/index.js",
-    "width": 800,
-    "height": 520,
-    "resizable": true
+    "width": 760,
+    "height": 523,
+    "resizable": false
   }
 }
