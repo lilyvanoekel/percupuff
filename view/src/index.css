@@ -103,3 +103,67 @@ img {
     );
   border-radius: 4px;
 }
+
+@keyframes pulse-red {
+  0% {
+    fill: hsl(0, 70%, 60%);
+  }
+  50% {
+    fill: hsl(0, 70%, 30%);
+  }
+  100% {
+    fill: hsl(0, 70%, 60%);
+  }
+}
+
+.pulse-red {
+  animation: pulse-red 2s infinite ease-in-out;
+}
+
+@keyframes pulse-red-light {
+  0% {
+    fill: hsl(0, 90%, 77%);
+  }
+  50% {
+    fill: hsl(0, 40%, 47%);
+  }
+  100% {
+    fill: hsl(0, 90%, 77%);
+  }
+}
+
+.pulse-red-light {
+  animation: pulse-red-light 2s infinite ease-in-out;
+}
+
+@keyframes pulse-green {
+  0% {
+    fill: hsl(120, 70%, 50%);
+  }
+  50% {
+    fill: hsl(120, 60%, 20%);
+  }
+  100% {
+    fill: hsl(120, 70%, 50%);
+  }
+}
+
+.pulse-green {
+  animation: pulse-green 2s infinite ease-in-out;
+}
+
+@keyframes pulse-green-light {
+  0% {
+    fill: hsl(120, 90%, 77%);
+  }
+  50% {
+    fill: hsl(120, 40%, 47%);
+  }
+  100% {
+    fill: hsl(120, 90%, 77%);
+  }
+}
+
+.pulse-green-light {
+  animation: pulse-green-light 2s infinite ease-in-out;
+}

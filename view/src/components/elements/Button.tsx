@@ -6,8 +6,18 @@ export const Button: React.FC<{
   width?: number;
   height?: number;
   style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  pulseClass?: string;
   children: React.ReactNode;
-}> = ({ glowColor, width = 80, height = 80, style, children }) => {
+}> = ({
+  glowColor,
+  width = 80,
+  height = 80,
+  style,
+  onClick,
+  pulseClass,
+  children,
+}) => {
   const moat = height / 18;
   const borderWidthTopRight = height / 14;
   const borderWidthBottomLeft = height / 16;
@@ -20,6 +30,7 @@ export const Button: React.FC<{
         lineHeight: "0",
         ...style,
       }}
+      onClick={onClick}
     >
       <svg width={width} height={height} xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -110,6 +121,7 @@ export const Button: React.FC<{
           fill={glowColor.toString()}
           filter="url(#blurFilter)"
           clipPath="url(#outer)"
+          className={pulseClass}
         />
         <rect
           x={moat}

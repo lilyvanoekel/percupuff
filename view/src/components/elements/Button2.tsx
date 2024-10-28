@@ -7,7 +7,7 @@ export const Button2: React.FC<{
   width?: number;
   height?: number;
   active?: boolean;
-  onClick?: () => void;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
   style?: React.CSSProperties;
 }> = ({ color, width = 50, height = 70, active = false, onClick, style }) => {
   const id = useId();
@@ -32,7 +32,7 @@ export const Button2: React.FC<{
       }}
       onClick={(e) => {
         e.preventDefault();
-        onClick?.();
+        onClick?.(e);
       }}
     >
       <svg

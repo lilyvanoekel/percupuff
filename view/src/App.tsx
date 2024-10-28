@@ -29,7 +29,10 @@ function App() {
       <InlineBlock>
         <InstrumentPicker />
       </InlineBlock>
-      <div className="ridge" style={{ marginBottom: "8px" }}></div>
+      <div
+        className="ridge"
+        style={{ marginTop: "4px", marginBottom: "8px" }}
+      ></div>
       <InstrumentConfig />
     </div>
   );

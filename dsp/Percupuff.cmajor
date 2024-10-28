@@ -26,6 +26,7 @@ namespace Percupuff
     {
         input event std::midi::Message midiIn;
         input p.*;
+        output event (std::notes::NoteOn) noteOn;
 
         output stream float out;
 
@@ -60,6 +61,7 @@ namespace Percupuff
             mpe -> crash.eventIn;
             mpe -> claves.eventIn;
             mpe -> bongos.eventIn;
+            mpe -> noteOn;
             noise -> hihat.noiseIn;
             noise -> snare.noiseIn;
             noise -> clap.noiseIn;

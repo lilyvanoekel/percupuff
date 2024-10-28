@@ -30,9 +30,6 @@ namespace Percupuff
 
             void main()
             {
-                // @todo: make param or constant
-                let baseFrequency = 49.0f;
-
                 osc.frequencyIn <- float<8>(
                     50,
                     93,
