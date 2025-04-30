@@ -5,7 +5,7 @@
  */
 
 import React, { createContext, useState, useContext } from "react";
-import { InstrumentKey } from "./params";
+import { InstrumentKey, instrumentKeys } from "./params";
 
 export interface StoredState {
   selectedInstrument: InstrumentKey;
@@ -24,6 +24,8 @@ type StoredStateUpdater = <K extends keyof StoredState>(
 interface StoredStateStoreContextType {
   storedState: StoredState;
   setStoredState: (value: Partial<StoredState>) => void;
+  setPreviousInstrument: () => void;
+  setNextInstrument: () => void;
   updateStoredStateItem: StoredStateUpdater;
 }
 
@@ -43,9 +45,36 @@ export const StoredStatetoreProvider: React.FC<{
   const updateStoredStateItem: StoredStateUpdater = (key) => (value) =>
     setStoredState({ [key]: value });
 
+  const setPreviousInstrument = () => {
+    const currentIndex = instrumentKeys.indexOf(state.selectedInstrument);
+    const prevIndex =
+      (currentIndex - 1 + instrumentKeys.length) % instrumentKeys.length;
+    const prevInstrument = instrumentKeys[prevIndex];
+
+    setStoredState({
+      selectedInstrument: prevInstrument,
+    });
+  };
+
+  const setNextInstrument = () => {
+    const currentIndex = instrumentKeys.indexOf(state.selectedInstrument);
+    const nextIndex = (currentIndex + 1) % instrumentKeys.length;
+    const nextInstrument = instrumentKeys[nextIndex];
+
+    setStoredState({
+      selectedInstrument: nextInstrument,
+    });
+  };
+
   return (
     <StoredStateStoreContext.Provider
-      value={{ storedState: state, setStoredState, updateStoredStateItem }}
+      value={{
+        storedState: state,
+        setStoredState,
+        setPreviousInstrument,
+        setNextInstrument,
+        updateStoredStateItem,
+      }}
     >
       {children}
     </StoredStateStoreContext.Provider>

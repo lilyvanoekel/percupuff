@@ -42,8 +42,6 @@ export const InstrumentGroup: React.FC<{
 };
 
 export const InstrumentPicker: React.FC = () => {
-  // instrumentGroup
-
   return (
     <div style={{ width: "620px" }}>
       {instrumentGroups.map((groupName) => (

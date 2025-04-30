@@ -51,6 +51,7 @@ export const groupColors: Record<InstrumentGroup, HSL> = {
 };
 
 export type InstrumentKey = keyof typeof instruments;
+export const instrumentKeys = Object.keys(instruments) as InstrumentKey[];
 
 export type InstrumentParams =
   | `${InstrumentKey}Level`

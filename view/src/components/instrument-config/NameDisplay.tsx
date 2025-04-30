@@ -6,7 +6,17 @@ import { Label } from "../elements/Label";
 import { LetterDisplay } from "../elements/LetterDisplay";
 
 export const NameDisplay = () => {
-  const { storedState } = useStoredStateStore();
+  const { storedState, setPreviousInstrument, setNextInstrument } =
+    useStoredStateStore();
+
+  const previousClicked = () => {
+    setPreviousInstrument();
+  };
+
+  const nextClicked = () => {
+    setNextInstrument();
+  };
+
   return (
     <div>
       <div style={{ marginBottom: "4px" }}>
@@ -26,8 +36,9 @@ export const NameDisplay = () => {
       <Button
         width={41}
         height={41}
-        style={{ marginLeft: "4px" }}
+        style={{ marginLeft: "4px", userSelect: "none" }}
         glowColor={HSL(0, 100, 100)}
+        onClick={previousClicked}
       >
         <svg
           width="41"
@@ -50,8 +61,9 @@ export const NameDisplay = () => {
       <Button
         width={41}
         height={41}
-        style={{ marginLeft: "4px" }}
+        style={{ marginLeft: "4px", userSelect: "none" }}
         glowColor={HSL(0, 100, 100)}
+        onClick={nextClicked}
       >
         <svg
           width="41"
