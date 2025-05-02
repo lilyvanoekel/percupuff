@@ -7,6 +7,7 @@ import { Button } from "../elements/Button";
 import { DigitDisplay } from "../elements/DigitDisplay";
 import { Label } from "../elements/Label";
 import { getPatchConnection } from "../../common/patchConnection";
+import { playMidiNote } from "../../common/midi";
 
 export const MidiAssignment: React.FC<{
   style?: React.CSSProperties;
@@ -38,6 +39,11 @@ export const MidiAssignment: React.FC<{
       patchConnection?.removeEndpointListener("noteOn", midiNoteOn);
     };
   });
+
+  const playNote = () => {
+    const patchConnection = getPatchConnection();
+    playMidiNote(patchConnection, midiValue);
+  };
 
   return (
     <div style={style}>
@@ -94,12 +100,7 @@ export const MidiAssignment: React.FC<{
         style={{ marginLeft: "4px" }}
         glowColor={HSL(120, 90, 77)}
         onClick={() => {
-          if (isPlaying) {
-            setIsPlaying(false);
-          } else {
-            setIsPlaying(true);
-            setIsRecording(false);
-          }
+          playNote();
         }}
         pulseClass={playingPulseClassLight}
       >
