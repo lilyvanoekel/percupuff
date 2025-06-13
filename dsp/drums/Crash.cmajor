@@ -88,21 +88,31 @@ namespace Percupuff
             input event (std::notes::NoteOn) eventIn;
             input stream float noiseIn;
             output stream float out;
+            input event Params paramsIn;
 
             float triggerVelocity = 0.0f;
+            int crash1Pitch = 0;
+            int crash2Pitch = 0;
+            int chinesePitch = 0;
+
+            event paramsIn(Params p) {
+                crash1Pitch = int(p.crash1Midi);
+                crash2Pitch = int(p.crash2Midi);
+                chinesePitch = int(p.crash3Midi);
+            }
 
             event eventIn(std::notes::NoteOn n) {
-                if (int (n.pitch) == CRASH_CYMBAL_1_MIDI_PITCH) {
+                if (int (n.pitch) == crash1Pitch) {
                     triggerVelocity = n.velocity;
                     highpass.frequency <- 4500.0f;
                     generator.frequencyMultiplierIn <- 0.75f;
                 }
-                if (int (n.pitch) == CRASH_CYMBAL_2_MIDI_PITCH) {
+                if (int (n.pitch) == crash2Pitch) {
                     triggerVelocity = n.velocity;
                     highpass.frequency <- 4000.0f;
                     generator.frequencyMultiplierIn <- 0.6f;
                 }
-                if (int (n.pitch) == CHINESE_CYMBAL_MIDI_PITCH) {
+                if (int (n.pitch) == chinesePitch) {
                     triggerVelocity = n.velocity;
                     highpass.frequency <- 4000.0f;
                     generator.frequencyMultiplierIn <- 0.4f;

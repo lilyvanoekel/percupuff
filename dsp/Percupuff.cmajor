@@ -52,6 +52,13 @@ namespace Percupuff
         {
             // mainLevel -> DivideEventBy100 -> levelSmoother;
             p.paramsOut -> bassDrum.paramsIn;
+            p.paramsOut -> bongos.paramsIn;
+            p.paramsOut -> clap.paramsIn;
+            p.paramsOut -> claves.paramsIn;
+            p.paramsOut -> crash.paramsIn;
+            p.paramsOut -> cowbell.paramsIn;
+            p.paramsOut -> hihat.paramsIn;
+            p.paramsOut -> snare.paramsIn;
             midiIn -> mpe;
             mpe -> bassDrum.eventIn;
             mpe -> snare.eventIn;

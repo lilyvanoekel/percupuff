@@ -7,11 +7,17 @@ namespace Percupuff
         processor Cowbell {
             input event (std::notes::NoteOn) eventIn;
             output stream float out;
+            input event Params paramsIn;
             
             float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.cowbellMidi);
+            }
 
             event eventIn(std::notes::NoteOn n) {
-                if (int (n.pitch) == COWBELL_MIDI_PITCH) {
+                if (int (n.pitch) == midiNotePitch) {
                     triggerVelocity = n.velocity;
                 }
             }

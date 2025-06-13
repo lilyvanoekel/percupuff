@@ -7,6 +7,7 @@ namespace Percupuff
     {
         processor Hihat {
             input event (std::notes::NoteOn) eventIn;
+            input event Params paramsIn;
             input stream float noiseIn;
             output stream float out;
             
@@ -14,20 +15,30 @@ namespace Percupuff
             float feedback = 0.0f;
             float noiseLevel = 0.3f;
 
+            int hihatClosedPitch = 0;
+            int pedalHihatPitch = 0;
+            int hihatOpenPitch = 0;
+
+            event paramsIn(Params p) {
+                hihatClosedPitch = int(p.hihat1Midi);
+                pedalHihatPitch = int(p.hihat2Midi);
+                hihatOpenPitch = int(p.hihat3Midi);
+            }
+
             event eventIn(std::notes::NoteOn n) {
-                if (int (n.pitch) == HIHAT_CLOSED_MIDI_PITCH) {
+                if (int (n.pitch) == hihatClosedPitch) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .3f;
                     noiseLevel = 0.8f;
                     highpass.frequency <- 9000.0f;
                 }
-                if (int (n.pitch) == PEDAL_HIHAT_MIDI_PITCH) {
+                if (int (n.pitch) == pedalHihatPitch) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .2f;
                     noiseLevel = 0.2f;
                     highpass.frequency <- 7000.0f;
                 }
-                if (int (n.pitch) == HIHAT_OPEN_MIDI_PITCH) {
+                if (int (n.pitch) == hihatOpenPitch) {
                     triggerVelocity = n.velocity;
                     envelope.releaseIn <- .8f;
                     noiseLevel = 0.5f;

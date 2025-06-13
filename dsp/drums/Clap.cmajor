@@ -8,12 +8,18 @@ namespace Percupuff
             input event (std::notes::NoteOn) eventIn;
             input stream float noiseIn;
             output stream float out;
+            input event Params paramsIn;
             
             float triggerVelocity = 0.0f;
             float feedback = 0.0f;
+            int midiNotePitch = 0;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.clap1Midi);
+            }
 
             event eventIn(std::notes::NoteOn n) {
-                if (int (n.pitch) == CLAP_MIDI_PITCH) {
+                if (int (n.pitch) == midiNotePitch) {
                     triggerVelocity = n.velocity;
                     envelope.attackIn <- 0.001f;
                     envelope.releaseIn <- .13f;
