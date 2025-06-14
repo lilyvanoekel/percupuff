@@ -24,15 +24,13 @@ namespace Percupuff
         float clap1Panning;
         float clap1Velocity;
         float clap1Midi;
-        float hihat1Level;
+        float hihatLevel;
         float hihat1Panning;
         float hihat1Velocity;
         float hihat1Midi;
-        float hihat2Level;
         float hihat2Panning;
         float hihat2Velocity;
         float hihat2Midi;
-        float hihat3Level;
         float hihat3Panning;
         float hihat3Velocity;
         float hihat3Midi;
@@ -124,15 +122,13 @@ namespace Percupuff
         p.clap1Panning = 0.0f;
         p.clap1Velocity = 100.0f;
         p.clap1Midi = 39.0f;
-        p.hihat1Level = 50.0f;
+        p.hihatLevel = 50.0f;
         p.hihat1Panning = 0.0f;
         p.hihat1Velocity = 100.0f;
         p.hihat1Midi = 42.0f;
-        p.hihat2Level = 50.0f;
         p.hihat2Panning = 0.0f;
         p.hihat2Velocity = 100.0f;
         p.hihat2Midi = 44.0f;
-        p.hihat3Level = 50.0f;
         p.hihat3Panning = 0.0f;
         p.hihat3Velocity = 100.0f;
         p.hihat3Midi = 46.0f;
@@ -224,15 +220,13 @@ namespace Percupuff
         input event float clap1Panning [[ name: "clap1Panning", min: -100, max: 100, init: 0, step: 0 ]];
         input event float clap1Velocity [[ name: "clap1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float clap1Midi [[ name: "clap1Midi", min: 0, max: 127, init: 39, step: 1 ]];
-        input event float hihat1Level [[ name: "hihat1Level", min: 0, max: 100, init: 50, step: 1 ]];
+        input event float hihatLevel [[ name: "hihatLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float hihat1Panning [[ name: "hihat1Panning", min: -100, max: 100, init: 0, step: 0 ]];
         input event float hihat1Velocity [[ name: "hihat1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float hihat1Midi [[ name: "hihat1Midi", min: 0, max: 127, init: 42, step: 1 ]];
-        input event float hihat2Level [[ name: "hihat2Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float hihat2Panning [[ name: "hihat2Panning", min: -100, max: 100, init: 0, step: 0 ]];
         input event float hihat2Velocity [[ name: "hihat2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float hihat2Midi [[ name: "hihat2Midi", min: 0, max: 127, init: 44, step: 1 ]];
-        input event float hihat3Level [[ name: "hihat3Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float hihat3Panning [[ name: "hihat3Panning", min: -100, max: 100, init: 0, step: 0 ]];
         input event float hihat3Velocity [[ name: "hihat3Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float hihat3Midi [[ name: "hihat3Midi", min: 0, max: 127, init: 46, step: 1 ]];
@@ -327,15 +321,13 @@ namespace Percupuff
         event clap1Panning (float f) { params.clap1Panning = f; update(); }
         event clap1Velocity (float f) { params.clap1Velocity = f; update(); }
         event clap1Midi (float f) { params.clap1Midi = f; update(); }
-        event hihat1Level (float f) { params.hihat1Level = f; update(); }
+        event hihatLevel (float f) { params.hihatLevel = f; update(); }
         event hihat1Panning (float f) { params.hihat1Panning = f; update(); }
         event hihat1Velocity (float f) { params.hihat1Velocity = f; update(); }
         event hihat1Midi (float f) { params.hihat1Midi = f; update(); }
-        event hihat2Level (float f) { params.hihat2Level = f; update(); }
         event hihat2Panning (float f) { params.hihat2Panning = f; update(); }
         event hihat2Velocity (float f) { params.hihat2Velocity = f; update(); }
         event hihat2Midi (float f) { params.hihat2Midi = f; update(); }
-        event hihat3Level (float f) { params.hihat3Level = f; update(); }
         event hihat3Panning (float f) { params.hihat3Panning = f; update(); }
         event hihat3Velocity (float f) { params.hihat3Velocity = f; update(); }
         event hihat3Midi (float f) { params.hihat3Midi = f; update(); }

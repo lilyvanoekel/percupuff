@@ -9,9 +9,11 @@ namespace Percupuff
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.kick1Midi);
+                outputLevel = p.kick1Level * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -91,13 +93,12 @@ namespace Percupuff
 
                         osc.frequencyModIn <- gain * 0.01f * fmAdjust;
                         osc.advance();
-                        out <- (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain;
+                        out <- (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain * outputLevel;
                         // out <- sin(osc.out * 2.0f) * gain;
                         
                         gain = envelope.gainOut;
                         envelope.advance();
                         envelope2.advance();
-                   
 
                         advance();
                     }

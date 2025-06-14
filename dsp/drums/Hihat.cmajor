@@ -14,6 +14,7 @@ namespace Percupuff
             float triggerVelocity = 0.0f;
             float feedback = 0.0f;
             float noiseLevel = 0.3f;
+            float outputLevel = 0.5f;
 
             int hihatClosedPitch = 0;
             int pedalHihatPitch = 0;
@@ -23,6 +24,7 @@ namespace Percupuff
                 hihatClosedPitch = int(p.hihat1Midi);
                 pedalHihatPitch = int(p.hihat2Midi);
                 hihatOpenPitch = int(p.hihat3Midi);
+                outputLevel = p.hihatLevel * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -78,7 +80,7 @@ namespace Percupuff
                         highpass.in <- osc2.out + noiseIn * noiseLevel;
 
                         let sample = highpass.out;
-                        out <- sample * gain * (0.15f + vel * 0.15f);
+                        out <- sample * gain * (0.15f + vel * 0.15f) * outputLevel;
 
                         osc1.advance();
                         osc2.advance();

@@ -5,7 +5,13 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { debounce } from "./common/debounce";
 import { getPatchConnection } from "./common/patchConnection";
-import { Param, paramDefaults, ParamState } from "./params";
+import {
+  endpointIdToParams,
+  Param,
+  paramDefaults,
+  ParamState,
+  paramToEndpointId,
+} from "./params";
 
 type ParamUpdater = <K extends keyof ParamState>(
   key: K,
@@ -22,13 +28,14 @@ const ParamStoreContext = createContext<ParamStoreContextType | undefined>(
   undefined
 );
 
-const paramToDsp = debounce((value: Partial<ParamState>) => {
+const paramToDsp = debounce((values: Partial<ParamState>) => {
   const patchConnection = getPatchConnection();
 
-  for (const k in value) {
-    const param = k as keyof ParamState;
-    patchConnection?.sendEventOrValue(param, value[param]);
-    patchConnection?.requestParameterValue(param);
+  for (const k in values) {
+    let param = k as keyof ParamState;
+    const endpointId = paramToEndpointId(param);
+    patchConnection?.sendEventOrValue(endpointId, values[param]);
+    patchConnection?.requestParameterValue(endpointId);
   }
 }, 10);
 
@@ -53,8 +60,11 @@ export const ParamStoreProvider: React.FC<{ children: React.ReactNode }> = ({
       endpointID: Param;
       value: number;
     }) => {
-      if (state[endpointID] != value) {
-        setState((prevState) => ({ ...prevState, [endpointID]: value }));
+      const params = endpointIdToParams(endpointID);
+      for (let param of params) {
+        if (state[param] != value) {
+          setState((prevState) => ({ ...prevState, [param]: value }));
+        }
       }
     };
 
