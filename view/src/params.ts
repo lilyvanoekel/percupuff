@@ -200,7 +200,5 @@ export const endpointIdToParams = (endpointId: string): Param[] => {
     crashPanning: ["crash1Panning", "crash2Panning", "crash3Panning"],
   };
 
-  return (
-    paramGroups[endpointId as keyof typeof paramGroups] ?? [endpointId as Param]
-  );
+  return paramGroups[endpointId] ?? [endpointId as Param];
 };
