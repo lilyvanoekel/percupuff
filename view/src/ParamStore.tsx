@@ -69,8 +69,9 @@ export const ParamStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     patchConnection?.addAllParameterListener(listener);
-    for (const key in paramDefaults) {
-      patchConnection?.requestParameterValue(key);
+    for (const param in paramDefaults) {
+      const endpointId = paramToEndpointId(param as Param);
+      patchConnection?.requestParameterValue(endpointId);
     }
     return () => {
       patchConnection?.removeAllParameterListener(listener);
