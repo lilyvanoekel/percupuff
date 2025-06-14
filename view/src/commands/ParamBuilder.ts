@@ -1,5 +1,4 @@
-import { pipe } from "../common/fp/pipe";
-import { paramDefaults, paramRange } from "../params";
+import { Param, paramDefaults, paramRange, paramToEndpointId } from "../params";
 import * as Sqrl from "squirrelly";
 
 const objKeys = <T extends object>(obj: T): (keyof T)[] => {
@@ -11,14 +10,6 @@ const objKeys = <T extends object>(obj: T): (keyof T)[] => {
 
   return result;
 };
-
-const objEntries = <T extends object>(obj: T): [keyof T, T[keyof T]][] =>
-  objKeys(obj).map((key) => [key, obj[key]]);
-
-const objEntriesMapValue =
-  <K, R>(func: (input: K) => R) =>
-  <T>(x: [T, K][]): [T, R][] =>
-    x.map(([key, value]) => [key, func(value)]);
 
 const formatNumberFloat = (num: number): string => {
   return `${num.toFixed(1)}f`;
@@ -65,21 +56,77 @@ const template = `namespace Percupuff
 }
 `;
 
+type ParamEntry = [string, number];
+
+const getConsolidatedParams = (): string[] => {
+  const allParams = objKeys(paramDefaults);
+  const consolidatedParams = new Set<string>();
+  const seenGroupParams = new Set<string>();
+
+  for (const param of allParams) {
+    const endpointId = paramToEndpointId(param as Param);
+    if (endpointId === param) {
+      consolidatedParams.add(param);
+    } else if (!seenGroupParams.has(endpointId)) {
+      consolidatedParams.add(endpointId);
+      seenGroupParams.add(endpointId);
+    }
+  }
+
+  return Array.from(consolidatedParams);
+};
+
+const getDefaultsForConsolidatedParams = (): ParamEntry[] => {
+  const defaults: ParamEntry[] = [];
+  const seenGroupParams = new Set<string>();
+
+  for (const param of objKeys(paramDefaults)) {
+    const endpointId = paramToEndpointId(param as Param);
+    const value = paramDefaults[param as Param];
+
+    if (endpointId === param) {
+      defaults.push([param, value]);
+    } else if (!seenGroupParams.has(endpointId)) {
+      defaults.push([endpointId, value]);
+      seenGroupParams.add(endpointId);
+    }
+  }
+
+  return defaults;
+};
+
 const result = Sqrl.render(template, {
-  params: objKeys(paramDefaults),
-  defaults: pipe(
-    paramDefaults,
-    objEntries,
-    objEntriesMapValue(formatNumberFloat)
+  params: getConsolidatedParams(),
+  defaults: getDefaultsForConsolidatedParams().map(
+    ([param, value]) => [param, formatNumberFloat(value)] as [string, string]
   ),
-  details: pipe(paramDefaults, objKeys, (params) =>
-    params.map((param) => ({
-      name: param,
-      min: paramRange[param][0],
-      max: paramRange[param][1],
-      step: paramRange[param][2],
-      init: paramDefaults[param],
-    }))
-  ),
+  details: (() => {
+    const detailsMap = new Map<
+      string,
+      {
+        name: string;
+        min: number;
+        max: number;
+        step: number;
+        init: number;
+      }
+    >();
+
+    for (const param of objKeys(paramDefaults)) {
+      const endpointId = paramToEndpointId(param as Param);
+      if (!detailsMap.has(endpointId)) {
+        detailsMap.set(endpointId, {
+          name: endpointId,
+          min: paramRange[param as Param][0],
+          max: paramRange[param as Param][1],
+          step: paramRange[param as Param][2],
+          init: paramDefaults[param as Param],
+        });
+      }
+    }
+
+    return Array.from(detailsMap.values());
+  })(),
 });
+
 console.log(result);
