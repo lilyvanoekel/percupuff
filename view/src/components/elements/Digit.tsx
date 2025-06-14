@@ -55,7 +55,7 @@ export const DigitSvg: React.FC<{
         className="segment g"
         x="36"
         y="220"
-        style={[2, 3, 4, 5, 6, 8, 9].includes(number) ? active : inactive}
+        style={[2, 3, 4, 5, 6, 8, 9, -2].includes(number) ? active : inactive}
       ></use>
       <use
         href="#unit-h"
@@ -109,7 +109,7 @@ const imageCache = new Map<string, string>();
 
 export const Digit: React.FC<{
   color: "red" | "green";
-  number?: number;
+  number?: number | "-";
   width?: number;
   height?: number;
 }> = ({ number = -1, color, width = 160, height = 240 }) => {
@@ -125,7 +125,12 @@ export const Digit: React.FC<{
     }
 
     const svgString = ReactDOMServer.renderToStaticMarkup(
-      <DigitSvg number={number} color={color} width={width} height={height} />
+      <DigitSvg
+        number={number == "-" ? -2 : number}
+        color={color}
+        width={width}
+        height={height}
+      />
     );
 
     const svgBlob = new Blob([svgString], {

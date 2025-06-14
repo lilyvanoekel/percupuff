@@ -94,11 +94,13 @@ namespace Percupuff
             int crash1Pitch = 0;
             int crash2Pitch = 0;
             int chinesePitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 crash1Pitch = int(p.crash1Midi);
                 crash2Pitch = int(p.crash2Midi);
                 chinesePitch = int(p.crash3Midi);
+                outputLevel = p.crashLevel * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -152,7 +154,7 @@ namespace Percupuff
                         let sample = generator.out;
                         highpass.in <- sample * 0.13f;
 
-                        out <- highpass.out * gain + sample * envelope2.gainOut * 0.05f;
+                        out <- (highpass.out * gain + sample * envelope2.gainOut * 0.05f) * outputLevel;
 
                         highpass.advance();
                         generator.advance();

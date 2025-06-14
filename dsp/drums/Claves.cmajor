@@ -20,11 +20,13 @@ namespace Percupuff
             int clavesPitch = 0;
             int hiWoodBlockPitch = 0;
             int lowWoodBlockPitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 clavesPitch = int(p.claves1Midi);
                 hiWoodBlockPitch = int(p.wood1Midi);
                 lowWoodBlockPitch = int(p.wood2Midi);
+                outputLevel = p.woodLevel * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -94,7 +96,7 @@ namespace Percupuff
                         gain = envelope.gainOut;
                     }
 
-                    out <- sample;
+                    out <- sample * outputLevel;
                     advance();
                 }
             }

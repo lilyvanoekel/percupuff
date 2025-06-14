@@ -7,6 +7,8 @@ import { debounce } from "./common/debounce";
 import { getPatchConnection } from "./common/patchConnection";
 import {
   endpointIdToParams,
+  mapNormalizedValueToParamRange,
+  mapParamRangeToNormalizedValue,
   Param,
   paramDefaults,
   ParamState,
@@ -34,7 +36,16 @@ const paramToDsp = debounce((values: Partial<ParamState>) => {
   for (const k in values) {
     let param = k as keyof ParamState;
     const endpointId = paramToEndpointId(param);
-    patchConnection?.sendEventOrValue(endpointId, values[param]);
+    const value = values[param];
+
+    if (value === undefined) {
+      continue;
+    }
+
+    patchConnection?.sendEventOrValue(
+      endpointId,
+      mapNormalizedValueToParamRange(param, value)
+    );
     patchConnection?.requestParameterValue(endpointId);
   }
 }, 10);
@@ -62,8 +73,12 @@ export const ParamStoreProvider: React.FC<{ children: React.ReactNode }> = ({
     }) => {
       const params = endpointIdToParams(endpointID);
       for (let param of params) {
-        if (state[param] != value) {
-          setState((prevState) => ({ ...prevState, [param]: value }));
+        const normalizedValue = mapParamRangeToNormalizedValue(param, value);
+        if (state[param] != normalizedValue) {
+          setState((prevState) => ({
+            ...prevState,
+            [param]: normalizedValue,
+          }));
         }
       }
     };

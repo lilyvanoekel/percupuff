@@ -1,15 +1,23 @@
 import React, { useEffect, useRef } from "react";
 import { useParamStore } from "../../ParamStore";
-import { Param } from "../../params";
+import { mapNormalizedValueToParamRange, Param } from "../../params";
 import { Knob } from "./knob/Knob";
 import { Digit } from "./Digit";
 
-const getLastFourDigits = (num: number): (number | undefined)[] => {
-  const numStr = num.toString();
-  const lastFourDigits = numStr.slice(-4).split("");
-  return Array(4 - lastFourDigits.length)
+const getDisplayDigits = (num: number): (number | "-1" | undefined)[] => {
+  const isNegative = num < 0;
+  const absoluteNum = Math.abs(num);
+  const numStr = absoluteNum.toString();
+
+  if (isNegative) {
+    const digits = numStr.slice(-3).split("").map(Number);
+    return [...Array(3 - digits.length).fill(undefined), "-", ...digits];
+  }
+
+  const digits = numStr.slice(-4).split("").map(Number);
+  return Array(4 - digits.length)
     .fill(undefined)
-    .concat(lastFourDigits.map((digit) => Number(digit)));
+    .concat(digits);
 };
 
 export const ParamKnob: React.FC<{
@@ -30,7 +38,9 @@ export const ParamKnob: React.FC<{
   const digitPadding = height / 40;
 
   const digits = param
-    ? getLastFourDigits(Math.round(paramState[param]))
+    ? getDisplayDigits(
+        Math.round(mapNormalizedValueToParamRange(param, paramState[param]))
+      )
     : Array(4).fill(undefined);
 
   const value = param ? paramState[param] : 0;

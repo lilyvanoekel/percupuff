@@ -12,9 +12,11 @@ namespace Percupuff
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.snare1Midi);
+                outputLevel = p.snare1Level * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -79,7 +81,7 @@ namespace Percupuff
                         float lpSample = lpf.getSample(noiseIn, 4000.0f + vel * 10000.0f, invSampleRate);
                         lpSample = notch.getSample(lpSample);
 
-                        out <- (sin(osc.out * (1.0f + vel * 0.5f)) + lpSample * 0.4f) * gain * (0.5f + vel * 0.5f);
+                        out <- ((sin(osc.out * (1.0f + vel * 0.5f)) + lpSample * 0.4f) * gain * (0.5f + vel * 0.5f)) * outputLevel;
 
                         osc.advance();
                         

@@ -11,9 +11,11 @@ namespace Percupuff
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.cowbellMidi);
+                outputLevel = p.cowbellLevel * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -62,7 +64,7 @@ namespace Percupuff
                         let sample = sin((osc1.out + osc2.out) * 1.0f);
                         highpass.in <- sample;
                         
-                        out <- highpass.out * (gain * (1.0f - gainReduce)) * (0.5f + vel * 0.5f);
+                        out <- (highpass.out * (gain * (1.0f - gainReduce)) * (0.5f + vel * 0.5f)) * outputLevel;
 
                         if (r > 0) {
                             gainReduce += rampdownAmount;

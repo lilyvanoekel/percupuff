@@ -13,9 +13,11 @@ namespace Percupuff
             float triggerVelocity = 0.0f;
             float feedback = 0.0f;
             int midiNotePitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.clap1Midi);
+                outputLevel = p.clap1Level * 0.01f;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -52,7 +54,7 @@ namespace Percupuff
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         highpass.in <- noiseIn;
                         let sample = lowpass.getSample(highpass.out, 2800.0f + (7 - retriggers) * 100.0f, 0.9f, invSampleRate);
-                        out <- (sample + (noiseIn * 0.15f)) * gain * (0.3f + vel * 0.3f) * repeatGain;
+                        out <- ((sample + (noiseIn * 0.15f)) * gain * (0.3f + vel * 0.3f) * repeatGain) * outputLevel;
 
                         if (retriggers > 0 && retriggerCounter == 0) {
                             envelope.triggerIn <- void;

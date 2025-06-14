@@ -19,10 +19,12 @@ namespace Percupuff
 
             int highBongoPitch = 0;
             int lowBongoPitch = 0;
+            float outputLevel = 0.5f;
 
             event paramsIn(Params p) {
                 highBongoPitch = int(p.bongo1Midi);
                 lowBongoPitch = int(p.bongo2Midi);
+                outputLevel = p.bongoLevel * 0.01f;
             }
 
             std::random::RNG rng;
@@ -91,7 +93,7 @@ namespace Percupuff
                         y2 = y1;
                         y1 = yn;
 
-                        sample = yn * velocity * gain * 3.0f;
+                        sample = yn * velocity * gain * 3.0f * outputLevel;
                         envelope.advance();
                         gain = envelope.gainOut;
                     }
