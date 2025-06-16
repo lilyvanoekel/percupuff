@@ -3,6 +3,7 @@
  * Loads the view in an iframe and provides patch connection.
  * Also sets scaling limits.
  */
+// test
 class PatchView extends HTMLElement {
   constructor(patchConnection) {
     super();
