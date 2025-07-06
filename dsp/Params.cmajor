@@ -26,34 +26,26 @@ namespace Percupuff
         float clap1Midi;
         float hihatLevel;
         float hihatPanning;
-        float hihat1Velocity;
+        float hihatVelocity;
         float hihat1Midi;
-        float hihat2Velocity;
         float hihat2Midi;
-        float hihat3Velocity;
         float hihat3Midi;
         float crashLevel;
         float crashPanning;
-        float crash1Velocity;
+        float crashVelocity;
         float crash1Midi;
-        float crash2Velocity;
         float crash2Midi;
-        float crash3Velocity;
         float crash3Midi;
         float bongoLevel;
         float bongoPanning;
-        float bongo1Velocity;
+        float bongoVelocity;
         float bongo1Midi;
-        float bongo2Velocity;
         float bongo2Midi;
         float woodLevel;
-        float claves1Panning;
-        float claves1Velocity;
-        float claves1Midi;
         float woodPanning;
-        float wood1Velocity;
+        float woodVelocity;
+        float claves1Midi;
         float wood1Midi;
-        float wood2Velocity;
         float wood2Midi;
         float tom1Level;
         float tom1Panning;
@@ -113,34 +105,26 @@ namespace Percupuff
         p.clap1Midi = 39.0f;
         p.hihatLevel = 50.0f;
         p.hihatPanning = 0.0f;
-        p.hihat1Velocity = 100.0f;
+        p.hihatVelocity = 100.0f;
         p.hihat1Midi = 42.0f;
-        p.hihat2Velocity = 100.0f;
         p.hihat2Midi = 44.0f;
-        p.hihat3Velocity = 100.0f;
         p.hihat3Midi = 46.0f;
         p.crashLevel = 50.0f;
         p.crashPanning = 0.0f;
-        p.crash1Velocity = 100.0f;
+        p.crashVelocity = 100.0f;
         p.crash1Midi = 49.0f;
-        p.crash2Velocity = 100.0f;
         p.crash2Midi = 57.0f;
-        p.crash3Velocity = 100.0f;
         p.crash3Midi = 52.0f;
         p.bongoLevel = 50.0f;
         p.bongoPanning = 0.0f;
-        p.bongo1Velocity = 100.0f;
+        p.bongoVelocity = 100.0f;
         p.bongo1Midi = 60.0f;
-        p.bongo2Velocity = 100.0f;
         p.bongo2Midi = 61.0f;
         p.woodLevel = 50.0f;
-        p.claves1Panning = 0.0f;
-        p.claves1Velocity = 100.0f;
-        p.claves1Midi = 75.0f;
         p.woodPanning = 0.0f;
-        p.wood1Velocity = 100.0f;
+        p.woodVelocity = 100.0f;
+        p.claves1Midi = 75.0f;
         p.wood1Midi = 76.0f;
-        p.wood2Velocity = 100.0f;
         p.wood2Midi = 77.0f;
         p.tom1Level = 50.0f;
         p.tom1Panning = 0.0f;
@@ -200,34 +184,26 @@ namespace Percupuff
         input event float clap1Midi [[ name: "clap1Midi", min: 0, max: 127, init: 39, step: 1 ]];
         input event float hihatLevel [[ name: "hihatLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float hihatPanning [[ name: "hihatPanning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float hihat1Velocity [[ name: "hihat1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float hihatVelocity [[ name: "hihatVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float hihat1Midi [[ name: "hihat1Midi", min: 0, max: 127, init: 42, step: 1 ]];
-        input event float hihat2Velocity [[ name: "hihat2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float hihat2Midi [[ name: "hihat2Midi", min: 0, max: 127, init: 44, step: 1 ]];
-        input event float hihat3Velocity [[ name: "hihat3Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float hihat3Midi [[ name: "hihat3Midi", min: 0, max: 127, init: 46, step: 1 ]];
         input event float crashLevel [[ name: "crashLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float crashPanning [[ name: "crashPanning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float crash1Velocity [[ name: "crash1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float crashVelocity [[ name: "crashVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float crash1Midi [[ name: "crash1Midi", min: 0, max: 127, init: 49, step: 1 ]];
-        input event float crash2Velocity [[ name: "crash2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float crash2Midi [[ name: "crash2Midi", min: 0, max: 127, init: 57, step: 1 ]];
-        input event float crash3Velocity [[ name: "crash3Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float crash3Midi [[ name: "crash3Midi", min: 0, max: 127, init: 52, step: 1 ]];
         input event float bongoLevel [[ name: "bongoLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float bongoPanning [[ name: "bongoPanning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float bongo1Velocity [[ name: "bongo1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float bongoVelocity [[ name: "bongoVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float bongo1Midi [[ name: "bongo1Midi", min: 0, max: 127, init: 60, step: 1 ]];
-        input event float bongo2Velocity [[ name: "bongo2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float bongo2Midi [[ name: "bongo2Midi", min: 0, max: 127, init: 61, step: 1 ]];
         input event float woodLevel [[ name: "woodLevel", min: 0, max: 100, init: 50, step: 1 ]];
-        input event float claves1Panning [[ name: "claves1Panning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float claves1Velocity [[ name: "claves1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
-        input event float claves1Midi [[ name: "claves1Midi", min: 0, max: 127, init: 75, step: 1 ]];
         input event float woodPanning [[ name: "woodPanning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float wood1Velocity [[ name: "wood1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float woodVelocity [[ name: "woodVelocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float claves1Midi [[ name: "claves1Midi", min: 0, max: 127, init: 75, step: 1 ]];
         input event float wood1Midi [[ name: "wood1Midi", min: 0, max: 127, init: 76, step: 1 ]];
-        input event float wood2Velocity [[ name: "wood2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float wood2Midi [[ name: "wood2Midi", min: 0, max: 127, init: 77, step: 1 ]];
         input event float tom1Level [[ name: "tom1Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float tom1Panning [[ name: "tom1Panning", min: -100, max: 100, init: 0, step: 5 ]];
@@ -290,34 +266,26 @@ namespace Percupuff
         event clap1Midi (float f) { params.clap1Midi = f; update(); }
         event hihatLevel (float f) { params.hihatLevel = f; update(); }
         event hihatPanning (float f) { params.hihatPanning = f; update(); }
-        event hihat1Velocity (float f) { params.hihat1Velocity = f; update(); }
+        event hihatVelocity (float f) { params.hihatVelocity = f; update(); }
         event hihat1Midi (float f) { params.hihat1Midi = f; update(); }
-        event hihat2Velocity (float f) { params.hihat2Velocity = f; update(); }
         event hihat2Midi (float f) { params.hihat2Midi = f; update(); }
-        event hihat3Velocity (float f) { params.hihat3Velocity = f; update(); }
         event hihat3Midi (float f) { params.hihat3Midi = f; update(); }
         event crashLevel (float f) { params.crashLevel = f; update(); }
         event crashPanning (float f) { params.crashPanning = f; update(); }
-        event crash1Velocity (float f) { params.crash1Velocity = f; update(); }
+        event crashVelocity (float f) { params.crashVelocity = f; update(); }
         event crash1Midi (float f) { params.crash1Midi = f; update(); }
-        event crash2Velocity (float f) { params.crash2Velocity = f; update(); }
         event crash2Midi (float f) { params.crash2Midi = f; update(); }
-        event crash3Velocity (float f) { params.crash3Velocity = f; update(); }
         event crash3Midi (float f) { params.crash3Midi = f; update(); }
         event bongoLevel (float f) { params.bongoLevel = f; update(); }
         event bongoPanning (float f) { params.bongoPanning = f; update(); }
-        event bongo1Velocity (float f) { params.bongo1Velocity = f; update(); }
+        event bongoVelocity (float f) { params.bongoVelocity = f; update(); }
         event bongo1Midi (float f) { params.bongo1Midi = f; update(); }
-        event bongo2Velocity (float f) { params.bongo2Velocity = f; update(); }
         event bongo2Midi (float f) { params.bongo2Midi = f; update(); }
         event woodLevel (float f) { params.woodLevel = f; update(); }
-        event claves1Panning (float f) { params.claves1Panning = f; update(); }
-        event claves1Velocity (float f) { params.claves1Velocity = f; update(); }
-        event claves1Midi (float f) { params.claves1Midi = f; update(); }
         event woodPanning (float f) { params.woodPanning = f; update(); }
-        event wood1Velocity (float f) { params.wood1Velocity = f; update(); }
+        event woodVelocity (float f) { params.woodVelocity = f; update(); }
+        event claves1Midi (float f) { params.claves1Midi = f; update(); }
         event wood1Midi (float f) { params.wood1Midi = f; update(); }
-        event wood2Velocity (float f) { params.wood2Velocity = f; update(); }
         event wood2Midi (float f) { params.wood2Midi = f; update(); }
         event tom1Level (float f) { params.tom1Level = f; update(); }
         event tom1Panning (float f) { params.tom1Panning = f; update(); }
