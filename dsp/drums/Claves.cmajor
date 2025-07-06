@@ -5,7 +5,7 @@ namespace Percupuff
         processor Claves {
             input event std::notes::NoteOn eventIn;
             input stream float noiseIn;
-            output stream float out;
+            output stream float<2> out;
             input event Params paramsIn;
 
             const float fs = float(processor.frequency);
@@ -21,12 +21,14 @@ namespace Percupuff
             int hiWoodBlockPitch = 0;
             int lowWoodBlockPitch = 0;
             float outputLevel = 0.5f;
+            float panning = 0.0f;
 
             event paramsIn(Params p) {
                 clavesPitch = int(p.claves1Midi);
                 hiWoodBlockPitch = int(p.wood1Midi);
                 lowWoodBlockPitch = int(p.wood2Midi);
                 outputLevel = p.woodLevel * 0.01f;
+                panning = p.woodPanning;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -96,7 +98,12 @@ namespace Percupuff
                         gain = envelope.gainOut;
                     }
 
-                    out <- sample * outputLevel;
+                    let outSample = sample * outputLevel;
+
+                    float pan = panning * 0.01f;
+                    float leftGain  = 0.5f * (1.0f - pan);
+                    float rightGain = 0.5f * (1.0f + pan);
+                    out <- (outSample * leftGain, outSample * rightGain);
                     advance();
                 }
             }

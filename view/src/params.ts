@@ -192,6 +192,9 @@ export const paramToEndpointId = (param: Param): string => {
   if (param === "claves1Level") {
     return "woodLevel";
   }
+  if (param === "claves1Panning") {
+    return "woodPanning";
+  }
   return param;
 };
 

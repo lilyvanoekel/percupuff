@@ -5,15 +5,17 @@ namespace Percupuff
         processor BassDrum {
             input event (std::notes::NoteOn) eventIn;
             input event Params paramsIn;
-            output stream float out;
+            output stream float<2> out;
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
             float outputLevel = 0.5f;
+            float panning = 0.0f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.kick1Midi);
                 outputLevel = p.kick1Level * 0.01f;
+                panning = p.kick1Panning;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -93,8 +95,13 @@ namespace Percupuff
 
                         osc.frequencyModIn <- gain * 0.01f * fmAdjust;
                         osc.advance();
-                        out <- (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain * outputLevel;
-                        // out <- sin(osc.out * 2.0f) * gain;
+
+                        float sample = (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain * outputLevel;
+
+                        float pan = panning * 0.01f;
+                        float leftGain  = 0.5f * (1.0f - pan);
+                        float rightGain = 0.5f * (1.0f + pan);
+                        out <- (sample * leftGain, sample * rightGain);
                         
                         gain = envelope.gainOut;
                         envelope.advance();

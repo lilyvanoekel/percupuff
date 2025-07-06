@@ -6,16 +6,18 @@ namespace Percupuff
     {
         processor Cowbell {
             input event (std::notes::NoteOn) eventIn;
-            output stream float out;
+            output stream float<2> out;
             input event Params paramsIn;
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
             float outputLevel = 0.5f;
+            float panning = 0.0f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.cowbellMidi);
                 outputLevel = p.cowbellLevel * 0.01f;
+                panning = p.cowbellPanning;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -64,7 +66,12 @@ namespace Percupuff
                         let sample = sin((osc1.out + osc2.out) * 1.0f);
                         highpass.in <- sample;
                         
-                        out <- (highpass.out * (gain * (1.0f - gainReduce)) * (0.5f + vel * 0.5f)) * outputLevel;
+                        let outSample = (highpass.out * (gain * (1.0f - gainReduce)) * (0.5f + vel * 0.5f)) * outputLevel;
+
+                        float pan = panning * 0.01f;
+                        float leftGain  = 0.5f * (1.0f - pan);
+                        float rightGain = 0.5f * (1.0f + pan);
+                        out <- (outSample * leftGain, outSample * rightGain);
 
                         if (r > 0) {
                             gainReduce += rampdownAmount;

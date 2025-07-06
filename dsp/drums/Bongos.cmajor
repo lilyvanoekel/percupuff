@@ -4,7 +4,7 @@ namespace Percupuff
     {
         processor Bongos {
             input event std::notes::NoteOn eventIn;
-            output stream float out;
+            output stream float<2> out;
             input event Params paramsIn;
 
             const float64 fs = processor.frequency;
@@ -16,6 +16,7 @@ namespace Percupuff
             float64 triggerVelocity = 0.0f;
             float64 velocity = 0.0f;
             float64 gain = 0.0f;
+            float panning = 0.0f;
 
             int highBongoPitch = 0;
             int lowBongoPitch = 0;
@@ -25,6 +26,7 @@ namespace Percupuff
                 highBongoPitch = int(p.bongo1Midi);
                 lowBongoPitch = int(p.bongo2Midi);
                 outputLevel = p.bongoLevel * 0.01f;
+                panning = p.bongoPanning;
             }
 
             std::random::RNG rng;
@@ -98,7 +100,11 @@ namespace Percupuff
                         gain = envelope.gainOut;
                     }
 
-                    out <- float(sample);
+                    float pan = panning * 0.01f;
+                    float leftGain  = 0.5f * (1.0f - pan);
+                    float rightGain = 0.5f * (1.0f + pan);
+                    out <- (float(sample) * leftGain, float(sample) * rightGain);
+
                     advance();
                 }
             }

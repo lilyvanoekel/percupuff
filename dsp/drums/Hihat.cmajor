@@ -9,7 +9,7 @@ namespace Percupuff
             input event (std::notes::NoteOn) eventIn;
             input event Params paramsIn;
             input stream float noiseIn;
-            output stream float out;
+            output stream float<2> out;
             
             float triggerVelocity = 0.0f;
             float feedback = 0.0f;
@@ -20,11 +20,14 @@ namespace Percupuff
             int pedalHihatPitch = 0;
             int hihatOpenPitch = 0;
 
+            float panning = 0.01f;
+
             event paramsIn(Params p) {
                 hihatClosedPitch = int(p.hihat1Midi);
                 pedalHihatPitch = int(p.hihat2Midi);
                 hihatOpenPitch = int(p.hihat3Midi);
                 outputLevel = p.hihatLevel * 0.01f;
+                panning = p.hihatPanning;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -80,7 +83,12 @@ namespace Percupuff
                         highpass.in <- osc2.out + noiseIn * noiseLevel;
 
                         let sample = highpass.out;
-                        out <- sample * gain * (0.15f + vel * 0.15f) * outputLevel;
+                        let outSample = sample * gain * (0.15f + vel * 0.15f) * outputLevel;
+
+                        float pan = panning * 0.01f;
+                        float leftGain  = 0.5f * (1.0f - pan);
+                        float rightGain = 0.5f * (1.0f + pan);
+                        out <- (outSample * leftGain, outSample * rightGain);
 
                         osc1.advance();
                         osc2.advance();

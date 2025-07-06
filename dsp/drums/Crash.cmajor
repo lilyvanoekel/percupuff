@@ -87,7 +87,7 @@ namespace Percupuff
         processor Crash {
             input event (std::notes::NoteOn) eventIn;
             input stream float noiseIn;
-            output stream float out;
+            output stream float<2> out;
             input event Params paramsIn;
 
             float triggerVelocity = 0.0f;
@@ -95,12 +95,14 @@ namespace Percupuff
             int crash2Pitch = 0;
             int chinesePitch = 0;
             float outputLevel = 0.5f;
+            float panning = 0.0f;
 
             event paramsIn(Params p) {
                 crash1Pitch = int(p.crash1Midi);
                 crash2Pitch = int(p.crash2Midi);
                 chinesePitch = int(p.crash3Midi);
                 outputLevel = p.crashLevel * 0.01f;
+                panning = p.crashPanning;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -154,7 +156,12 @@ namespace Percupuff
                         let sample = generator.out;
                         highpass.in <- sample * 0.13f;
 
-                        out <- (highpass.out * gain + sample * envelope2.gainOut * 0.05f) * outputLevel;
+                        let outSample = (highpass.out * gain + sample * envelope2.gainOut * 0.05f) * outputLevel;
+
+                        float pan = panning * 0.01f;
+                        float leftGain  = 0.5f * (1.0f - pan);
+                        float rightGain = 0.5f * (1.0f + pan);
+                        out <- (outSample * leftGain, outSample * rightGain);
 
                         highpass.advance();
                         generator.advance();

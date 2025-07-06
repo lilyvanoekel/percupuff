@@ -28,7 +28,7 @@ namespace Percupuff
         input p.*;
         output event (std::notes::NoteOn) noteOn;
 
-        output stream float out;
+        output stream float<2> out;
 
         node
         {
@@ -42,7 +42,7 @@ namespace Percupuff
             crash = Drums::Crash;
             claves = Drums::Claves;
             bongos = Drums::Bongos;
-            gainLimiter = std::levels::ConstantGain (float, 1.0f);
+            gainLimiter = std::levels::ConstantGain (float<2>, 1.0f);
             mpe = std::midi::MPEConverter;
             levelSmoother = std::smoothing::SmoothedValueStream (0.02f);
             mul = MultiplyStreams;
