@@ -147,6 +147,10 @@ export const mapNormalizedValueToParamRange = (
   param: Param,
   normalizedValue: number // 0-100
 ): number => {
+  if (param.endsWith("Midi")) {
+    return normalizedValue;
+  }
+
   // Clamp the input value to 0-100 range
   const clampedValue = Math.max(0, Math.min(100, normalizedValue));
 
@@ -161,6 +165,10 @@ export const mapParamRangeToNormalizedValue = (
   param: Param,
   rawValue: number
 ): number => {
+  if (param.endsWith("Midi")) {
+    return rawValue;
+  }
+
   // Get the parameter's range definition
   const [min, max] = paramRange[param];
 
