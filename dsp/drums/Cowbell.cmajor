@@ -22,7 +22,7 @@ namespace Percupuff
 
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == midiNotePitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                 }
             }
 

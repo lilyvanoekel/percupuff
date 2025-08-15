@@ -33,7 +33,7 @@ namespace Percupuff
             
             event eventIn(std::notes::NoteOn n) {
                 if (int(n.pitch) == highBongoPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
                     envelope.releaseIn <- .2f;
                     setFrequency(650.0f, 50.0f);
@@ -42,7 +42,7 @@ namespace Percupuff
                     rng.seed(1999);
                 }
                 if (int(n.pitch) == lowBongoPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
                     envelope.releaseIn <- .2f;
                     setFrequency(480.0f, 50.0f);

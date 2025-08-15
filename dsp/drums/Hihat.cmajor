@@ -32,19 +32,19 @@ namespace Percupuff
 
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == hihatClosedPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.releaseIn <- .3f;
                     noiseLevel = 0.8f;
                     highpass.frequency <- 9000.0f;
                 }
                 if (int (n.pitch) == pedalHihatPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.releaseIn <- .2f;
                     noiseLevel = 0.2f;
                     highpass.frequency <- 7000.0f;
                 }
                 if (int (n.pitch) == hihatOpenPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.releaseIn <- .8f;
                     noiseLevel = 0.5f;
                     highpass.frequency <- 9000.0f;

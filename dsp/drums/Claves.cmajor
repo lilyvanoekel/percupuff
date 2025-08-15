@@ -33,19 +33,19 @@ namespace Percupuff
 
             event eventIn(std::notes::NoteOn n) {
                 if (int(n.pitch) == clavesPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
                     envelope.releaseIn <- .25f;
                     setFrequency(2300.0f, 50.0f);
                 }
                 if (int(n.pitch) == hiWoodBlockPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
                     envelope.releaseIn <- .12f;
                     setFrequency(2000.0f, 75.0f);
                 }
                 if (int(n.pitch) == lowWoodBlockPitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
                     envelope.releaseIn <- .12f;
                     setFrequency(1500.0f, 75.0f);

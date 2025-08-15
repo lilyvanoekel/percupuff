@@ -107,17 +107,17 @@ namespace Percupuff
 
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == crash1Pitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     highpass.frequency <- 4500.0f;
                     generator.frequencyMultiplierIn <- 0.75f;
                 }
                 if (int (n.pitch) == crash2Pitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     highpass.frequency <- 4000.0f;
                     generator.frequencyMultiplierIn <- 0.6f;
                 }
                 if (int (n.pitch) == chinesePitch) {
-                    triggerVelocity = n.velocity;
+                    triggerVelocity = sqrt(n.velocity);
                     highpass.frequency <- 4000.0f;
                     generator.frequencyMultiplierIn <- 0.4f;
                 }
