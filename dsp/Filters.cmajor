@@ -1,5 +1,6 @@
 namespace Percupuff
 {
+    // A faster approximation of tanh.
     float fastTanh(float x) {
         if (x > 3.0f) return 1.0f;
         if (x < -3.0f) return -1.0f;
@@ -7,10 +8,21 @@ namespace Percupuff
         return x * (27.0f + x2) / (27.0f + 9.0f * x2);
     }
     
+    // A filter that sharply reduces (attenuates) a narrow range of frequencies
+    // while leaving most other frequencies untouched. Affects the character of
+    // the sound and/or removes an unwanted tone.
     struct NotchFilter {
         float a0, a1, a2, b1, b2;
         float z1, z2;
 
+        // Sets up the parameters of the filter separately for performance
+        // reasons. This filter is not efficient if we want to modify the
+        // frequency or Q for every sample (quickly).
+        //
+        // Inputs:
+        // - frequency:     The middle point of the frequencies to reduce.
+        // - Q:             How narrow or wide of a range of frequencies.
+        // - sampleRate:    The current sample rate we are running at.
         void setCoefficients(float frequency, float Q, float sampleRate) {
             float omega = 2.0f * PI * frequency / sampleRate;
             float alpha = sin(omega) / (2.0f * Q);
@@ -25,6 +37,7 @@ namespace Percupuff
             this.z2 = 0.0f;
         }
 
+        // Apply the filter to a sample.
         float getSample(float in) {
             let res = this.a0 * in + this.a1 * this.z1 + this.a2 * this.z2
                         - this.b1 * this.z1 - this.b2 * this.z2;
@@ -35,8 +48,25 @@ namespace Percupuff
         }
     }
 
+    // Lets low frequencies through while gradually reducing (attenuating)
+    // higher frequencies above a set cutoff point. Makes the sound darker.
+    //
+    // The parameters of this filter can be modified every sample, for example
+    // by using the envelope generator. This can add a lot of character,
+    // especially with the resonant version below.
     struct Lpf {
         float n3, n4;
+
+        // Inputs:
+        // in:              The sample we are currently processing.
+        // cutoff:          The frequency above which we want to reduce the sound.
+        // invSampleRate:   1 divided by the current sample rate.
+        //
+        // Note:
+        // We use 1 / sample rate for performance reasons. Multiplication is
+        // faster than division. So we calculate 1 / sample rate at the
+        // beginning (or when sample rate changes) and then multiply by that
+        // for every sample.
         float getSample(float in, float cutoff, float invSampleRate) {
             let cut_lp = clamp(cutoff * 2.0f * invSampleRate, 0.0f, 0.99f);
             this.n3 = this.n3 + cut_lp * (in - this.n3);
@@ -45,8 +75,14 @@ namespace Percupuff
         }
     }
 
+    // Same as above, but adds "resonance" or emphasis of the frequencies
+    // around the cutoff. Adds character, and re-adds some of the lost
+    // brightness (or depending on the settings can even over compensate).
     struct LpfResonant {
         float n3, n4;
+
+        // See Lpf above. Adds a resonance parameter that controls how much we
+        // want to boost frequencies around the cutoff.
         float getSample(float in, float cutoff, float resonance, float invSampleRate) {
             let cut_lp = clamp(cutoff * 2.0f * invSampleRate, 0.0f, 0.99f);
             let fb_lp = resonance + resonance / (1.0f - cut_lp);

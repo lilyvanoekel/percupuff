@@ -6,16 +6,32 @@ namespace Percupuff
         triangle
     }
 
+    // For our purposes and oscillator is a thing that generates a tone at a
+    // certain frequency. It outputs a kind of wave that goes up and down
+    // between -1 and 1, like a ~. This wave can have different shapes. The ~
+    // shapes is called a sine, and sounds very "pure" (or boring). A triangle
+    // looks more like /\/ and sounds a little more interesting. A square
+    // wave |‾|_| can sound a little abbrasive.
     processor Oscillator(OscillatorShape shape = OscillatorShape::sine) {
         input event float frequencyIn;
         input stream float frequencyModIn;
         output stream float out;
 
+        // We use a table, so while generating sound we don't have to calculate
+        // every point of a sine wave.
         const int tableSize = 4096;
+
+        // Phase describes where we are on the X axis of our wave form. To
+        // generate a sound we have to continously move to the right on the
+        // X axis. The phase describes where we are, and the phase increment
+        // describes how much we are moving for each sample. A higher frequency
+        // means more waves per second, so our phase increments becomes larger
+        // and we rush through our phase quicker.
+        
+        // This helps us relate phase to a specific index in our table.
         const float phaseToIndexMultiplier = float(tableSize) / PI_PI;
 
         float[tableSize] sineTable;
-
         float phase = 0.0f;
         float phaseIncrement = 0.0f;
 

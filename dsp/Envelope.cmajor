@@ -1,5 +1,31 @@
 namespace Percupuff
 {
+    // Simple AR envelope generator. Use this to, over time, control:
+    // - the gain (how loud the sound is).
+    // - the pitch (from low to high or vice versa).
+    // - anything other param that needs to "fade in" and "fade out".
+    //
+    // Output Stream:
+    // - gainOut:       A continous stream of numbers from 0 to 1 that describe
+    //                  the envelope at a given point in time.
+    //
+    // Events:
+    // - attackIn:      Controls how quickly we go from 0 to 1 (max *). For
+    //                  example; how quickly after starting a note are we at 
+    //                  full volume?
+    // - releaseIn:     Controls how quickly we fade out again.
+    // - triggerIn:     Starts the envelope. For example, when a key is 
+    //                  pressed, or a drum is hit. Starts the "attack phase"
+    //                  after which we immediately go to the "release phase".
+    //
+    // Notes:
+    // This envelope generator differs from what might be standard, as it does
+    // not hold at a maximum level while a key is held. It's meant specifically
+    // for percussive sounds.
+    //
+    // * The reason we go from 0 - 1 is that makes it easy to multiply the
+    //   output of the envelope by the thing we want to control, in order to
+    //   scale (for example) the volume from 0% to 100%.
     processor Envelope {
         input event float attackIn;
         input event float releaseIn;
@@ -24,6 +50,8 @@ namespace Percupuff
             triggerNote = true;
         }
 
+        // Fakes an exponential curve for the release.
+        // Values fall quickly at first, then slow as they approach zero.
         float calculateMultiplier(float startLevel, float endLevel, int32 lengthInSamples) {
             let exponentFactor = 6.0f;
             float t = 1.0f / float(lengthInSamples);
@@ -32,15 +60,20 @@ namespace Percupuff
 
         void main() {
             loop {
+                // Do nothing while there is no trigger
                 while (!triggerNote)
                     advance();
 
                 triggerNote = false;
 
+                // How long do we take to go from 0 to 1 in samples
                 int32 attackSamples = int32(attackSeconds * float(processor.frequency));
+                
                 currentLevel = max(0.0f, currentLevel);
                 float stepSize = (1.0f - currentLevel) / float(attackSamples);
                 
+                // While we are in the attack phase, linearly scale up our
+                // output from 0 to 1.
                 while (attackSamples > 0) {
                     currentLevel += stepSize;
                     gainOut <- currentLevel;
@@ -48,9 +81,14 @@ namespace Percupuff
                     attackSamples -= 1;
                 }
 
+                // How long do we take to from 1 back down to 0 in samples.
                 int32 releaseSamples = int32(releaseSeconds * float(processor.frequency));
+                
                 float multiplier = calculateMultiplier(currentLevel, 0.0f, releaseSamples);
 
+                // While we are in the release phase exponentially go from 1
+                // back down to 0. If a note is triggered during this time we
+                // abort and restart the process from the attack phase.
                 while (releaseSamples > 0 && !triggerNote) {
                     gainOut <- currentLevel;
                     currentLevel *= multiplier;
@@ -58,6 +96,7 @@ namespace Percupuff
                     releaseSamples -= 1;
                 }
 
+                // Make sure we return the final level.
                 gainOut <- currentLevel;
                 advance();
             }

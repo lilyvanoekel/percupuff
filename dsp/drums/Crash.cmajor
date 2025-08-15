@@ -33,7 +33,7 @@ namespace Percupuff
                 2690.0f
             );
             float frequencyMultiplier = 0.6f;
-            float<6> fs = (processor.frequency);
+            float<6> fs = (float(processor.frequency));
             float<6> previousSample = (0.0f);
             
             event frequencyMultiplierIn(float f) {
