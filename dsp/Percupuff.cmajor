@@ -1,31 +1,25 @@
 namespace Percupuff
 {
-    processor MultiplyStreams {
-        input stream float stream1;
-        input stream float stream2;
-        output stream float out;
-
-        void main() {
-            loop {
-                out <- stream1 * stream2;
-                advance();
-            }
-        }
-    }
-
-    processor DivideEventBy100() {
-        input event float in;
-        output event float out;
-
-        event in(float f) {
-            out <- f * 0.01f;
-        }
-    }
-
+    // This is the main "controller" of the synthesizer, it ties everything
+    // together.
+    //
+    // MIDI is a protocol that devices and software use to communicate "musical
+    // information". It describes things like which note to start/stop playing 
+    // and how hard it was pressed or hit. This is our input. In this case we
+    // specifically care about when to start playing a note, and ignore when to
+    // stop, as our percussive sounds are stubborn and decide that for
+    // themselves.
+    //
+    // We also define all of our parameters from the `ParamsProcessor` as input
+    // events. So we can act on them when they change.
+    //
+    // Our output is 2 streams of actual audio data.
     graph Percupuff  [[main]]
     {
         input event std::midi::Message midiIn;
         input p.*;
+
+        // @TODO: remember why we have an output event for noteOn events.
         output event (std::notes::NoteOn) noteOn;
 
         output stream float<2> out;
@@ -44,13 +38,11 @@ namespace Percupuff
             bongos = Drums::Bongos;
             gainLimiter = std::levels::ConstantGain (float<2>, 1.0f);
             mpe = std::midi::MPEConverter;
-            levelSmoother = std::smoothing::SmoothedValueStream (0.02f);
-            mul = MultiplyStreams;
         }
     
         connection
         {
-            // mainLevel -> DivideEventBy100 -> levelSmoother;
+            // Send all of the parameters to each individual sound processor.
             p.paramsOut -> bassDrum.paramsIn;
             p.paramsOut -> bongos.paramsIn;
             p.paramsOut -> clap.paramsIn;
@@ -59,6 +51,9 @@ namespace Percupuff
             p.paramsOut -> cowbell.paramsIn;
             p.paramsOut -> hihat.paramsIn;
             p.paramsOut -> snare.paramsIn;
+
+            // Send the midi events so the sound processors know when to start
+            // playing.
             midiIn -> mpe;
             mpe -> bassDrum.eventIn;
             mpe -> snare.eventIn;
@@ -69,11 +64,16 @@ namespace Percupuff
             mpe -> claves.eventIn;
             mpe -> bongos.eventIn;
             mpe -> noteOn;
+
+            // Some sounds use noise.
             noise -> hihat.noiseIn;
             noise -> snare.noiseIn;
             noise -> clap.noiseIn;
             noise -> crash.noiseIn;
             noise -> claves.noiseIn;
+
+            // Take the output from all of our sounds, mix it together and put
+            // it into the gain limiter to adjust how loud they are.
             bassDrum -> gainLimiter;
             snare -> gainLimiter;
             hihat -> gainLimiter;
@@ -82,8 +82,8 @@ namespace Percupuff
             crash -> gainLimiter;
             claves -> gainLimiter;
             bongos -> gainLimiter;
-            // levelSmoother -> mul.stream1;
-            // gainLimiter -> mul.stream2;
+
+            // Output the result.
             gainLimiter -> out;
         }
     }

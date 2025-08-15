@@ -59,8 +59,6 @@ namespace Percupuff
                     0.3f
                 );
 
-                let referenceSampleRate = 44100.0f;
-                let fmAdjust = (referenceSampleRate / float(processor.frequency));
                 let invSampleRate = 1.0f / float(processor.frequency);
                 
                 loop
@@ -78,7 +76,7 @@ namespace Percupuff
                     notch.setCoefficients(10000.0f, 0.9f, float(processor.frequency));
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        osc.frequencyModIn <- gain * 0.01f * fmAdjust;
+                        osc.frequencyModIn <- gain * 0.01f;
 
                         float lpSample = lpf.getSample(noiseIn, 4000.0f + vel * 10000.0f, invSampleRate);
                         lpSample = notch.getSample(lpSample);

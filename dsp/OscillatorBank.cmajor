@@ -1,5 +1,13 @@
 namespace Percupuff
 {
+    // Please read the comments on Oscillator.cmajor first, as they apply here
+    // too. This processor controls 8 independent oscillators. This attempts to
+    // use "vectorization", which is a technique to run multiple calculations
+    // in the same instruction on the CPU. Whether it achieves this goal
+    // depends on where the code runs and how it is compiled.
+    //
+    // This is used for additive synthesis. This means we construct a more
+    // complex sound by combining various tones.
     processor OscillatorBank(OscillatorShape shape = OscillatorShape::sine) {
         input event float<8> frequencyIn;
         input event float<8> levelIn;
@@ -9,7 +17,7 @@ namespace Percupuff
         const int tableSize = 4096;
         const float phaseToIndexMultiplier = float(tableSize) / PI_PI;
 
-        float[tableSize] sineTable;
+        float[tableSize] waveTable;
 
         float<8> phase = 0.0f;
         float<8> phaseIncrement = 0.0f;
@@ -28,21 +36,23 @@ namespace Percupuff
                 for (wrap<tableSize> i) {
                     float t = float(i) / float(tableSize);
                     if (t < 0.5f) {
-                        sineTable[i] = 4.0f * t - 1.0f;
+                        waveTable[i] = 4.0f * t - 1.0f;
                     } else {
-                        sineTable[i] = 3.0f - 4.0f * t;
+                        waveTable[i] = 3.0f - 4.0f * t;
                     }
                 }
             } else {
                 for (wrap<tableSize> i) {
-                    sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+                    waveTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
                 }
             }
         }
 
         void main() {
+            let referenceSampleRate = 44100.0f;
+            let fmAdjust = (referenceSampleRate / float(processor.frequency));
             loop {
-                phase += phaseIncrement + frequencyModIn;
+                phase += phaseIncrement + frequencyModIn * fmAdjust;
                 phase = fmod(phase, float<8>(PI_PI)); 
                 phase = select(phase < 0.0f, phase + PI_PI, phase);
 
@@ -52,25 +62,25 @@ namespace Percupuff
                 let frac = indexFloat - index;
 
                 float<8> currentSamples = (
-                    sineTable[wrap<tableSize>(index[0])],
-                    sineTable[wrap<tableSize>(index[1])],
-                    sineTable[wrap<tableSize>(index[2])],
-                    sineTable[wrap<tableSize>(index[3])],
-                    sineTable[wrap<tableSize>(index[4])],
-                    sineTable[wrap<tableSize>(index[5])],
-                    sineTable[wrap<tableSize>(index[6])],
-                    sineTable[wrap<tableSize>(index[7])]
+                    waveTable[wrap<tableSize>(index[0])],
+                    waveTable[wrap<tableSize>(index[1])],
+                    waveTable[wrap<tableSize>(index[2])],
+                    waveTable[wrap<tableSize>(index[3])],
+                    waveTable[wrap<tableSize>(index[4])],
+                    waveTable[wrap<tableSize>(index[5])],
+                    waveTable[wrap<tableSize>(index[6])],
+                    waveTable[wrap<tableSize>(index[7])]
                 );
 
                 float<8> nextSamples = (
-                    sineTable[wrap<tableSize>(nextIndex[0])],
-                    sineTable[wrap<tableSize>(nextIndex[1])],
-                    sineTable[wrap<tableSize>(nextIndex[2])],
-                    sineTable[wrap<tableSize>(nextIndex[3])],
-                    sineTable[wrap<tableSize>(nextIndex[4])],
-                    sineTable[wrap<tableSize>(nextIndex[5])],
-                    sineTable[wrap<tableSize>(nextIndex[6])],
-                    sineTable[wrap<tableSize>(nextIndex[7])]
+                    waveTable[wrap<tableSize>(nextIndex[0])],
+                    waveTable[wrap<tableSize>(nextIndex[1])],
+                    waveTable[wrap<tableSize>(nextIndex[2])],
+                    waveTable[wrap<tableSize>(nextIndex[3])],
+                    waveTable[wrap<tableSize>(nextIndex[4])],
+                    waveTable[wrap<tableSize>(nextIndex[5])],
+                    waveTable[wrap<tableSize>(nextIndex[6])],
+                    waveTable[wrap<tableSize>(nextIndex[7])]
                 );
                 
                 float<8> sample = currentSamples * (1.0f - frac) + nextSamples * frac;

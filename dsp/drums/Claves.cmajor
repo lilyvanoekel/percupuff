@@ -57,7 +57,7 @@ namespace Percupuff
             }
 
             void setFrequency(float f, float q) {
-                float omega_0 = f * 2.0f * float(pi);
+                float omega_0 = f * 2.0f * PI;
 
                 float alpha = sin(omega_0 / fs) / (2.0f * q);
                 float cosw0 = cos(omega_0 / fs);

@@ -6,8 +6,8 @@ namespace Percupuff
     // - anything other param that needs to "fade in" and "fade out".
     //
     // Output Stream:
-    // - gainOut:       A continous stream of numbers from 0 to 1 that describe
-    //                  the envelope at a given point in time.
+    // - gainOut:       A continuous stream of numbers from 0 to 1 that
+    //                  describe the envelope at a given point in time.
     //
     // Events:
     // - attackIn:      Controls how quickly we go from 0 to 1 (max *). For

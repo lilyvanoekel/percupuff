@@ -6,15 +6,26 @@ namespace Percupuff
         triangle
     }
 
-    // For our purposes and oscillator is a thing that generates a tone at a
+    // For our purposes an oscillator is a thing that generates a tone at a
     // certain frequency. It outputs a kind of wave that goes up and down
     // between -1 and 1, like a ~. This wave can have different shapes. The ~
     // shapes is called a sine, and sounds very "pure" (or boring). A triangle
     // looks more like /\/ and sounds a little more interesting. A square
-    // wave |‾|_| can sound a little abbrasive.
+    // wave |‾|_| can sound a little abrasive.
+    //
+    // The shape is defined when you create an instance of the processor. For
+    // this oscillator it does not change after that.
     processor Oscillator(OscillatorShape shape = OscillatorShape::sine) {
         input event float frequencyIn;
+
+        // Frequency modulation can be used to continuously adjust the
+        // frequency of one oscillator, using the output of another. This is
+        // used to create more interesting sounds efficiently. It is usually
+        // implemented by adjusting the phase, causing us to step slightly
+        // faster or slightly slower depending on the value of frequencyModIn
+        // at the given time.
         input stream float frequencyModIn;
+
         output stream float out;
 
         // We use a table, so while generating sound we don't have to calculate
@@ -22,7 +33,7 @@ namespace Percupuff
         const int tableSize = 4096;
 
         // Phase describes where we are on the X axis of our wave form. To
-        // generate a sound we have to continously move to the right on the
+        // generate a sound we have to continuously move to the right on the
         // X axis. The phase describes where we are, and the phase increment
         // describes how much we are moving for each sample. A higher frequency
         // means more waves per second, so our phase increments becomes larger
@@ -31,37 +42,48 @@ namespace Percupuff
         // This helps us relate phase to a specific index in our table.
         const float phaseToIndexMultiplier = float(tableSize) / PI_PI;
 
-        float[tableSize] sineTable;
+        float[tableSize] waveTable;
         float phase = 0.0f;
         float phaseIncrement = 0.0f;
 
+        // The frequency is meant to be set... infrequently... ._.
         event frequencyIn(float frequency) {
             phaseIncrement = (PI_PI * frequency) / float(processor.frequency);
         }
 
+        // Before we generate sound, we generate our table.
         void init() {
             if (shape == OscillatorShape::triangle) {
+                // This generates a naive triangle wave. If we were to play
+                // this at high frequencies we might hear unwanted sounds
+                // called aliasing artifacts. PolyBLEP is a technique that can
+                // be used to avoid that.
+                // (sine waves do not suffer this problem)
                 for (wrap<tableSize> i) {
                     float t = float(i) / float(tableSize);
                     if (t < 0.5f) {
-                        sineTable[i] = 4.0f * t - 1.0f;
+                        waveTable[i] = 4.0f * t - 1.0f;
                     } else {
-                        sineTable[i] = 3.0f - 4.0f * t;
+                        waveTable[i] = 3.0f - 4.0f * t;
                     }
                 }
             } else {
+                // Simply use the Sine function to populate a sine wave into the table
                 for (wrap<tableSize> i) {
-                    sineTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
+                    waveTable[i] = sin(2.0f * PI * float(i) / float(tableSize));
                 }
             }
         }
 
         void main() {
+            // Adjusts the frequency modulation to account for the sample rate.
             let referenceSampleRate = 44100.0f;
             let fmAdjust = (referenceSampleRate / float(processor.frequency));
             loop {
+                // Increment the phase, walk through the X axis of the wave.
                 phase += phaseIncrement + frequencyModIn * fmAdjust;
                 
+                // Wrap the phase so it's always between 0 and Two PI.
                 if (phase < 0) {
                     phase += PI_PI;
                 }
@@ -69,20 +91,30 @@ namespace Percupuff
                     phase -= PI_PI;
                 }
 
+                // This gets the sample from the wave table. It uses linear
+                // interpolation. The actual index we want is usually between
+                // two table indexes, so we take a little of the value of the
+                // index to the left, and a little of the value to the right.
+                // Then we mix according to how close we are to each.
                 let indexFloat = phase * phaseToIndexMultiplier;
                 let index = int(indexFloat);
                 let nextIndex = index + 1;
                 let frac = indexFloat - index;
 
-                let currentSample = sineTable[wrap<tableSize>(index)];
-                let nextSample = sineTable[wrap<tableSize>(nextIndex)];
+                let currentSample = waveTable[wrap<tableSize>(index)];
+                let nextSample = waveTable[wrap<tableSize>(nextIndex)];
                 let sample = currentSample * (1.0f - frac) + nextSample * frac;
+                
                 out <- sample;
                 advance();
             }
         }
     }
 
+    // This oscillator uses the PolyBLEP technique to create a square |‾|_|
+    // wave. It also uses phase, but it does not use a table. Instead it
+    // calculates values on the fly, and accounts for the aliasing issue
+    // mentioned above.
     processor PolyblepOscillator {
         input event float frequencyIn;
         input stream float frequencyModIn;
