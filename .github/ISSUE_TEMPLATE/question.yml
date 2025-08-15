@@ -1,0 +1,37 @@
+name: ❓ Question / Help Request / Suggestion ❗
+description: 🆘 Ask a question, request clarification about the project or provide a suggestion
+labels:
+  - type:question
+  - status:new
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: Please state your question, the issue you are facing or your suggestion.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context / Background
+      description: Provide relevant context, links, or examples.
+    validations:
+      required: false
+
+  - type: textarea
+    id: attempts
+    attributes:
+      label: What You’ve Tried
+      description: Describe any steps, research, or solutions you’ve already attempted.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other information that might help answer the question.
+    validations:
+      required: false

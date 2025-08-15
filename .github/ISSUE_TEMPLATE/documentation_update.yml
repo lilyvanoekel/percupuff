@@ -1,0 +1,37 @@
+name: 📚 Documentation Update 📚
+description: 📝 Propose changes or additions to the project documentation
+labels:
+  - type:docs
+  - status:new
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary of Changes
+      description: A clear summary of what documentation changes or additions are being proposed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Reason
+      description: Explain why this change is needed or helpful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_docs
+    attributes:
+      label: Affected Documentation
+      description: Specify which files, sections, or pages of the documentation are affected.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any extra information, links, or examples.
+    validations:
+      required: false
