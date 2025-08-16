@@ -2,6 +2,9 @@ namespace Percupuff
 {
     namespace Drums
     {
+        // This processor generates sounds for claves and low/high wood blocks.
+        // It uses a similar approach as Bongos.cmajor where white noise is
+        // processed by a filter.
         processor Claves {
             input event std::notes::NoteOn eventIn;
             input stream float noiseIn;
@@ -9,14 +12,16 @@ namespace Percupuff
             input event Params paramsIn;
 
             const float fs = float(processor.frequency);
+            
+            // Filter coefficients and state variables.
             float b0, b1, a1, a2;
-
             float y1 = 0.0f, y2 = 0.0f;
 
             float triggerVelocity = 0.0f;
             float velocity = 0.0f;
             float gain = 0.0f;
 
+            // This processor listens to 3 midi note pitches.
             int clavesPitch = 0;
             int hiWoodBlockPitch = 0;
             int lowWoodBlockPitch = 0;
@@ -32,6 +37,9 @@ namespace Percupuff
             }
 
             event eventIn(std::notes::NoteOn n) {
+                // Sounds can differ in their decay, filter cutoff frequency
+                // and resonance. These might all be candidates for user
+                // configurable parameters for each sound.
                 if (int(n.pitch) == clavesPitch) {
                     triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
@@ -56,9 +64,12 @@ namespace Percupuff
                 setFrequency(2300.0f, 50.0f);
             }
 
+            // The mathy calculations for the filter are split up in two pieces.
+            // Here we calculate part of it when the filter frequency changes.
+            // This approach allows us to do more simple calculations for each
+            // sample that gets processed in the main loop further below.
             void setFrequency(float f, float q) {
                 float omega_0 = f * 2.0f * PI;
-
                 float alpha = sin(omega_0 / fs) / (2.0f * q);
                 float cosw0 = cos(omega_0 / fs);
 
@@ -85,11 +96,12 @@ namespace Percupuff
                         gain = envelope.gainOut;
                     }
 
+                    // Only process the filter if the result will be audible.
                     if (gain > 0.0001f)
                     {
+                        // Takes the white noise from the input and filters it.
                         float xn = (noiseIn - 0.5f) * 2.0f;
                         float yn = b0 * xn - a1 * y1 - a2 * y2;
-
                         y2 = y1;
                         y1 = yn;
 

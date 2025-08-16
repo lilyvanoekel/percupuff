@@ -2,26 +2,31 @@ namespace Percupuff
 {
     namespace Drums
     {
+        // This processor generates the sounds for both "low" and "high" bongos.
+        // It generates white noise and then shapes it with a filter.
         processor Bongos {
             input event std::notes::NoteOn eventIn;
             output stream float<2> out;
             input event Params paramsIn;
 
-            const float64 fs = processor.frequency;
-            float64 energyPerSample = 44100.0 / fs;
+            // Normalize differences in sample rate.
+            float64 energyPerSample = sqrt(44100.0 / processor.frequency);
+            
+            // Filter coefficients and state variables.
             float64 b0, b1, a1, a2;
-
             float64 y1 = 0.0f, y2 = 0.0f;
 
             float64 triggerVelocity = 0.0f;
             float64 velocity = 0.0f;
             float64 gain = 0.0f;
             float panning = 0.0f;
-
-            int highBongoPitch = 0;
-            int lowBongoPitch = 0;
             float outputLevel = 0.5f;
 
+            // This processor listens to two different midi pitches for low and
+            //  high bongos.
+            int lowBongoPitch = 0;
+            int highBongoPitch = 0;
+            
             event paramsIn(Params p) {
                 highBongoPitch = int(p.bongo1Midi);
                 lowBongoPitch = int(p.bongo2Midi);
@@ -29,26 +34,33 @@ namespace Percupuff
                 panning = p.bongoPanning;
             }
 
+            // A random number generator is used to create the white noise.
+            // Having a dedicated RNG here allows us to seed it the same for
+            // the start of every note. Not doing so means every note can sound
+            // different. This could be considered a feature and not a bug
+            // though, so this might be changed in the future.
             std::random::RNG rng;
             
             event eventIn(std::notes::NoteOn n) {
-                if (int(n.pitch) == highBongoPitch) {
+                if (int(n.pitch) == highBongoPitch || int(n.pitch) == lowBongoPitch) {
                     triggerVelocity = sqrt(n.velocity);
                     envelope.attackIn <- 0.001f;
+
+                    // Set this longer for an echoy reverby effect. Should
+                    // probably be a user configurable parameter.
                     envelope.releaseIn <- .2f;
-                    setFrequency(650.0f, 50.0f);
+
                     y1 = 0.0f;
                     y2 = 0.0f;
                     rng.seed(1999);
                 }
+                // The only difference between a low and high bongo is the
+                // cutoff frequency of the filter.
+                if (int(n.pitch) == highBongoPitch) {
+                    setFrequency(650.0f, 50.0f);
+                }
                 if (int(n.pitch) == lowBongoPitch) {
-                    triggerVelocity = sqrt(n.velocity);
-                    envelope.attackIn <- 0.001f;
-                    envelope.releaseIn <- .2f;
                     setFrequency(480.0f, 50.0f);
-                    y1 = 0.0f;
-                    y2 = 0.0f;
-                    rng.seed(1999);
                 }
             }
 
@@ -56,8 +68,12 @@ namespace Percupuff
                 setFrequency(2300.0f, 50.0f);
             }
 
+            // The mathy calculations for the filter are split up in two pieces.
+            // Here we calculate part of it when the filter frequency changes.
+            // This approach allows us to do more simple calculations for each
+            // sample that gets processed in the main loop further below.
             void setFrequency(float64 f, float64 q) {
-                float64 K = tan(pi * f / fs);
+                float64 K = tan(pi * f / processor.frequency);
                 float64 norm = 1.0 / (1.0 + K / q + K * K);
                 
                 b0 = K / q * norm;
@@ -87,9 +103,11 @@ namespace Percupuff
                         gain = envelope.gainOut;
                     }
 
+                    // Only process the filter if the result will be audible.
                     if (gain > 0.0001f)
                     {
-                        float64 xn = rng.getBipolar() * sqrt(energyPerSample);
+                        // Generate the white noise and apply the filter.
+                        float64 xn = rng.getBipolar() * energyPerSample;
                         float64 yn = b0 * xn + b1 * y1 - a1 * y1 - a2 * y2;
 
                         y2 = y1;
