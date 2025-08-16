@@ -1,3 +1,4 @@
+// https://www.soundonsound.com/techniques/synthesizing-drums-bass-drum
 namespace Percupuff
 {
     namespace Drums
@@ -8,9 +9,17 @@ namespace Percupuff
             input event Params paramsIn;
             output stream float<2> out;
             
+            // How hard or fast was the note hit, doubles as trigger.
             float triggerVelocity = 0.0f;
+
+            // The midi note pitch that should trigger this sound.
             int midiNotePitch = 0;
+
+            // How loud should this sound be, controlled by kick1Level param.
             float outputLevel = 0.5f;
+
+            // Should the sound be biased towards the left or right side, or be
+            // centered. -1 is completely left, and 1 is completely right.
             float panning = 0.0f;
 
             event paramsIn(Params p) {
@@ -19,22 +28,28 @@ namespace Percupuff
                 panning = p.kick1Panning;
             }
 
+            // When a note is hit that corresponds with our expected
+            // midiNotePitch, we take its velocity (how hard it was hit), 
+            // compute the square root and set that as our trigger velocity.
+            // The code below will use this to start playing the sound and 
+            // adjust its volume and "intensity" accordingly.
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == midiNotePitch) {
                     triggerVelocity = sqrt(n.velocity);
                 }
             }
 
+            // The individual components that make up our sound.
             node osc = OscillatorBank;
             node envelope = Envelope;
-            node envelope2 = Envelope;
+            node filterEnvelope = Envelope;
             node carrier = Oscillator;
             node modulator = Oscillator;
-            
             Lpf lpf = (0.0f, 0.0f);
 
             void main()
             {
+                // Frequencies taken from the article + experimentation.
                 osc.frequencyIn <- float<8>(
                     50,
                     93,
@@ -46,6 +61,7 @@ namespace Percupuff
                     60
                 );
 
+                // Relative levels of each individual frequency.
                 osc.levelIn <- float<8>(
                     2.0f,
                     0.5f,
@@ -57,16 +73,25 @@ namespace Percupuff
                     1.0f
                 );
 
+                // Our main envelope this is used for gain/volume, but also for
+                // the pitch of one of our oscillators. Causing a kind of pew
+                // effect.
                 envelope.releaseIn <- .25f;
-                envelope2.releaseIn <- .05f;
+                filterEnvelope.releaseIn <- .05f;
 
+                // This bass drum sound has two "voices" the oscillator bank
+                // above provides the expected "thud". This oscillator pair
+                // provides slightly higher pitched noise, think maybe the
+                // sound of the pedal hitting the drum and some "air".
                 carrier.frequencyIn <- 500.0f;
                 modulator.frequencyIn <- 166.0f;
 
+                // Used for the filter.
                 let invSampleRate = 1.0f / float(processor.frequency);
 
                 loop
                 {
+                    // Do nothing while velocity is 0.
                     while (triggerVelocity == 0) {
                         advance();
                     }
@@ -74,29 +99,49 @@ namespace Percupuff
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
 
+                    // Trigger the envelopes.
                     envelope.triggerIn <- void;
-                    envelope2.triggerIn <- void;
+                    filterEnvelope.triggerIn <- void;
 
+                    // Extract the first value from the envelopes.
                     envelope.advance();
-                    envelope2.advance();
+                    filterEnvelope.advance();
                     float gain = envelope.gainOut;
 
+                    // Generate sound as long as it would be audible and our
+                    // sound isn't triggered again.
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        // Modulate the frequency of the first oscillator with
+                        // the gain envelope.
                         modulator.frequencyModIn <- gain * 0.01f;
                         let mod = modulator.out;
                         modulator.advance();
 
+                        // Modulate the second oscillator with the output of
+                        // the first.
                         carrier.frequencyModIn <- mod;
                         let car = carrier.out;
                         carrier.advance();
 
-                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * envelope2.gainOut, invSampleRate);
+                        // Filter out high frequency content from the output of
+                        // the second oscillator. The cutoff frequency is being
+                        // modulated by the filter envelope. As it has a very
+                        // short release, we very quickly lower the cut off
+                        // frequency, meaning we have a quick boost of higher
+                        // frequencies that then quickly get darkened.
+                        float lpSample = lpf.getSample(car, 1200.0f + 3500.0f * filterEnvelope.gainOut, invSampleRate);
 
+                        // The oscillator bank also gets modulated by the gain
+                        // envelope.
                         osc.frequencyModIn <- gain * 0.01f;
+                        
+                        // We mix everything together. The sine function
+                        // provides a kind of distortion to make the sound more
+                        // punchy.
+                        float sample = (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain * outputLevel;
                         osc.advance();
 
-                        float sample = (sin(osc.out * (.01f + 1.5f * vel)) + lpSample * 0.17f) * gain * outputLevel;
-
+                        // We create left/right samples according to panning.
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
                         float rightGain = 0.5f * (1.0f + pan);
@@ -104,7 +149,7 @@ namespace Percupuff
                         
                         gain = envelope.gainOut;
                         envelope.advance();
-                        envelope2.advance();
+                        filterEnvelope.advance();
 
                         advance();
                     }
