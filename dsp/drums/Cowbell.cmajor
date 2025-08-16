@@ -4,6 +4,8 @@ namespace Percupuff
 {
     namespace Drums
     {
+        // A cowbell sound is emulated by two oscillators tuned to specific
+        // frequencies outputting a triangle wave.
         processor Cowbell {
             input event (std::notes::NoteOn) eventIn;
             output stream float<2> out;
@@ -13,6 +15,7 @@ namespace Percupuff
             int midiNotePitch = 0;
             float outputLevel = 0.5f;
             float panning = 0.0f;
+            const float highPassCutoff = 700.0f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.cowbellMidi);
@@ -29,19 +32,21 @@ namespace Percupuff
             node envelope = Envelope;
             node osc1 = Oscillator(OscillatorShape::triangle);
             node osc2 = Oscillator(OscillatorShape::triangle);
-            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, 700.0f);
+            node highpass = std::filters::butterworth::Processor(std::filters::butterworth::Mode::highPass, highPassCutoff);
             
             void main()
             {
-                envelope.releaseIn <- .5f;
                 envelope.attackIn <- .001f;
 
+                // The magic cowbell frequencies from the article.
                 osc1.frequencyIn <- 587.0f;
                 osc2.frequencyIn <- 845.0f;
 
-                let referenceSampleRate = 44100.0f;
-                let fmAdjust = (referenceSampleRate / float(processor.frequency));
-                let invSampleRate = 1.0f / float(processor.frequency);
+                // Most other percussion processors only rely on an amplitude
+                // envelope to define how the volume rises and falls over time.
+                // Here we also add a short ramp-down right after the note is 
+                // triggered. This extra fade smooths out the initial transient
+                // so the cowbell doesn’t sound too clicky or harsh at the attack.
                 let rampDownSamples = int(processor.frequency * 0.02);
                 let rampdownAmount = 0.7f / float(rampDownSamples);
                 
@@ -53,16 +58,35 @@ namespace Percupuff
 
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
+
+                    // Velocity effects the release of the envelope, or the
+                    // "decay" of the cowbell sound. It affects how long you can
+                    // hear the cowbell "fade out" and sounds kind of like an
+                    // echo or reverb. The base value of this should probably be
+                    // a parameter.
                     envelope.releaseIn <- .2f + vel * 0.4f;
                     envelope.triggerIn <- void;
                     envelope.advance();
                     float gain = envelope.gainOut;
 
+                    // Variables to support the volume ramp down.
                     int r = rampDownSamples;
                     float gainReduce = 0.0f;
                     
-
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        // The sound of the two oscillators is simply summed. 
+                        // The cowbell effect comes from the interaction of
+                        // their frequencies.
+                        //
+                        // Currently they are mixed equally, but it could be a
+                        // parameter to affect how much of one or the other
+                        // oscillator to mix in.
+                        //
+                        // The sine function here is a form of distortion
+                        // (waveshaping) and the 1.0f is a sort of gain or
+                        // "overdrive" factor for it. Multiplying by 1.0f is
+                        // silly, but this could be a user controlled parameter
+                        // to make the cowbell more aggressive.
                         let sample = sin((osc1.out + osc2.out) * 1.0f);
                         highpass.in <- sample;
                         
@@ -73,6 +97,7 @@ namespace Percupuff
                         float rightGain = 0.5f * (1.0f + pan);
                         out <- (outSample * leftGain, outSample * rightGain);
 
+                        // Calculate the volume ramp down for the next sample.
                         if (r > 0) {
                             gainReduce += rampdownAmount;
                         }

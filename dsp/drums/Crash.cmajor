@@ -1,9 +1,19 @@
 // https://www.soundonsound.com/techniques/practical-cymbal-synthesis
 
+// From the article this module attempts to implement "Synthesizing The Cymbal
+// Sound: Part 2", but arguably not very well at this point. This one needs a 
+// but more attention. We might need to scrap the 6 vectorized oscillators and
+// implement 6 separate ones that can modulate each other properly.
+//
+// Worth noting that while not convincing crash cymbals, the generated sounds
+// of the current approach might still be valid as other kinds of percussion.
+
 namespace Percupuff
 {
     namespace Drums
     {
+        // Vectorized PolyBlep function. See the README for more information on
+        // these concepts.
         T polyblepVectorized<T> (T phase, T increment) {
             T result;
 
@@ -18,8 +28,14 @@ namespace Percupuff
             return result;
         }
         
-        processor MetalicSoundGenerator {
+        // This is a helper processor for the Crash processor. It creates six
+        // oscillators that are tuned to inharmonic frequencies and perform
+        // frequency modulation.
+        processor MetallicSoundGenerator {
             output stream float out;
+
+            // This allows the frequencies to all be raised or lowered by the
+            // same amount.
             input event float frequencyMultiplierIn;
 
             float<6> phase;
@@ -129,9 +145,7 @@ namespace Percupuff
                 std::filters::butterworth::Mode::highPass,
                 1000.0f
             );
-            node generator = MetalicSoundGenerator;
-
-            let invSampleRate = 1.0f / float(processor.frequency);
+            node generator = MetallicSoundGenerator;
 
             void main()
             {
