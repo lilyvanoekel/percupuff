@@ -8,6 +8,8 @@ To control the synthesizer MIDI[†](#glossary) input is typically used. It can 
 
 This project aims to prioritize an "educational angle" over things like performance or ultra realistic sound. The hope is that it can serve as an introduction to this kind of "audio programming" and enable experimentation and collaboration.
 
+![Percupuff UI Screenshot](docs/assets/screenshot.png)
+
 ## State of the Project
 
 The project is currently not finished. Not all sounds and features have been implemented yet. Contributions are welcome (@TODO: contribution guidelines and the like).
