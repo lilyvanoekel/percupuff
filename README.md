@@ -14,7 +14,7 @@ The project is currently not finished. Not all sounds and features have been imp
 
 ## Demo / Web Version
 
-To be added.
+(@TODO: to be added).
 
 ## Building and Running
 
@@ -101,6 +101,9 @@ A software application for recording, editing, mixing, and producing audio files
 **DSP (Digital Signal Processing):**
 Make or manipulate sound with numbers. In the context of this project it might refer to the code that's responsible for generating the drum sounds, listening to midi signals, determining which drum should sound when.
 
+**General MIDI:**
+A standard that ensures MIDI data triggers predictable instruments on different devices by defining which MIDI messages correspond to which instruments and parameters.
+
 **MIDI (Musical Instrument Digital Interface):**
 MIDI is a protocol that devices and software use to communicate "musical information". It describes things like which note to start/stop playing and how hard it was pressed or hit. MIDI enables real-time performance, automation, and the ability to record and edit musical data without storing actual audio.
 
@@ -121,6 +124,64 @@ Another standard for audio plugins.
 
 **WebAssembly (Wasm):**  
 A binary instruction format for a stack-based virtual machine, enabling high-performance execution of code on web browsers and other platforms. WebAssembly allows audio plugins and other applications to run efficiently in web environments.
+
+## General MIDI Percussion Key Map
+
+General MIDI[†](#glossary) defines a standard for percussive sounds that assigns specific notes to specific percussive instruments. In MIDI each note has a number. 60, for example, represents a C note at a certain octave. The percussion map defines which note numbers trigger which drum sounds, so instead of playing a tone, you get a specific percussion instrument.
+
+This project attempts to follow this standard. Below is a table showing the state of what is implemented so far. Some instruments exist in the UI, but have no actual implementation yet.
+
+Contributions for instruments that are not yet included in the UI are definitely welcome. They do come with the added complexity of needing to rejiggle the UI, but that does not necessarily have to be done in the same PR.
+
+| Note | Instrument         | Included in UI | Implemented | Source File                                  |
+| ---- | ------------------ | -------------- | ----------- | -------------------------------------------- |
+| 35   | Acoustic Bass Drum | ✅             | ✅          | [BassDrum.cmajor](dsp/drums/BassDrum.cmajor) |
+| 36   | Electric Bass Drum | ✅             | ❌          | -                                            |
+| 37   | Side Stick         | ❌             | ❌          | -                                            |
+| 38   | Acoustic Snare     | ✅             | ✅          | [Snare.cmajor](dsp/drums/Snare.cmajor)       |
+| 39   | Hand Clap          | ✅             | ✅          | [Clap.cmajor](dsp/drums/Clap.cmajor)         |
+| 40   | Electric Snare     | ✅             | ❌          | -                                            |
+| 41   | Low Floor Tom      | ✅             | ❌          | -                                            |
+| 42   | Closed Hi-hat      | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)       |
+| 43   | High Floor Tom     | ✅             | ❌          | -                                            |
+| 44   | Pedal Hi-hat       | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)       |
+| 45   | Low Tom            | ✅             | ❌          | -                                            |
+| 46   | Open Hi-hat        | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)       |
+| 47   | Low-Mid Tom        | ✅             | ❌          | -                                            |
+| 48   | High-Mid Tom       | ✅             | ❌          | -                                            |
+| 49   | Crash Cymbal 1     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)       |
+| 50   | High Tom           | ✅             | ❌          | -                                            |
+| 51   | Ride Cymbal 1      | ❌             | ❌          | -                                            |
+| 52   | Chinese Cymbal     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)       |
+| 53   | Ride Bell          | ❌             | ❌          | -                                            |
+| 54   | Tambourine         | ❌             | ❌          | -                                            |
+| 55   | Splash Cymbal      | ❌             | ❌          | -                                            |
+| 56   | Cowbell            | ✅             | ✅          | [Cowbell.cmajor](dsp/drums/Cowbell.cmajor)   |
+| 57   | Crash Cymbal 2     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)       |
+| 58   | Vibraslap          | ❌             | ❌          | -                                            |
+| 59   | Ride Cymbal 2      | ❌             | ❌          | -                                            |
+| 60   | High Bongo         | ✅             | ✅          | [Bongos.cmajor](dsp/drums/Bongos.cmajor)     |
+| 61   | Low Bongo          | ✅             | ✅          | [Bongos.cmajor](dsp/drums/Bongos.cmajor)     |
+| 62   | Mute High Conga    | ❌             | ❌          | -                                            |
+| 63   | Open High Conga    | ❌             | ❌          | -                                            |
+| 64   | Low Conga          | ❌             | ❌          | -                                            |
+| 65   | High Timbale       | ❌             | ❌          | -                                            |
+| 66   | Low Timbale        | ❌             | ❌          | -                                            |
+| 67   | High Agogô         | ❌             | ❌          | -                                            |
+| 68   | Low Agogô          | ❌             | ❌          | -                                            |
+| 69   | Cabasa             | ❌             | ❌          | -                                            |
+| 70   | Maracas            | ❌             | ❌          | -                                            |
+| 71   | Short Whistle      | ❌             | ❌          | -                                            |
+| 72   | Long Whistle       | ❌             | ❌          | -                                            |
+| 73   | Short Güiro        | ❌             | ❌          | -                                            |
+| 74   | Long Güiro         | ❌             | ❌          | -                                            |
+| 75   | Claves             | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)     |
+| 76   | High Woodblock     | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)     |
+| 77   | Low Woodblock      | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)     |
+| 78   | Mute Cuíca         | ❌             | ❌          | -                                            |
+| 79   | Open Cuíca         | ❌             | ❌          | -                                            |
+| 80   | Mute Triangle      | ❌             | ❌          | -                                            |
+| 81   | Open Triangle      | ❌             | ❌          | -                                            |
 
 ## Audio Programming / Synthesis
 
@@ -150,7 +211,41 @@ PolyBLEP is a technique that can be used to create these waveforms safely, avoid
 
 ### Envelopes
 
+An envelope changes a parameter over time. They are commonly used in combination with volume but can be used with any parameter, such as pitch or filter settings.
+
+Envelopes come in different types:
+
+- **Attack/Release** envelopes have two phases Attack and Release.
+  - Attack describes how quickly we go from 0 to 100% (usually represented as 0.0 → 1.0).
+  - Release describes the opposite, how long does it take for the note to fade out.
+  - This is the type of envelope most commonly used in this project.
+  - Normally between Attack and Release the value is kept at 100% while a note is held.
+  - For our percussive sounds we usually go from Attack straight into Release instead.
+- **ADSR** envelopes add two phases in between Attack and Release. These envelopes can build up to a peak and then hold at a configurable level. They are not currently used in this project but worth looking into. An example of why you would want this is a piano sound. There's an initial burst of sound as the hammer hits the string, while you hold the key the note keeps playing but at a lower level than what it started at, and finally it quickly dampens when you release the key.
+
+#### Note on Attack
+
+It might seem like we want an instant attack for percussive sounds and only really want to configure a custom release/decay/fade out. Ugly artifacts can occur in digital audio when jumping from silence to a sound instantly. To smooth out this transition we use the shortest attack setting that we can get away with.
+
 ### Filters
+
+Filters change the frequency content of sounds. They can make sounds brighter, darker, or emphasize specific frequencies.
+
+#### Low Pass Filter (LPF)
+
+A low pass filter lets low frequencies through while gradually reducing higher frequencies above a cutoff point. This makes sounds darker. In this project, LPFs are often used with envelopes to create dynamic changes. For example, the bass drum starts bright and quickly darkens as the filter cutoff frequency drops.
+
+##### Resonance
+
+Some filters can add "resonance", emphasis of frequencies around the cutoff point. This can add character and re-introduce some of the brightness that was filtered out, or even over-compensate for a dramatic effect.
+
+#### High Pass Filter (HPF)
+
+A high pass filter does the opposite, it lets high frequencies through while reducing lower frequencies. This makes sounds brighter and removes unwanted low frequencies. Hi-hats, for example, use high pass filters to focus on their characteristic bright sound.
+
+#### Notch Filter
+
+A notch filter sharply reduces a narrow range of frequencies while leaving most other frequencies untouched. This can remove unwanted tones or change the character of a sound. The snare drum uses a notch filter to shape its tonal character.
 
 ### Wave Shaping
 
@@ -192,7 +287,3 @@ These are a few other techniques worthy of consideration. They are not yet used 
 
 - **Karplus-Strong** is a technique that uses a delay line, a buffer that stores samples, and plays them back later, like an echo. Karplus-Strong uses feedback, meaning the output of the delay line is fed back into it. This is combined with very short delays to create a simple model of a string.
 - **Modal Synthesis** Uses multiple filters to simulate how real objects vibrate. Each filter represents one of the natural frequencies of the object (like a drum or bell). This can create very realistic sounds, but is more complex than basic subtractive synthesis.
-
-### Interpolation
-
-### Vectorization
