@@ -5,6 +5,10 @@ namespace Percupuff
 {
     namespace Drums
     {
+        // This generates the sounds for open, closed and pedal hihats. The
+        // metallic "tick" of the hihat is created by 2 oscillators using
+        // frequency modulation. White noise simulates the higher frequencies
+        // that linger a bit longer.
         processor Hihat {
             input event (std::notes::NoteOn) eventIn;
             input event Params paramsIn;
@@ -30,6 +34,9 @@ namespace Percupuff
                 panning = p.hihatPanning;
             }
 
+            // The hihats vary in release/decay and how much white noise gets
+            // added. The pedal hihat also let's through a little bit more low
+            // frequencies than the other 2.
             event eventIn(std::notes::NoteOn n) {
                 if (int (n.pitch) == hihatClosedPitch) {
                     triggerVelocity = sqrt(n.velocity);
@@ -60,7 +67,7 @@ namespace Percupuff
 
             void main()
             {
-                
+                // Frequencies as described in the article "Synthesizing Realistic Cymbals"
                 osc1.frequencyIn <- 1047.0f;
                 osc2.frequencyIn <- 2490.0f;
 
@@ -77,6 +84,9 @@ namespace Percupuff
                     float gain = envelope.gainOut;
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        // Feedback was experimented with but not used. If
+                        // feedback is useful it should be a param, otherwise
+                        // it should be removed from the code here.
                         osc1.frequencyModIn <- feedback * 0.0f;
                         osc2.frequencyModIn <- osc1.out * 1.8f;
                         feedback = osc2.out;

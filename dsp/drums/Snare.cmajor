@@ -4,6 +4,9 @@ namespace Percupuff
 {
     namespace Drums
     {
+        // This processor tries to create a realistic snare drum sound.
+        // Additive synthesis is used to create the initial impact of the snare,
+        // with filtered white noise mixed in for more brightness.
         processor Snare {
             input event (std::notes::NoteOn) eventIn;
             input event Params paramsIn;
@@ -30,6 +33,7 @@ namespace Percupuff
             node envelope = Envelope;
             node osc = OscillatorBank(OscillatorShape::triangle);
             
+            // Filters that shape the white noise.
             Lpf lpf = (0.0f, 0.0f);
             NotchFilter notch;
 
@@ -60,6 +64,7 @@ namespace Percupuff
                 );
 
                 let invSampleRate = 1.0f / float(processor.frequency);
+                notch.setCoefficients(10000.0f, 0.9f, float(processor.frequency));
                 
                 loop
                 {
@@ -72,8 +77,6 @@ namespace Percupuff
                     envelope.triggerIn <- void;
                     envelope.advance();
                     float gain = envelope.gainOut;
-
-                    notch.setCoefficients(10000.0f, 0.9f, float(processor.frequency));
 
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         osc.frequencyModIn <- gain * 0.01f;
