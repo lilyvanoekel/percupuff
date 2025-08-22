@@ -93,7 +93,7 @@ namespace Percupuff
         p.kick1Level = 50.0f;
         p.kick1Panning = 0.0f;
         p.kick1Velocity = 100.0f;
-        p.kick1Midi = 36.0f;
+        p.kick1Midi = 35.0f;
         p.kick2Level = 50.0f;
         p.kick2Panning = 0.0f;
         p.kick2Velocity = 100.0f;
@@ -172,11 +172,11 @@ namespace Percupuff
         input event float kick1Level [[ name: "kick1Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float kick1Panning [[ name: "kick1Panning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float kick1Velocity [[ name: "kick1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
-        input event float kick1Midi [[ name: "kick1Midi", min: 0, max: 127, init: 36, step: 1 ]];
+        input event float kick1Midi [[ name: "kick1Midi", min: 0, max: 127, init: 35, step: 1 ]];
         input event float kick2Level [[ name: "kick2Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float kick2Panning [[ name: "kick2Panning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float kick2Velocity [[ name: "kick2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
-        input event float kick2Midi [[ name: "kick2Midi", min: 0, max: 127, init: 35, step: 1 ]];
+        input event float kick2Midi [[ name: "kick2Midi", min: 0, max: 127, init: 36, step: 1 ]];
         input event float snare1Level [[ name: "snare1Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float snare1Panning [[ name: "snare1Panning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float snare1Velocity [[ name: "snare1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
