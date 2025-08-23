@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Cmajor Patch</title>
+  </head>
+
+  <body>
+    <div id="cmaj-main">
+      <div id="cmaj-view-container"></div>
+      <div id="cmaj-overlay">
+        <div id="cmaj-info">
+          <span>Percupuff</span>
+          <span class="cmaj-small-text">Percupuff is a drum synth!</span>
+
+          <span id="cmaj-click-to-start">- Click to Start -</span>
+        </div>
+      </div>
+      <button id="cmaj-reset-button">Stop Audio</button>
+    </div>
+    <div id="cmaj-button-container">
+      <div>
+        <button class="note-btn" data-note="41" data-key="q" disabled>
+          Q (41)
+        </button>
+        <button class="note-btn" data-note="43" data-key="w" disabled>
+          W (43)
+        </button>
+        <button class="note-btn" data-note="45" data-key="e" disabled>
+          E (45)
+        </button>
+        <button class="note-btn" data-note="47" data-key="r" disabled>
+          R (47)
+        </button>
+        <button class="note-btn" data-note="48" data-key="t" disabled>
+          T (48)
+        </button>
+        <button class="note-btn" data-note="50" data-key="y" disabled>
+          Y (50)
+        </button>
+        <button class="note-btn" data-note="56" data-key="u">U (56)</button>
+        <button class="note-btn" data-note="73" data-key="i" disabled>
+          I (73)
+        </button>
+        <button class="note-btn" data-note="79" data-key="o" disabled>
+          O (79)
+        </button>
+        <button class="note-btn" data-note="80" data-key="p" disabled>
+          P (80)
+        </button>
+      </div>
+      <div>
+        <button class="note-btn" data-note="49" data-key="a">A (49)</button>
+        <button class="note-btn" data-note="57" data-key="s">S (57)</button>
+        <button class="note-btn" data-note="52" data-key="d">D (52)</button>
+        <button class="note-btn" data-note="42" data-key="f">F (42)</button>
+        <button class="note-btn" data-note="44" data-key="g">G (44)</button>
+        <button class="note-btn" data-note="46" data-key="h">H (46)</button>
+        <button class="note-btn" data-note="75" data-key="j">J (75)</button>
+        <button class="note-btn" data-note="76" data-key="k">K (76)</button>
+        <button class="note-btn" data-note="77" data-key="l">L (77)</button>
+      </div>
+      <div>
+        <button class="note-btn" data-note="35" data-key="z">Z (35)</button>
+        <button class="note-btn" data-note="36" data-key="x" disabled>
+          X (36)
+        </button>
+        <button class="note-btn" data-note="38" data-key="c">C (38)</button>
+        <button class="note-btn" data-note="40" data-key="v" disabled>
+          V (40)
+        </button>
+        <button class="note-btn" data-note="39" data-key="b">B (39)</button>
+        <button class="note-btn" data-note="60" data-key="n">N (60)</button>
+        <button class="note-btn" data-note="61" data-key="m">M (61)</button>
+      </div>
+    </div>
+  </body>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+    html {
+      background: black;
+      overflow: hidden;
+    }
+    body {
+      padding: 0.5rem;
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    #cmaj-main {
+      display: flex;
+      flex-direction: column;
+      color: white;
+      font-family: Monaco, Consolas, monospace;
+      width: 100%;
+      height: 100%;
+    }
+
+    #cmaj-view-container {
+      display: flex;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      justify-content: center;
+    }
+
+    #cmaj-header-bar {
+      position: relative;
+      height: 1.5rem;
+      min-height: 1.5rem;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      margin-bottom: 2px;
+      user-select: none;
+    }
+    #cmaj-header-content {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+    }
+    #cmaj-header-logo {
+      height: 100%;
+      fill-opacity: 0.8;
+    }
+    #cmaj-header-title {
+      height: 100%;
+      flex-grow: 1;
+      text-align: center;
+      padding-right: 1rem;
+    }
+
+    #cmaj-click-to-start {
+      margin-top: 3rem;
+      opacity: 0;
+    }
+
+    #cmaj-reset-button {
+      display: none;
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 2rem;
+      margin: 0.1rem;
+      padding: 0.3rem;
+      opacity: 0.4;
+    }
+    #cmaj-reset-button:hover {
+      opacity: 0.5;
+    }
+
+    #cmaj-button-container {
+      display: none;
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.5rem;
+    }
+
+    #cmaj-button-container > div {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    #cmaj-button-container button {
+      height: 2rem;
+      padding: 0.3rem;
+      white-space: nowrap;
+      background: white;
+      color: black;
+    }
+
+    #cmaj-button-container button[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    #cmaj-overlay {
+      border: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background: rgb(0, 0, 0);
+      background: radial-gradient(circle, #333333ee 0%, #333333cc 100%);
+      z-index: 10;
+      text-shadow: 0 0 0.2rem black, 0 0 0.5rem black, 0 0 1rem black,
+        0 0 3rem black;
+    }
+
+    #cmaj-overlay * {
+      padding: 0.5rem;
+    }
+    #cmaj-overlay a {
+      color: rgb(120, 120, 184);
+    }
+
+    #cmaj-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .cmaj-small-text {
+      font-size: 75%;
+    }
+  </style>
+
+  <script type="module">
+    import * as patch from "./cmaj_Percupuff.js";
+    import { createPatchViewHolder } from "./cmaj_api/cmaj-patch-view.js";
+
+    function getMIDIInputEndpointID(connection) {
+      for (const i of connection.inputEndpoints)
+        if (i.purpose === "midi in") return i.endpointID;
+    }
+
+    async function loadPatch() {
+      const audioContext = new AudioContext();
+      audioContext.suspend();
+      const connection = await patch.createAudioWorkletNodePatchConnection(
+        audioContext,
+        "cmaj-worklet-processor"
+      );
+
+      const viewContainer = document.getElementById("cmaj-view-container");
+      const startOverlay = document.getElementById("cmaj-overlay");
+      const resetButton = document.getElementById("cmaj-reset-button");
+
+      viewContainer.innerHTML = "";
+
+      const view = await createPatchViewHolder(connection);
+
+      if (view) viewContainer.appendChild(view);
+
+      resetButton.onclick = () => {
+        audioContext?.close();
+        connection?.close?.();
+
+        viewContainer.innerHTML = "";
+        viewContainer.style.transform = "none";
+        startOverlay.style.display = "flex";
+        resetButton.style.display = "none";
+        document.getElementById("cmaj-button-container").style.display = "none";
+
+        loadPatch();
+      };
+
+      function triggerNote(note, button) {
+        const midiCode = (0x90 << 16) | (note << 8) | 100;
+        connection.sendMIDIInputEvent("midiIn", midiCode);
+        button.style.transform = "scale(0.9)";
+        button.style.backgroundColor = "#ff4444";
+        setTimeout(() => {
+          button.style.transform = "scale(1)";
+          button.style.backgroundColor = "";
+        }, 100);
+      }
+
+      // Add click handlers to all note buttons
+      document.querySelectorAll(".note-btn").forEach((button) => {
+        button.addEventListener("mousedown", () => {
+          const note = parseInt(button.dataset.note);
+          triggerNote(note, button);
+        });
+      });
+
+      startOverlay.onclick = () => {
+        startOverlay.style.display = "none";
+        resetButton.style.display = "block";
+        document.getElementById("cmaj-button-container").style.display = "flex";
+        connection.connectDefaultAudioAndMIDI(audioContext);
+        audioContext.resume();
+      };
+
+      function addKeyboardListener(element) {
+        element.addEventListener("keydown", (event) => {
+          const key = event.key.toLowerCase();
+          const button = document.querySelector(`[data-key="${key}"]`);
+          if (button) {
+            const note = parseInt(button.dataset.note);
+            triggerNote(note, button);
+          }
+        });
+      }
+
+      // Add keyboard listener to main document
+      addKeyboardListener(document);
+
+      // Add keyboard listener to iframe when ready
+      const interval = setInterval(() => {
+        const customPatchView = view?.querySelector("custom-patch-view");
+        const iframe = customPatchView?.shadowRoot?.querySelector("iframe");
+
+        if (iframe?.contentDocument) {
+          addKeyboardListener(iframe.contentDocument);
+          clearInterval(interval);
+        } else if (iframe) {
+          iframe.addEventListener("load", () => {
+            addKeyboardListener(iframe.contentDocument);
+          });
+          clearInterval(interval);
+        }
+      }, 100);
+
+      document.getElementById("cmaj-click-to-start").style.opacity = 1.0;
+    }
+
+    loadPatch();
+  </script>
+</html>
