@@ -196,3 +196,7 @@ Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) 
 ## Code of Conduct
 
 This project follows a [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming environment for all contributors.
+
+## License
+
+This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
