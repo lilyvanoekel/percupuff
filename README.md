@@ -93,6 +93,40 @@ Cmajor makes this pretty easy and straightforward, but there are a few gotchas i
     - `view/src/params.ts`, specifically the `paramToEndpointId` and `endpointIdToParams` functions.
     - `view/src/commands/ParamBuilder.ts` `getConsolidatedParams`
 
+### Building a CLAP plugin
+
+**Prerequisites:**
+
+- Cmajor extension in VSCode (or Cursor)
+- The view has been built with the most recent changes (see [Building the view](#building-the-view))
+- CMake
+- macOS (these instructions are macOS-specific)
+
+**Steps:**
+
+1. Export the patch as a CLAP plugin:
+
+   - Open Command Palette: `Cmd+Shift+P`
+   - Select `"Cmajor: Export patch as a CLAP plugin"`
+
+2. Download the CLAP SDK:
+
+   - Download from: https://github.com/free-audio/clap
+   - Extract and store the CLAP SDK somewhere on your system
+
+3. Build the plugin:
+
+   ```bash
+   cd /path/to/exported/plugin/folder
+   cmake -B build -DCLAP_INCLUDE_PATH="/path/to/clap/include" -DCMAKE_BUILD_TYPE=Release
+   cmake --build build --config Release
+   ```
+
+4. Install the plugin:
+   ```bash
+   cp -r ./Percupuff.clap /Library/Audio/Plug-Ins/CLAP
+   ```
+
 ## General MIDI Percussion Key Map
 
 General MIDI[†](docs/glossary.md#general-midi) defines a standard for percussive sounds that assigns specific notes to specific percussive instruments. In MIDI each note has a number. 60, for example, represents a C note at a certain octave. The percussion map defines which note numbers trigger which drum sounds, so instead of playing a tone, you get a specific percussion instrument.
@@ -154,3 +188,11 @@ Contributions for instruments that are not yet included in the UI are definitely
 ## Audio Programming / Synthesis
 
 For more details on the audio programming and audio synthesis concepts used in this project, see [Audio Programming / Synthesis](docs/synthesis.md).
+
+## Contributing
+
+Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+
+## Code of Conduct
+
+This project follows a [Code of Conduct](CODE_OF_CONDUCT.md) to ensure a welcoming environment for all contributors.
