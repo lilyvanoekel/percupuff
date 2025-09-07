@@ -19,9 +19,9 @@ namespace Percupuff
         input event std::midi::Message midiIn;
         input p.*;
 
-        // @TODO: remember why we have an output event for noteOn events.
+        // Send midi notes to output as well, this is needed for the function
+        // that lets you reassign midi notes.
         output event (std::notes::NoteOn) noteOn;
-
         output stream float<2> out;
 
         node
@@ -36,6 +36,7 @@ namespace Percupuff
             crash = Drums::Crash;
             claves = Drums::Claves;
             bongos = Drums::Bongos;
+            sideStick = Drums::SideStick;
             gainLimiter = std::levels::ConstantGain (float<2>, 1.0f);
             mpe = std::midi::MPEConverter;
         }
@@ -51,9 +52,9 @@ namespace Percupuff
             p.paramsOut -> cowbell.paramsIn;
             p.paramsOut -> hihat.paramsIn;
             p.paramsOut -> snare.paramsIn;
+            p.paramsOut -> sideStick.paramsIn;
 
-            // Send the midi events so the sound processors know when to start
-            // playing.
+            // Send the midi events so the sound processors know when to start playing.
             midiIn -> mpe;
             mpe -> bassDrum.eventIn;
             mpe -> snare.eventIn;
@@ -63,6 +64,7 @@ namespace Percupuff
             mpe -> crash.eventIn;
             mpe -> claves.eventIn;
             mpe -> bongos.eventIn;
+            mpe -> sideStick.eventIn;
             mpe -> noteOn;
 
             // Some sounds use noise.
@@ -82,6 +84,7 @@ namespace Percupuff
             crash -> gainLimiter;
             claves -> gainLimiter;
             bongos -> gainLimiter;
+            sideStick -> gainLimiter;
 
             // Output the result.
             gainLimiter -> out;

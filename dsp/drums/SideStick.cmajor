@@ -1,0 +1,71 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor SideStick {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float<2> out;
+            input event Params paramsIn;
+            
+            float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+            float outputLevel = 0.5f;
+            float panning = 0.0f;
+
+            // Velocity sensitivity is not implemented yet
+            float velocitySensitivity = 1.0f;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.sideStickMidi);
+                outputLevel = p.sideStickLevel * 0.01f;
+                panning = p.sideStickPanning;
+                velocitySensitivity = p.sideStickVelocity;
+            }
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == midiNotePitch) {
+                    triggerVelocity = sqrt(n.velocity);
+                }
+            }
+
+            node envelope = Envelope;
+            node osc1 = Oscillator(OscillatorShape::triangle);
+            
+            void main()
+            {
+                envelope.attackIn <- .001f;
+                osc1.frequencyIn <- 587.0f;
+                
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+
+                    envelope.releaseIn <- .2f + vel * 0.4f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        osc1.frequencyModIn <- gain * 0.1f;
+                        let outSample = osc1.out * gain * 0.5f * vel * outputLevel;
+
+                        float pan = panning * 0.01f;
+                        float leftGain  = 0.5f * (1.0f - pan);
+                        float rightGain = 0.5f * (1.0f + pan);
+                        out <- (outSample * leftGain, outSample * rightGain);
+
+                        osc1.advance();
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}

@@ -31,11 +31,14 @@ export const instruments = {
   tom6: { name: "High Tom", group: "Toms", midi: 50 },
 
   cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
+
+  // Example of adding an instrument without having it show up in the UI yet.
+  sideStick: { name: "Side Stick", group: null, midi: 37 },
 } as const;
 
 export const instrumentGroups = Array.from(
   new Set(Object.values(instruments).map((instrument) => instrument.group))
-);
+).filter((x) => x != null);
 
 export type InstrumentGroup = (typeof instrumentGroups)[number];
 
@@ -134,6 +137,10 @@ export const instrumentToCustomParam: Partial<
 export const instrumentsByGroup: Record<InstrumentGroup, InstrumentKey[]> =
   Object.keys(instruments).reduce((acc, key) => {
     const group = instruments[key as keyof typeof instruments].group;
+
+    if (group === null) {
+      return acc;
+    }
 
     if (!acc[group]) {
       acc[group] = [];

@@ -15,7 +15,14 @@ const formatNumberFloat = (num: number): string => {
   return `${num.toFixed(1)}f`;
 };
 
-const template = `namespace Percupuff
+const template = `// The view is currently the source of truth for the parameters. They are
+// defined in \`view/src/params.ts\` and exported using the \`build-params\`
+// command that outputs the structure below.
+
+// This approach keeps managing parameters for this project manageable and
+// makes it relatively easy to use them in the Cmajor code.
+
+namespace Percupuff
 {
     struct Params
     {

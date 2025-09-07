@@ -26,6 +26,7 @@
     "dsp/drums/Crash.cmajor",
     "dsp/drums/Claves.cmajor",
     "dsp/drums/Bongos.cmajor",
+    "dsp/drums/SideStick.cmajor",
     "dsp/Percupuff.cmajor"
   ],
   "view": {
