@@ -56,12 +56,14 @@ export const groupColors: Record<InstrumentGroup, HSL> = {
 export type InstrumentKey = keyof typeof instruments;
 export const instrumentKeys = Object.keys(instruments) as InstrumentKey[];
 
+// These params apply to each instrument.
 export type InstrumentParams =
   | `${InstrumentKey}Level`
   | `${InstrumentKey}Panning`
   | `${InstrumentKey}Velocity`
   | `${InstrumentKey}Midi`;
 
+// Add custom parameters here.
 export interface ParamState extends Record<InstrumentParams, number> {
   mainLevel: number;
   kick1Decay: number;
