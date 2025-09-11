@@ -99,7 +99,7 @@ Ideas for new features or enhancements are always welcome.
 - Please use the ✨ Feature Request ✨ issue template and follow the steps.
 - Or, use the 📚 Documentation Update 📚 template if that's more appropriate for your suggestion!
 
-## Asking Questions, Requesting Help, Prodiving Feedback, Other Suggestions
+## Asking Questions, Requesting Help, Providing Feedback, Other Suggestions
 
 Feel free to create an issue using the ❓ Question / Help Request / Suggestion ❗ for anything that has you confused, or needs constructive feedback, or otherwise doesn't fit in one of the other categories.
 
