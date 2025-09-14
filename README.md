@@ -22,7 +22,20 @@ Percupuff is a drum machine that creates drum sounds by building them from scrat
 
 ## State of the Project
 
-The project is currently not finished. Not all sounds and features have been implemented yet. Contributions are welcome (@TODO: contribution guidelines and the like).
+The project is currently not finished. Not all sounds and features have been implemented yet. Contributions are welcome. Please have a look at:
+
+- The [Code of Conduct](https://github.com/lilyvanoekel/percupuff/blob/main/CODE_OF_CONDUCT.md)
+- [Contributing to Percupuff](https://github.com/lilyvanoekel/percupuff/blob/main/CONTRIBUTING.md)
+- The [Issue List](https://github.com/lilyvanoekel/percupuff/issues)
+
+These resources could also be helpful:
+
+- [Glossary](https://github.com/lilyvanoekel/percupuff/blob/main/docs/glossary.md)
+- [Audio Programming / Synthesis guide](https://github.com/lilyvanoekel/percupuff/blob/main/docs/synthesis.md)
+- [Adding a Sound](https://github.com/lilyvanoekel/percupuff/blob/main/docs/adding_a_sound.md)
+- [Improving a Sound](https://github.com/lilyvanoekel/percupuff/blob/main/docs/improving_a_sound.md)
+
+If anything is still unclear after that, please feel free to [create a question issue](https://github.com/lilyvanoekel/percupuff/issues/new?template=question.yml).
 
 ## Demo / Web Version
 
