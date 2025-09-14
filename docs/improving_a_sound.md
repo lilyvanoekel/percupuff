@@ -53,3 +53,7 @@ event paramsIn(Params p) {
     decay = p.kick1Decay;
 }
 ```
+
+## What is DSP
+
+Please see the [glossary](https://github.com/lilyvanoekel/percupuff/blob/main/docs/glossary.md#dsp-digital-signal-processing).

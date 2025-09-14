@@ -26,7 +26,10 @@ A software application for recording, editing, mixing, and producing audio files
 
 ## DSP (Digital Signal Processing)
 
-Make or manipulate sound with numbers. In the context of this project it might refer to the code that's responsible for generating the drum sounds, listening to MIDI signals, determining which drum should sound when.
+Make or manipulate sound with numbers. In the context of this project it might refer to the code that's responsible for generating the drum sounds, listening to MIDI signals, determining which drum should sound when. This project has two main "domains":
+
+- The view, a TypeScript/React based app that controls the UI/UX.
+- DSP code written in Cmajor that consumes MIDI messages and creates the sounds.
 
 ## General MIDI
 
