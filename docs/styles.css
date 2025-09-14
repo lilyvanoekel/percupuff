@@ -1,0 +1,52 @@
+html,
+body {
+  margin: 0;
+  padding: 0 !important;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: black;
+  font-family: "Consolas", "Courier New", Courier, monospace;
+}
+
+header {
+    margin-bottom: 1rem;
+}
+
+a {
+  text-decoration: none;
+  color: cyan;
+}
+
+a:hover {
+  color: magenta;
+}
+
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: block;
+}
+
+nav {
+  background: white;
+}
+
+nav li {
+  display: inline-block;
+}
+nav a {
+  display: inline-block;
+  line-height: 50px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: black;
+}
+
+section {
+  color: white;
+  width: 800px;
+  margin: 0 auto;
+}
