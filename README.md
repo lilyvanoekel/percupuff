@@ -26,7 +26,7 @@ The project is currently not finished. Not all sounds and features have been imp
 
 ## Demo / Web Version
 
-(@TODO: to be added).
+[Try it!](https://lilyvanoekel.github.io/percupuff/demo/index.html)
 
 ## Building and Running
 
