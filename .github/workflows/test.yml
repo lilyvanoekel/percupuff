@@ -2,6 +2,9 @@ name: Run View Tests
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
     paths:
       - 'view/**'
 
