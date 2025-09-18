@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build && shx cp index.js dist/index.js",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build-params": "tsx src/commands/ParamBuilder.ts"
+    "build-params": "tsx src/commands/ParamBuilder.ts",
+    "test": "vitest"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -17,17 +18,24 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.3.1",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/jest": "^30.0.0",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18.3.0",
+    "@types/testing-library__react": "^10.0.1",
     "@vitejs/plugin-react": "^4.3.2",
     "eslint": "^9.11.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.12",
     "globals": "^15.9.0",
+    "jsdom": "^23.0.1",
     "shx": "^0.3.4",
     "tsx": "^4.19.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.7.0",
-    "vite": "^5.4.8"
+    "vite": "^7.1.6",
+    "vitest": "^1.0.4"
   }
 }

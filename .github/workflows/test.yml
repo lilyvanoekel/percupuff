@@ -1,0 +1,27 @@
+name: Run View Tests
+
+on:
+  pull_request:
+    paths:
+      - 'view/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      working-directory: view
+      run: npm install
+
+    - name: Run tests
+      working-directory: view
+      run: npm test
