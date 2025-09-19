@@ -25,7 +25,6 @@ jobs:
       working-directory: view
       run: npm ci
 
-
     - name: Run tests
       working-directory: view
       run: npm test
