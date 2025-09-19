@@ -6,25 +6,29 @@ on:
     branches:
       - main
     paths:
-      - 'view/**'
+      - "view/**"
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
 
-    - name: Install dependencies
-      working-directory: view
-      run: npm ci
+      - name: Install dependencies
+        working-directory: view
+        run: npm ci
 
-    - name: Run tests
-      working-directory: view
-      run: npm test
+      - name: Run tests
+        working-directory: view
+        run: npm run test-ci
+
+      - name: Verify it builds
+        working-directory: view
+        run: npm run build
