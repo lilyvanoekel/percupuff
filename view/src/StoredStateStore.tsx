@@ -33,7 +33,7 @@ const StoredStateStoreContext = createContext<
   StoredStateStoreContextType | undefined
 >(undefined);
 
-export const StoredStatetoreProvider: React.FC<{
+export const StoredStateStoreProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [state, setState] = useState<StoredState>(initialState);
@@ -85,7 +85,7 @@ export const useStoredStateStore = (): StoredStateStoreContextType => {
   const context = useContext(StoredStateStoreContext);
   if (!context) {
     throw new Error(
-      "useStoredStateStore must be used within a StoredStatetoreProvider"
+      "useStoredStateStore must be used within a StoredStateStoreProvider"
     );
   }
   return context;

@@ -3,14 +3,14 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import userEvent from "@testing-library/user-event";
 import App from "./App";
-import { StoredStatetoreProvider } from "./StoredStateStore";
+import { StoredStateStoreProvider } from "./StoredStateStore";
 import { ParamStoreProvider } from "./ParamStore";
 
 const renderWithProvider = (component: React.ReactElement) => {
   return render(
-    <StoredStatetoreProvider>
+    <StoredStateStoreProvider>
       <ParamStoreProvider>{component}</ParamStoreProvider>
-    </StoredStatetoreProvider>
+    </StoredStateStoreProvider>
   );
 };
 
