@@ -3,14 +3,14 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { ParamStoreProvider } from "./ParamStore";
-import { StoredStatetoreProvider } from "./StoredStateStore.tsx";
+import { StoredStateStoreProvider } from "./StoredStateStore.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ParamStoreProvider>
-      <StoredStatetoreProvider>
+      <StoredStateStoreProvider>
         <App />
-      </StoredStatetoreProvider>
+      </StoredStateStoreProvider>
     </ParamStoreProvider>
   </StrictMode>
 );
