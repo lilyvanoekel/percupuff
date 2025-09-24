@@ -108,7 +108,6 @@ export const Button2: React.FC<{
           rx={borderRadius * 0.8}
           ry={borderRadius * 0.8}
           fill={c.toString()}
-          // fill="rgb(100, 255, 100)"
           filter={`url(#roundedShadow${id})`}
         />
         <rect

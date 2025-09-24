@@ -18,9 +18,6 @@ export const ParamGrid: React.FC = () => {
 
   return (
     <div style={{ marginTop: "15px" }}>
-      {/* <div>
-        <Label>Sound Params</Label>
-      </div> */}
       <div className={styles.grid}>
         <div>
           <Label>Level</Label>

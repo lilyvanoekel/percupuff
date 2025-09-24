@@ -39,7 +39,6 @@ export const Group: React.FC<{
         height: height,
         boxSizing: "border-box",
         position: "relative",
-        //background: "#111111",
         marginTop: "100px",
         borderRadius: "10px",
         padding: "20px",
