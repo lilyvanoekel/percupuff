@@ -1,7 +1,7 @@
 import { Param, paramDefaults, paramRange, paramToEndpointId } from "../params";
 import * as Sqrl from "squirrelly";
 
-const objKeys = <T extends object>(obj: T): (keyof T)[] => {
+export const objKeys = <T extends object>(obj: T): (keyof T)[] => {
   const result: (keyof T)[] = [];
 
   for (const key in obj) {
@@ -11,7 +11,7 @@ const objKeys = <T extends object>(obj: T): (keyof T)[] => {
   return result;
 };
 
-const formatNumberFloat = (num: number): string => {
+export const formatNumberFloat = (num: number): string => {
   return `${num.toFixed(1)}f`;
 };
 
@@ -65,7 +65,7 @@ namespace Percupuff
 
 type ParamEntry = [string, number];
 
-const getConsolidatedParams = (): string[] => {
+export const getConsolidatedParams = (): string[] => {
   const allParams = objKeys(paramDefaults);
   const consolidatedParams = new Set<string>();
   const seenGroupParams = new Set<string>();
@@ -83,7 +83,7 @@ const getConsolidatedParams = (): string[] => {
   return Array.from(consolidatedParams);
 };
 
-const getDefaultsForConsolidatedParams = (): ParamEntry[] => {
+export const getDefaultsForConsolidatedParams = (): ParamEntry[] => {
   const defaults: ParamEntry[] = [];
   const seenGroupParams = new Set<string>();
 
@@ -136,4 +136,6 @@ const result = Sqrl.render(template, {
   })(),
 });
 
-console.log(result);
+if (process.env.NODE_ENV !== "test") {
+  console.log(result);
+}
