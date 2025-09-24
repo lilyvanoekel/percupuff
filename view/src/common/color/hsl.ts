@@ -14,8 +14,13 @@ const clamp = (min: number, max: number) => (value: number) => {
 
 const clampPercentage = clamp(0, 100);
 
+const normalizeHue = (h: number): number => {
+  h = h % 360;
+  return h < 0 ? h + 360 : h;
+};
+
 export const HSL = (h: number, s: number, l: number): HSL => ({
-  h: h % 360,
+  h: normalizeHue(h),
   s: clampPercentage(s),
   l: clampPercentage(l),
   toString() {
