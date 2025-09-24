@@ -6,7 +6,7 @@ import {
   instrumentsByGroup,
 } from "../params";
 import { useStoredStateStore } from "../StoredStateStore";
-import { Button2 } from "./elements/Button2";
+import { InstrumentButton } from "./elements/InstrumentButton";
 import { Label } from "./elements/Label";
 
 export const InstrumentGroup: React.FC<{
@@ -24,7 +24,7 @@ export const InstrumentGroup: React.FC<{
       <div style={{ display: "flex" }}>
         {instrumentIds.map((id, index) => (
           <div key={id}>
-            <Button2
+            <InstrumentButton
               style={index && !(index % 3) ? { marginLeft: "9px" } : undefined}
               color={color}
               width={47}

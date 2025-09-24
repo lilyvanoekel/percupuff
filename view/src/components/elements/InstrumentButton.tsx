@@ -2,7 +2,7 @@ import { useId } from "react";
 import { HSL } from "../../common/color/hsl";
 import { InlineBlock } from "./InlineBlock";
 
-export const Button2: React.FC<{
+export const InstrumentButton: React.FC<{
   color: HSL;
   width?: number;
   height?: number;
