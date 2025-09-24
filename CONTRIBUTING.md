@@ -27,6 +27,7 @@ A few technical responsibilities:
 - **Target the `main` branch:** Please base your work on the latest code in the `main` branch.
 - **One change per pull request:** Keep your PRs focused on a single issue or feature to make them easier to review. For example, implement one drum sound per PR.
 - **Be patient:** We are a small team maintaining this project in our free time. We will get to your issue or PR as soon as we can.
+- **First come, first serve:** Picking up an issue is on a "first come, first serve" basis. The first person to comment on an issue will be the one assigned to it. If an issue is assigned to someone, but there have not been any updates for a month, it's acceptable to ask if you can take over. The original person assigned to the ticket then has a week to respond. Alternatively, for bigger issues that allow it, it's also acceptable at any time to propose collaborating, but it's up to the first person to decide if they are interested.
 
 ## Your First Contribution
 
