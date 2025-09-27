@@ -44,6 +44,7 @@ export const ParamKnob: React.FC<{
     : Array(4).fill(undefined);
 
   const value = param ? paramState[param] : 0;
+  const isBipolar = param?.endsWith("Panning");
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
@@ -56,6 +57,7 @@ export const ParamKnob: React.FC<{
           width={width}
           height={width}
           disabled={!param}
+          bipolar={isBipolar}
         />
       </div>
       <div

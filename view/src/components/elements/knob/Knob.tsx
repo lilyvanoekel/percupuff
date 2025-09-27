@@ -14,6 +14,25 @@ const interpolateColor = (
 
   return `rgb(${r}, ${g}, ${b})`;
 };
+const green: [number, number, number] = [170, 255, 170];
+const orange: [number, number, number] = [255, 200, 0];
+const red: [number, number, number] = [255, 170, 170];
+
+function getKnobColor(value: number, bipolar: boolean) {
+  // Snap tiny values around 0 to exact green
+  if (bipolar && Math.abs(value) <= 1) value = 0;
+
+  if (!bipolar) {
+    const t = value / 100;
+    if (t <= 0.5) return interpolateColor(green, orange, t / 0.5);
+    return interpolateColor(orange, red, (t - 0.5) / 0.5);
+  } else {
+    if (value <= -75) return interpolateColor(red, orange, (value + 100) / 25);
+    if (value <= 0) return interpolateColor(orange, green, (value + 75) / 75);
+    if (value <= 75) return interpolateColor(green, orange, value / 75);
+    return interpolateColor(orange, red, (value - 75) / 25);
+  }
+}
 
 export const Knob: React.FC<{
   value: number;
@@ -21,7 +40,8 @@ export const Knob: React.FC<{
   width?: number;
   height?: number;
   disabled?: boolean;
-}> = ({ value, width, height, setValue, disabled = false }) => {
+  bipolar?: boolean;
+}> = ({ value, width, height, setValue, disabled = false, bipolar }) => {
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const valueRef = useRef<number | null>(null);
 
@@ -113,13 +133,18 @@ export const Knob: React.FC<{
   const originY = knobHeight * 0.5 + knobMarginY;
 
   const gradientId = `knobGradient-${Math.round(value)}`;
-  const green = [170, 255, 170];
-  const red = [255, 170, 170];
-  const interpolatedColor = interpolateColor(
-    green,
-    red,
-    Math.round(value) / 100
-  );
+  function mapValue(value: number, bipolar: boolean) {
+    if (bipolar) {
+      // Map 0–100 → -100–100
+      return (value / 100) * 200 - 100;
+    } else {
+      // Keep 0–100
+      return value;
+    }
+  }
+  const isBipolar = bipolar ?? false;
+  const mappedValue = mapValue(value, isBipolar);
+  const interpolatedColor = getKnobColor(mappedValue, isBipolar);
 
   return (
     <div
