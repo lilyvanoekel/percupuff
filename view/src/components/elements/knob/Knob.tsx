@@ -14,6 +14,7 @@ const interpolateColor = (
 
   return `rgb(${r}, ${g}, ${b})`;
 };
+
 const green: [number, number, number] = [170, 255, 170];
 const orange: [number, number, number] = [255, 200, 0];
 const red: [number, number, number] = [255, 170, 170];
@@ -27,10 +28,29 @@ function getKnobColor(value: number, bipolar: boolean) {
     if (t <= 0.5) return interpolateColor(green, orange, t / 0.5);
     return interpolateColor(orange, red, (t - 0.5) / 0.5);
   } else {
-    if (value <= -75) return interpolateColor(red, orange, (value + 100) / 25);
-    if (value <= 0) return interpolateColor(orange, green, (value + 75) / 75);
-    if (value <= 75) return interpolateColor(green, orange, value / 75);
-    return interpolateColor(orange, red, (value - 75) / 25);
+    // Fixed bipolar logic: 
+    // -100 to -50: red to orange
+    // -50 to 0: orange to green  
+    // 0 to 50: green to orange
+    // 50 to 100: orange to red
+    
+    if (value <= -50) {
+      // Red to orange: map -100..-50 to t=0..1
+      const t = (value + 100) / 50;
+      return interpolateColor(red, orange, t);
+    } else if (value <= 0) {
+      // Orange to green: map -50..0 to t=0..1
+      const t = (value + 50) / 50;
+      return interpolateColor(orange, green, t);
+    } else if (value <= 50) {
+      // Green to orange: map 0..50 to t=0..1
+      const t = value / 50;
+      return interpolateColor(green, orange, t);
+    } else {
+      // Orange to red: map 50..100 to t=0..1
+      const t = (value - 50) / 50;
+      return interpolateColor(orange, red, t);
+    }
   }
 }
 
