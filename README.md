@@ -125,9 +125,14 @@ You have two options for developing the UI:
 
 #### Cmajor/DSP Code
 
-- The Cmajor[†](docs/glossary.md#cmajor)/DSP[†](docs/glossary.md#dsp) code DOES hot reload:
+- The Cmajor[†](docs/glossary.md#cmajor)/DSP[†](docs/glossary.md#dsp) code hot reloads:
   - While having `Cmajor: Run patch` open make changes to any cmajor file
   - Save them and they will be applied right away.
+
+- In `percupuff.cmajorpatch` we refer to `view/dist/index.js` specifically:
+  - This means the view must be rebuilt with `npm run build` before changes appear in `Cmajor: Run patch`
+  - Hot reload only works for Cmajor/DSP code, not for the TypeScript/React view
+  - This also applies to any other Cmajor related tooling such as `Cmajor: Export patch as...`. **Always build the view first.**
 
 #### Parameters  
 
@@ -149,12 +154,8 @@ You have two options for developing the UI:
     - `view/src/params.ts`, specifically the `paramToEndpointId` and `endpointIdToParams` functions.
     - `view/src/commands/ParamBuilder.ts` `getConsolidatedParams`
 
-#### Important Notes
 
-  - In `percupuff.cmajorpatch` we refer to `view/dist/index.js` specifically.
-  - This also applies to any other Cmajor related tooling such as `Cmajor: Export patch as...`. **Always build the view first.**
-
-  ### Troubleshooting
+### Troubleshooting
 
 **"Missing script: dev" error**
 
