@@ -49,15 +49,42 @@ The easiest way to get started is to use VSCode (or a similar IDE) with the [Cma
 
 - VSCode
 - [Cmajor Tools extension](https://marketplace.visualstudio.com/items?itemName=CmajorSoftware.cmajor-tools)
-- Node.js and npm
+- Node.js 20.19+ or 22.12+ (required for Vite 7.x)
+- npm
+
+### Quick Start
+
+The fastest way to get the UI running for development:
+
+1. Navigate to the view folder:
+```bash
+   cd view
+``` 
+2. Install dependencies:
+```bash
+   npm install
+```
+
+3. Start the development server:
+```bash
+   npm run dev
+```
+
+4. Open your browser to http://localhost:5173/
+
+This gives you hot reload for UI development. When you're ready to test with the full Cmajor patch, run `npm run build` and follow the [Running](#running) instructions below. 
 
 ### Building the view
 
 The view needs to be built before you can run the project or build/export it as a plugin or WebAssembly.
 
-- `cd` into `view`
-- Install dependencies `npm install`
-- `npm run build`
+From the project root:
+
+```bash
+cd view
+npm install
+npm run build
+```
 
 This will create `view/dist` which will contain:
 
@@ -78,16 +105,36 @@ In VSCode with the Cmajor Tools installed:
 
 Cmajor makes this pretty easy and straightforward, but there are a few gotchas in this project to be aware of:
 
+#### UI Development Workflow
+
+You have two options for developing the UI:
+
+**Option 1: Independent UI Development (Recommended for UI work)**
+
+- Run `npm run dev` from the `view` folder
+- Open http://localhost:5173/ in your browser
+- Changes hot reload automatically
+- Great for working on the interface without needing the full Cmajor patch
+
+**Option 2: Testing with Cmajor**
+
+- Make your changes to the TypeScript/React code
+- Run `npm run build` in the `view` folder
+- Use `Cmajor: Run patch` to see your changes
+- The view does NOT hot reload in this mode
+
+#### Cmajor/DSP Code
+
 - The Cmajor[†](docs/glossary.md#cmajor)/DSP[†](docs/glossary.md#dsp) code hot reloads:
+  - While having `Cmajor: Run patch` open make changes to any cmajor file
+  - Save them and they will be applied right away.
 
-  - While having `Cmajor: Run patch` open make changes to any cmajor file, save them and they will be applied right away.
-
-- The TypeScript/React/View code does **NOT** currently hot reload:
-
-  - It might be possible to develop the view independently with `npm run dev` as expected with vite, with hot reloading in the browser, but this does not work with `Cmajor: Run patch`.
-  - In `percupuff.cmajorpatch` we refer to `view/dist/index.js` specifically.
-  - You have to run `npm run build` in the `view` folder to apply the changes and see them in the `Cmajor: Run patch` pane.
+- In `percupuff.cmajorpatch` we refer to `view/dist/index.js` specifically:
+  - This means the view must be rebuilt with `npm run build` before changes appear in `Cmajor: Run patch`
+  - Hot reload only works for Cmajor/DSP code, not for the TypeScript/React view
   - This also applies to any other Cmajor related tooling such as `Cmajor: Export patch as...`. **Always build the view first.**
+
+#### Parameters  
 
 - Parameters[†](docs/glossary.md#parameters) are defined in `view/src/params.ts`:
 
@@ -97,14 +144,55 @@ Cmajor makes this pretty easy and straightforward, but there are a few gotchas i
   - Instead use `npm run build-params` from the `view` folder.
     - Currently you have to manually paste its output into `dsp/Params.cmajor`. This should be made easier at some point.
 
+#### Grouped Parameters
+
 - Some parameters are grouped (skip this for now if it's confusing).
 
   - Some of the sound processors[†](docs/glossary.md#processors) (the files under `dsp/drums`) can create multiple sounds.
   - Parameters such as level[†](docs/glossary.md#level), panning[†](docs/glossary.md#panning) and velocity[†](docs/glossary.md#velocity) currently apply to the whole group.
   - For examples please see:
-
     - `view/src/params.ts`, specifically the `paramToEndpointId` and `endpointIdToParams` functions.
     - `view/src/commands/ParamBuilder.ts` `getConsolidatedParams`
+
+
+### Troubleshooting
+
+**"Missing script: dev" error**
+
+Make sure you're in the `view` directory:
+```bash
+pwd  # Should show .../percupuff/view
+```
+
+If you're in the project root, navigate to view:
+```bash
+cd view
+```
+
+**Node.js version error**
+
+If you see "Vite requires Node.js version 20.19+ or 22.12+":
+
+1. Check your Node version:
+```bash
+   node --version
+```
+
+2. Upgrade Node.js:
+   - Download from https://nodejs.org/ (LTS version recommended)
+   - Or use nvm (Node Version Manager) to switch versions:
+```bash
+     nvm install 22
+     nvm use 22
+```
+
+**Changes not appearing in Cmajor patch**
+
+Make sure you've built the view after making changes:
+```bash
+cd view
+npm run build
+```
 
 ### Building a CLAP plugin
 
@@ -128,7 +216,6 @@ Cmajor makes this pretty easy and straightforward, but there are a few gotchas i
    - Extract and store the CLAP SDK somewhere on your system
 
 3. Build the plugin:
-
    ```bash
    cd /path/to/exported/plugin/folder
    cmake -B build -DCLAP_INCLUDE_PATH="/path/to/clap/include" -DCMAKE_BUILD_TYPE=Release
