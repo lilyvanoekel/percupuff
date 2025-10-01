@@ -1,6 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { useParamStore } from "../../ParamStore";
-import { mapNormalizedValueToParamRange, Param } from "../../params";
+import {
+  mapNormalizedValueToParamRange,
+  Param,
+  paramRange,
+} from "../../params";
 import { Knob } from "./knob/Knob";
 import { Digit } from "./Digit";
 
@@ -44,6 +48,8 @@ export const ParamKnob: React.FC<{
     : Array(4).fill(undefined);
 
   const value = param ? paramState[param] : 0;
+  const range = param ? paramRange[param] : undefined;
+  const isBipolar = range ? range[0] < 0 : false;
 
   return (
     <div style={{ width: `${width}px`, height: `${height}px` }}>
@@ -56,6 +62,7 @@ export const ParamKnob: React.FC<{
           width={width}
           height={width}
           disabled={!param}
+          bipolar={isBipolar}
         />
       </div>
       <div

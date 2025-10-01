@@ -15,13 +15,37 @@ const interpolateColor = (
   return `rgb(${r}, ${g}, ${b})`;
 };
 
+const green: [number, number, number] = [170, 255, 170];
+const red: [number, number, number] = [255, 170, 170];
+
+function getKnobColor(value: number, bipolar: boolean) {
+  if (bipolar && Math.abs(value) <= 1) value = 0;
+
+  if (!bipolar) {
+    const t = value / 100; // 0–100
+    return interpolateColor(green, red, t);
+  } else {
+    // Bipolar: -100 to 100 mapped
+    if (value <= 0) {
+      // -100..0 → red to green
+      const t = (value + 100) / 100;
+      return interpolateColor(red, green, t);
+    } else {
+      // 0..100 → green to red
+      const t = value / 100;
+      return interpolateColor(green, red, t);
+    }
+  }
+}
+
 export const Knob: React.FC<{
   value: number;
   setValue: (value: number) => void;
   width?: number;
   height?: number;
   disabled?: boolean;
-}> = ({ value, width, height, setValue, disabled = false }) => {
+  bipolar?: boolean;
+}> = ({ value, width, height, setValue, disabled = false, bipolar }) => {
   const lastPosRef = useRef<{ x: number; y: number } | null>(null);
   const valueRef = useRef<number | null>(null);
 
@@ -76,7 +100,7 @@ export const Knob: React.FC<{
       window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, []);
+  }, [setValue, width, height]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -112,14 +136,23 @@ export const Knob: React.FC<{
   const originX = knobWidth * 0.5 + knobMarginX;
   const originY = knobHeight * 0.5 + knobMarginY;
 
-  const gradientId = `knobGradient-${Math.round(value)}`;
-  const green = [170, 255, 170];
-  const red = [255, 170, 170];
-  const interpolatedColor = interpolateColor(
-    green,
-    red,
-    Math.round(value) / 100
-  );
+  // unique gradientId fix
+  const uniqueId = useRef(Math.random().toString(36).substring(2, 9));
+  const isBipolar = bipolar ?? false;
+
+  function mapValue(value: number, bipolar: boolean) {
+    if (bipolar) {
+      // Map 0–100 → -100–100
+      return (value / 100) * 200 - 100;
+    } else {
+      return value;
+    }
+  }
+
+  const mappedValue = mapValue(value, isBipolar);
+  const interpolatedColor = getKnobColor(mappedValue, isBipolar);
+
+  const gradientId = `knobGradient-${uniqueId.current}-${Math.round(value)}-${isBipolar ? "bipolar" : "unipolar"}`;
 
   return (
     <div
@@ -145,9 +178,9 @@ export const Knob: React.FC<{
       >
         <defs>
           <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor={interpolatedColor} />{" "}
-            <stop offset="40%" stopColor={interpolatedColor} />{" "}
-            <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />{" "}
+            <stop offset="0%" stopColor={interpolatedColor} />
+            <stop offset="40%" stopColor={interpolatedColor} />
+            <stop offset="100%" stopColor="rgba(0, 0, 0, 1)" />
           </radialGradient>
         </defs>
         <circle
