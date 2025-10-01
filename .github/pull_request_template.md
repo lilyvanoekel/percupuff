@@ -3,7 +3,8 @@ Brief description of what this PR does
 
 ## 🏷️ Type of Change
 - [ ] 🐛 Bug fix
-- [ ] 🥁 New drum sound/instrument  
+- [ ] 🥁 New drum sound/instrument 
+- [ ] 🎚️ Improvement to existing sound/instrument 
 - [ ] ✨ Feature enhancement
 - [ ] 📖 Documentation update
 - [ ] 🔧 Code refactoring
@@ -14,8 +15,8 @@ Brief description of what this PR does
 Why is this change needed? What problem does it solve?
 
 ## 🧪 Testing Done
-- [ ] 🎧 Tested with `Cmajor: Run patch` command
 - [ ] 🏗️ Built view successfully (`npm run build`)
+- [ ] 🎧 Tested with `Cmajor: Run patch` command
 - [ ] ✅ No breaking changes to existing functionality
 - [ ] 🔊 Audio output sounds correct (for audio changes)
 - [ ] 📱 UI works as expected (for view changes)
