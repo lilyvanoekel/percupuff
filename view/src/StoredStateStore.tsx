@@ -98,8 +98,20 @@ export const StoredStateStoreProvider: React.FC<{
 
   // Initial sync + listener registration
   useEffect(() => {
-    const patchConnection = getPatchConnection();
-    if (!patchConnection) return; // running in tests or without host
+    let patchConnection: any;
+    try {
+      patchConnection = getPatchConnection();
+    } catch (e) {
+      // Defensive: log and skip if PatchConnection throws
+      // eslint-disable-next-line no-console
+      console.error("Error getting PatchConnection:", e);
+      return;
+    }
+    if (!patchConnection) {
+      // eslint-disable-next-line no-console
+      console.warn("PatchConnection not found: running outside plugin host or not initialized");
+      return;
+    }
 
     // Listener for individual key updates from patch
     const storedStateListener = ({ key, value }: { key: string; value: any }) => {
@@ -110,36 +122,57 @@ export const StoredStateStoreProvider: React.FC<{
       }
     };
 
-    patchConnection.addStoredStateValueListener?.(storedStateListener);
+    try {
+      patchConnection.addStoredStateValueListener?.(storedStateListener);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to add stored state listener:", e);
+    }
 
     // Request full state so we can merge existing values (if any) stored by host
-    patchConnection.requestFullStoredState?.((full: any) => {
-      try {
-        const values = full?.values || {};
-        const incoming: Partial<StoredState> = {};
-        for (const k in values) {
-          if (k in stateRef.current) {
-            incoming[k as keyof StoredState] = values[k];
+    try {
+      patchConnection.requestFullStoredState?.((full: any) => {
+        try {
+          const values = full?.values || {};
+          const incoming: Partial<StoredState> = {};
+          for (const k in values) {
+            if (k in stateRef.current) {
+              incoming[k as keyof StoredState] = values[k];
+            }
           }
+          if (Object.keys(incoming).length) {
+            setState((prev) => ({ ...prev, ...incoming }));
+          } else {
+            // If host has nothing, push our initial state so it becomes persisted
+            sendStoredStateDelta(stateRef.current);
+          }
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error("Error merging full stored state:", e);
         }
-        if (Object.keys(incoming).length) {
-          setState((prev) => ({ ...prev, ...incoming }));
-        } else {
-          // If host has nothing, push our initial state so it becomes persisted
-          sendStoredStateDelta(stateRef.current);
-        }
-      } catch (_e) {
-        // noop - fail silently, not critical
-      }
-    });
+      });
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to request full stored state:", e);
+    }
 
     // Also request each individual key to trigger callbacks (mirrors ParamStore pattern)
-    for (const key in stateRef.current) {
-      patchConnection.requestStoredStateValue?.(key);
+    try {
+      for (const key in stateRef.current) {
+        patchConnection.requestStoredStateValue?.(key);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to request individual stored state values:", e);
     }
 
     return () => {
-      patchConnection.removeStoredStateValueListener?.(storedStateListener);
+      try {
+        patchConnection.removeStoredStateValueListener?.(storedStateListener);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to remove stored state listener:", e);
+      }
     };
   }, []);
 
