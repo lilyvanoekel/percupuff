@@ -50,6 +50,11 @@ export const StoredStateStoreProvider: React.FC<{
     for (const k in delta) {
       const key = k as keyof StoredState;
       const value = delta[key];
+      // Validate value before sending
+      if (key === 'selectedInstrument' && value && !instrumentKeys.includes(value as InstrumentKey)) {
+        console.warn(`Invalid selectedInstrument value: ${value}, skipping`);
+        continue;
+      }
       // Future-proof: allow null/undefined to clear
       patchConnection.sendStoredStateValue?.(key, value as any);
     }
@@ -57,13 +62,30 @@ export const StoredStateStoreProvider: React.FC<{
 
   const setStoredState = (value: Partial<StoredState>) => {
     if (!value || Object.keys(value).length === 0) return;
+
+    // Validate incoming values
+    const validatedValue: Partial<StoredState> = {};
+    for (const k in value) {
+      const key = k as keyof StoredState;
+      const val = value[key];
+      if (key === 'selectedInstrument') {
+        if (val && instrumentKeys.includes(val as InstrumentKey)) {
+          (validatedValue as any)[key] = val;
+        } else {
+          console.warn(`Invalid selectedInstrument: ${val}, keeping current value`);
+        }
+      } else {
+        (validatedValue as any)[key] = val;
+      }
+    }
+
     setState((prevState) => {
-      const next = { ...prevState, ...value };
+      const next = { ...prevState, ...validatedValue };
       // Send only changed keys
       const changed: Partial<StoredState> = {};
-      for (const k in value) {
+      for (const k in validatedValue) {
         const key = k as keyof StoredState;
-        if (prevState[key] !== next[key]) changed[key] = next[key];
+        if (prevState[key] !== next[key]) (changed as any)[key] = next[key];
       }
       if (Object.keys(changed).length) {
         sendStoredStateDelta(changed);
@@ -117,6 +139,15 @@ export const StoredStateStoreProvider: React.FC<{
     const storedStateListener = ({ key, value }: { key: string; value: any }) => {
       if (!(key in stateRef.current)) return; // ignore keys we don't know yet
       const typedKey = key as keyof StoredState;
+
+      // Validate incoming value
+      if (typedKey === 'selectedInstrument') {
+        if (!value || !instrumentKeys.includes(value as InstrumentKey)) {
+          console.warn(`Invalid selectedInstrument from patch: ${value}, ignoring`);
+          return;
+        }
+      }
+
       if (stateRef.current[typedKey] !== value) {
         setState((prev) => ({ ...prev, [typedKey]: value }));
       }
@@ -137,7 +168,19 @@ export const StoredStateStoreProvider: React.FC<{
           const incoming: Partial<StoredState> = {};
           for (const k in values) {
             if (k in stateRef.current) {
-              incoming[k as keyof StoredState] = values[k];
+              const key = k as keyof StoredState;
+              const value = values[k];
+
+              // Validate values from patch
+              if (key === 'selectedInstrument') {
+                if (value && instrumentKeys.includes(value as InstrumentKey)) {
+                  (incoming as any)[key] = value;
+                } else {
+                  console.warn(`Invalid selectedInstrument from full state: ${value}, skipping`);
+                }
+              } else {
+                (incoming as any)[key] = value;
+              }
             }
           }
           if (Object.keys(incoming).length) {
