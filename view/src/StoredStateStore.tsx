@@ -123,17 +123,10 @@ export const StoredStateStoreProvider: React.FC<{
     let patchConnection: any;
     try {
       patchConnection = getPatchConnection();
-    } catch (e) {
-      // Defensive: log and skip if PatchConnection throws
-      // eslint-disable-next-line no-console
-      console.error("Error getting PatchConnection:", e);
+    } catch {
       return;
     }
-    if (!patchConnection) {
-      // eslint-disable-next-line no-console
-      console.warn("PatchConnection not found: running outside plugin host or not initialized");
-      return;
-    }
+    if (!patchConnection) return;
 
     // Listener for individual key updates from patch
     const storedStateListener = ({ key, value }: { key: string; value: any }) => {
@@ -143,7 +136,6 @@ export const StoredStateStoreProvider: React.FC<{
       // Validate incoming value
       if (typedKey === 'selectedInstrument') {
         if (!value || !instrumentKeys.includes(value as InstrumentKey)) {
-          console.warn(`Invalid selectedInstrument from patch: ${value}, ignoring`);
           return;
         }
       }
@@ -155,10 +147,7 @@ export const StoredStateStoreProvider: React.FC<{
 
     try {
       patchConnection.addStoredStateValueListener?.(storedStateListener);
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to add stored state listener:", e);
-    }
+    } catch { }
 
     // Request full state so we can merge existing values (if any) stored by host
     try {
@@ -175,8 +164,6 @@ export const StoredStateStoreProvider: React.FC<{
               if (key === 'selectedInstrument') {
                 if (value && instrumentKeys.includes(value as InstrumentKey)) {
                   (incoming as any)[key] = value;
-                } else {
-                  console.warn(`Invalid selectedInstrument from full state: ${value}, skipping`);
                 }
               } else {
                 (incoming as any)[key] = value;
@@ -189,33 +176,21 @@ export const StoredStateStoreProvider: React.FC<{
             // If host has nothing, push our initial state so it becomes persisted
             sendStoredStateDelta(stateRef.current);
           }
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error("Error merging full stored state:", e);
-        }
+        } catch { }
       });
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to request full stored state:", e);
-    }
+    } catch { }
 
     // Also request each individual key to trigger callbacks (mirrors ParamStore pattern)
     try {
       for (const key in stateRef.current) {
         patchConnection.requestStoredStateValue?.(key);
       }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error("Failed to request individual stored state values:", e);
-    }
+    } catch { }
 
     return () => {
       try {
         patchConnection.removeStoredStateValueListener?.(storedStateListener);
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to remove stored state listener:", e);
-      }
+      } catch { }
     };
   }, []);
 
