@@ -29,15 +29,31 @@ namespace Percupuff
             }
 
             node envelope = Envelope;
-            node osc1 = Oscillator(OscillatorShape::triangle);
+            node osc1 = Oscillator(OscillatorShape::sine);
+            node osc2 = Oscillator(OscillatorShape::sine);
+            node osc3 = Oscillator(OscillatorShape::sine);
+            node osc4 = Oscillator(OscillatorShape::sine);
+
+             // Use Butterworth highpass to remove low frequencies
+            const float highPassCutoff = 800.0f;
+            node highpass = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::highPass, highPassCutoff
+            );
+
+            const float lowPassCutoff = 12000.0f;
+            node lowpass = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::lowPass, lowPassCutoff
+            );
+
 
             void main()
             {
-                envelope.attackIn <- .001f;
-                osc1.frequencyIn <- 587.0f;
+                envelope.attackIn <- 0.001f;
+                envelope.releaseIn <- 1.0f;
 
                 loop
                 {
+                    // Wait for a note trigger
                     while (triggerVelocity == 0) {
                         advance();
                     }
@@ -45,27 +61,65 @@ namespace Percupuff
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
 
-                    envelope.releaseIn <- .2f + vel * 0.4f;
+                    // Trigger envelope
                     envelope.triggerIn <- void;
+                    envelope.releaseIn <- 0.8f + vel * 0.4f;
                     envelope.advance();
-                    float gain = envelope.gainOut;
-                    while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        osc1.frequencyModIn <- gain * 0.1f;
-                        let outSample = osc1.out * gain * vel * outputLevel;
 
+                    // Base frequency and inharmonic ratios for bell tone
+                    float baseFreq = 880.0f;
+                    float ratio1 = 1.0f;
+                    float ratio2 = 1.52f;
+                    float ratio3 = 2.03f;
+                    float ratio4 = 2.87f;
+
+                    // Set oscillator frequencies
+                    osc1.frequencyIn <- baseFreq * ratio1;
+                    osc2.frequencyIn <- baseFreq * ratio2;
+                    osc3.frequencyIn <- baseFreq * ratio3;
+                    osc4.frequencyIn <- baseFreq * ratio4;
+
+                    // Slight detuning
+                    osc2.frequencyModIn <- 0.3f;
+                    osc3.frequencyModIn <- -0.2f;
+
+                    float gain = envelope.gainOut;
+
+                    while (gain > 0.001f && triggerVelocity == 0.0f)
+                    {
+                        // Mix oscillators into a temporary variable
+                        let sample = (osc1.out * 0.4f +
+                                      osc2.out * 0.3f +
+                                      osc3.out * 0.2f +
+                                      osc4.out * 0.1f) * gain * vel * outputLevel;
+
+                        // Apply highpass and lowpass filtering
+                        highpass.in <- sample;
+                        lowpass.in <- highpass.out;
+
+                        let filtered = lowpass.out;
+
+                        // Apply stereo panning
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
                         float rightGain = 0.5f * (1.0f + pan);
-                        out <- (outSample * leftGain, outSample * rightGain);
+                        out <- (filtered * leftGain, filtered * rightGain);
 
+                        // Advance nodes
                         osc1.advance();
-
-                        gain = envelope.gainOut;
+                        osc2.advance();
+                        osc3.advance();
+                        osc4.advance();
+                        highpass.advance();
+                        lowpass.advance();
                         envelope.advance();
                         advance();
+
+                        gain = envelope.gainOut;
                     }
                 }
             }
+
         }
     }
 }

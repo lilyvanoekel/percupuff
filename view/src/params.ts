@@ -32,7 +32,7 @@ export const instruments = {
 
   cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 
-  rideBell: { name: "Ride Bell", group: "Hihats", midi: 53 },
+  rideBell: { name: "Ride Bell", group: null, midi: 53 },
 
   // Example of adding an instrument without having it show up in the UI yet.
   sideStick: { name: "Side Stick", group: null, midi: 37 },
