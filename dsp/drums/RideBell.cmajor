@@ -34,7 +34,6 @@ namespace Percupuff
             node osc3 = Oscillator(OscillatorShape::sine);
             node osc4 = Oscillator(OscillatorShape::sine);
 
-             // Use Butterworth highpass to remove low frequencies
             const float highPassCutoff = 800.0f;
             node highpass = std::filters::butterworth::Processor(
                 std::filters::butterworth::Mode::highPass, highPassCutoff
@@ -45,7 +44,6 @@ namespace Percupuff
                 std::filters::butterworth::Mode::lowPass, lowPassCutoff
             );
 
-
             void main()
             {
                 envelope.attackIn <- 0.001f;
@@ -53,7 +51,6 @@ namespace Percupuff
 
                 loop
                 {
-                    // Wait for a note trigger
                     while (triggerVelocity == 0) {
                         advance();
                     }
@@ -61,19 +58,17 @@ namespace Percupuff
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
 
-                    // Trigger envelope
                     envelope.triggerIn <- void;
                     envelope.releaseIn <- 0.8f + vel * 0.4f;
                     envelope.advance();
 
-                    // Base frequency and inharmonic ratios for bell tone
+                    // Base frequency and inharmonic ratios
                     float baseFreq = 880.0f;
                     float ratio1 = 1.0f;
                     float ratio2 = 1.52f;
                     float ratio3 = 2.03f;
                     float ratio4 = 2.87f;
 
-                    // Set oscillator frequencies
                     osc1.frequencyIn <- baseFreq * ratio1;
                     osc2.frequencyIn <- baseFreq * ratio2;
                     osc3.frequencyIn <- baseFreq * ratio3;
@@ -99,13 +94,11 @@ namespace Percupuff
 
                         let filtered = lowpass.out;
 
-                        // Apply stereo panning
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
                         float rightGain = 0.5f * (1.0f + pan);
                         out <- (filtered * leftGain, filtered * rightGain);
 
-                        // Advance nodes
                         osc1.advance();
                         osc2.advance();
                         osc3.advance();
