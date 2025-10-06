@@ -9,19 +9,21 @@ namespace Percupuff
         // with filtered white noise mixed in for more brightness.
         processor ElectricSnare {
             input event (std::notes::NoteOn) eventIn;
-            input event Params paramsIn;
-            input stream float noiseIn;
             output stream float<2> out;
+            input stream float noiseIn;
+            input event Params paramsIn;
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
             float outputLevel = 0.5f;
             float panning = 0.0f;
+            float velocitySensitivity = 1.0f;
 
             event paramsIn(Params p) {
                 midiNotePitch = int(p.snare2Midi);
                 outputLevel = p.snare2Level * 0.01f;
                 panning = p.snare2Panning;
+                velocitySensitivity = p.snare2Velocity;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -31,42 +33,19 @@ namespace Percupuff
             }
 
             node envelope = Envelope;
-            node osc = OscillatorBank(OscillatorShape::triangle);
-            
+            node osc1 = Oscillator(OscillatorShape::triangle);
+
             // Filters that shape the white noise.
             // Use LpfResonant to add resonance for brightness
             LpfResonant lowpass = (0.0f, 0.0f);
             NotchFilter notch;
-
+            
             void main()
             {
-                envelope.releaseIn <- .2f;
-                envelope.attackIn <- .005f;
-
-                osc.frequencyIn <- float<8>(
-                    276.0f,
-                    346.0f,
-                    387.0f,
-                    424.0f,
-                    540.0f,
-                    624.0f,
-                    730.0f,
-                    850.0f
-                );
-
-                osc.levelIn <- float<8>(
-                    0.9f,
-                    0.8f,
-                    0.9f,
-                    0.8f,
-                    0.7f,
-                    0.6f,
-                    0.7f,
-                    0.8f
-                );
+                osc1.frequencyIn <- 160.0f; // Tweak here
 
                 let invSampleRate = 1.0f / float(processor.frequency);
-                notch.setCoefficients(20000.0f, 0.8f, float(processor.frequency));
+                notch.setCoefficients(18000.0f, 0.8f, float(processor.frequency));
                 
                 loop
                 {
@@ -76,24 +55,24 @@ namespace Percupuff
 
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
+
+                    envelope.attackIn <- 0.001f;
+                    envelope.releaseIn <- .2f + vel * 0.1f;
                     envelope.triggerIn <- void;
                     envelope.advance();
                     float gain = envelope.gainOut;
-
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        osc.frequencyModIn <- gain * 0.02f;
-
-                        float lpSample = lowpass.getSample(noiseIn, 8000.0f + vel * 15000.0f, 0.7f, invSampleRate);
+                        osc1.frequencyModIn <- gain * 0.03f;
+                        float lpSample = lowpass.getSample(noiseIn, 8000.0f + vel * 25000.0f, 0.7f, invSampleRate);
                         lpSample = notch.getSample(lpSample);
-
-                        let outSample = ((sin(osc.out * (1.0f + vel * 0.9f)) + lpSample * 0.2f) * gain * (0.9f + vel * 0.4f)) * outputLevel;
+                        let outSample = (sin(osc1.out * (1.0f + vel * 0.5f)) + lpSample * 0.6f) * gain * 0.8f * vel * outputLevel;
 
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
                         float rightGain = 0.5f * (1.0f + pan);
                         out <- (outSample * leftGain, outSample * rightGain);
 
-                        osc.advance();
+                        osc1.advance();
                         
                         gain = envelope.gainOut;
                         envelope.advance();
