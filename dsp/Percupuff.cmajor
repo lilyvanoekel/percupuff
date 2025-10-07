@@ -30,6 +30,7 @@ namespace Percupuff
             noise = std::noise::White;
             bassDrum = Drums::BassDrum;
             snare = Drums::Snare;
+            electricSnare = Drums::ElectricSnare;
             hihat = Drums::Hihat;
             clap = Drums::Clap;
             cowbell = Drums::Cowbell;
@@ -52,12 +53,14 @@ namespace Percupuff
             p.paramsOut -> cowbell.paramsIn;
             p.paramsOut -> hihat.paramsIn;
             p.paramsOut -> snare.paramsIn;
+            p.paramsOut -> electricSnare.paramsIn;
             p.paramsOut -> sideStick.paramsIn;
 
             // Send the midi events so the sound processors know when to start playing.
             midiIn -> mpe;
             mpe -> bassDrum.eventIn;
             mpe -> snare.eventIn;
+            mpe -> electricSnare.eventIn;
             mpe -> hihat.eventIn;
             mpe -> clap.eventIn;
             mpe -> cowbell.eventIn;
@@ -70,6 +73,7 @@ namespace Percupuff
             // Some sounds use noise.
             noise -> hihat.noiseIn;
             noise -> snare.noiseIn;
+            noise -> electricSnare.noiseIn;
             noise -> clap.noiseIn;
             noise -> crash.noiseIn;
             noise -> claves.noiseIn;
@@ -78,6 +82,7 @@ namespace Percupuff
             // it into the gain limiter to adjust how loud they are.
             bassDrum -> gainLimiter;
             snare -> gainLimiter;
+            electricSnare -> gainLimiter;
             hihat -> gainLimiter;
             clap -> gainLimiter;
             cowbell -> gainLimiter;
