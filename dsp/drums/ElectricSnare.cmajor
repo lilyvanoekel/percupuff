@@ -1,11 +1,13 @@
-// https://www.soundonsound.com/techniques/synthesizing-drums-snare-drum
+// Reference videos: 
+// https://www.youtube.com/watch?v=Fks15MXxwas
+// https://www.youtube.com/watch?v=NifOAvu7KQk
 
 namespace Percupuff
 {
     namespace Drums
     {
-        // This processor tries to create a realistic electric snare drum sound.
-        // Additive synthesis is used to create the initial impact of the snare,
+        // This processor tries to create a electric snare drum sound.
+        // An oscillator with a triangle waveform is used to create the initial impact of the snare,
         // with filtered white noise mixed in for more brightness.
         processor ElectricSnare {
             input event (std::notes::NoteOn) eventIn;
@@ -38,14 +40,12 @@ namespace Percupuff
             // Filters that shape the white noise.
             // Use LpfResonant to add resonance for brightness
             LpfResonant lowpass = (0.0f, 0.0f);
-            NotchFilter notch;
             
             void main()
             {
-                osc1.frequencyIn <- 160.0f; // Tweak here
+                osc1.frequencyIn <- 160.0f;
 
                 let invSampleRate = 1.0f / float(processor.frequency);
-                notch.setCoefficients(18000.0f, 0.8f, float(processor.frequency));
                 
                 loop
                 {
@@ -63,9 +63,8 @@ namespace Percupuff
                     float gain = envelope.gainOut;
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
                         osc1.frequencyModIn <- gain * 0.03f;
-                        float lpSample = lowpass.getSample(noiseIn, 8000.0f + vel * 25000.0f, 0.7f, invSampleRate);
-                        lpSample = notch.getSample(lpSample);
-                        let outSample = (sin(osc1.out * (1.0f + vel * 0.5f)) + lpSample * 0.6f) * gain * 0.8f * vel * outputLevel;
+                        float lpSample = lowpass.getSample(noiseIn, 15000.0f, 0.7f, invSampleRate);
+                        let outSample = (sin(osc1.out * (1.0f + vel * 0.5f)) + lpSample * 0.6f) * gain * 0.5f * vel * outputLevel;
 
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
