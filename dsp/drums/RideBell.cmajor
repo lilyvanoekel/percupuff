@@ -34,7 +34,7 @@ namespace Percupuff
             node osc3 = Oscillator(OscillatorShape::sine);
             node osc4 = Oscillator(OscillatorShape::sine);
 
-            const float highPassCutoff = 800.0f;
+            const float highPassCutoff = 1400.0f;
             node highpass = std::filters::butterworth::Processor(
                 std::filters::butterworth::Mode::highPass, highPassCutoff
             );
@@ -63,7 +63,7 @@ namespace Percupuff
                     envelope.advance();
 
                     // Base frequency and inharmonic ratios
-                    float baseFreq = 880.0f;
+                    float baseFreq = 1040.0f;
                     float ratio1 = 1.0f;
                     float ratio2 = 1.52f;
                     float ratio3 = 2.03f;

@@ -16,6 +16,8 @@ export const instruments = {
   crash2: { name: "Crash Cymbal 2", group: "Crash Cymbals", midi: 57 },
   crash3: { name: "Crash Cymbal 3", group: "Crash Cymbals", midi: 52 },
 
+  rideBell: { name: "Ride Bell", group: "🔔", midi: 53 },
+
   bongo1: { name: "High Bongo", group: "Bongos", midi: 60 },
   bongo2: { name: "Low Bongo", group: "Bongos", midi: 61 },
 
@@ -32,8 +34,6 @@ export const instruments = {
 
   cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 
-  rideBell: { name: "Ride Bell", group: null, midi: 53 },
-
   // Example of adding an instrument without having it show up in the UI yet.
   sideStick: { name: "Side Stick", group: null, midi: 37 },
 } as const;
@@ -49,6 +49,7 @@ export const groupColors: Record<InstrumentGroup, HSL> = {
   Snares: HSL(60, 80, 40),
   Hihats: HSL(120, 58, 41),
   ["Crash Cymbals"]: HSL(60, 80, 40),
+  ["🔔"]: HSL(10, 50, 45),
   Bongos: HSL(60, 80, 40),
   ["Wood Sounds"]: HSL(120, 58, 41),
   Toms: HSL(10, 50, 45),
