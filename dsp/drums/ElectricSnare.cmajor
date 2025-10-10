@@ -1,0 +1,84 @@
+// Reference videos: 
+// https://www.youtube.com/watch?v=Fks15MXxwas
+// https://www.youtube.com/watch?v=NifOAvu7KQk
+
+namespace Percupuff
+{
+    namespace Drums
+    {
+        // This processor tries to create a electric snare drum sound.
+        // An oscillator with a triangle waveform is used to create the initial impact of the snare,
+        // with filtered white noise mixed in for more brightness.
+        processor ElectricSnare {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float<2> out;
+            input stream float noiseIn;
+            input event Params paramsIn;
+            
+            float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+            float outputLevel = 0.5f;
+            float panning = 0.0f;
+            float velocitySensitivity = 1.0f;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.snare2Midi);
+                outputLevel = p.snare2Level * 0.01f;
+                panning = p.snare2Panning;
+                velocitySensitivity = p.snare2Velocity;
+            }
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int (n.pitch) == midiNotePitch) {
+                    triggerVelocity = sqrt(n.velocity);
+                }
+            }
+
+            node envelope = Envelope;
+            node osc1 = Oscillator(OscillatorShape::triangle);
+
+            // Filters that shape the white noise.
+            // Use LpfResonant to add resonance for brightness
+            LpfResonant lowpass = (0.0f, 0.0f);
+            
+            void main()
+            {
+                osc1.frequencyIn <- 160.0f;
+
+                let invSampleRate = 1.0f / float(processor.frequency);
+                
+                loop
+                {
+                    while (triggerVelocity == 0) {
+                        advance();
+                    }
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+
+                    envelope.attackIn <- 0.001f;
+                    envelope.releaseIn <- .2f + vel * 0.1f;
+                    envelope.triggerIn <- void;
+                    envelope.advance();
+                    float gain = envelope.gainOut;
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        osc1.frequencyModIn <- gain * 0.03f;
+                        float lpSample = lowpass.getSample(noiseIn, 15000.0f, 0.7f, invSampleRate);
+                        let outSample = (sin(osc1.out * (1.0f + vel * 0.5f)) + lpSample * 0.6f) * gain * 0.5f * vel * outputLevel;
+
+                        float pan = panning * 0.01f;
+                        float leftGain  = 0.5f * (1.0f - pan);
+                        float rightGain = 0.5f * (1.0f + pan);
+                        out <- (outSample * leftGain, outSample * rightGain);
+
+                        osc1.advance();
+                        
+                        gain = envelope.gainOut;
+                        envelope.advance();
+                        advance();
+                    }
+                }
+            }
+        }
+    }
+}

@@ -20,6 +20,7 @@
     "dsp/Envelope.cmajor",
     "dsp/drums/BassDrum.cmajor",
     "dsp/drums/Snare.cmajor",
+    "dsp/drums/ElectricSnare.cmajor",
     "dsp/drums/Hihat.cmajor",
     "dsp/drums/Clap.cmajor",
     "dsp/drums/Cowbell.cmajor",
