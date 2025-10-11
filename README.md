@@ -57,22 +57,26 @@ The easiest way to get started is to use VSCode (or a similar IDE) with the [Cma
 The fastest way to get the UI running for development:
 
 1. Navigate to the view folder:
+
 ```bash
    cd view
-``` 
+```
+
 2. Install dependencies:
+
 ```bash
    npm install
 ```
 
 3. Start the development server:
+
 ```bash
    npm run dev
 ```
 
 4. Open your browser to http://localhost:5173/
 
-This gives you hot reload for UI development. When you're ready to test with the full Cmajor patch, run `npm run build` and follow the [Running](#running) instructions below. 
+This gives you hot reload for UI development. When you're ready to test with the full Cmajor patch, run `npm run build` and follow the [Running](#running) instructions below.
 
 ### Building the view
 
@@ -126,6 +130,7 @@ You have two options for developing the UI:
 #### Cmajor/DSP Code
 
 - The Cmajor[†](docs/glossary.md#cmajor)/DSP[†](docs/glossary.md#dsp) code hot reloads:
+
   - While having `Cmajor: Run patch` open make changes to any cmajor file
   - Save them and they will be applied right away.
 
@@ -134,7 +139,7 @@ You have two options for developing the UI:
   - Hot reload only works for Cmajor/DSP code, not for the TypeScript/React view
   - This also applies to any other Cmajor related tooling such as `Cmajor: Export patch as...`. **Always build the view first.**
 
-#### Parameters  
+#### Parameters
 
 - Parameters[†](docs/glossary.md#parameters) are defined in `view/src/params.ts`:
 
@@ -154,17 +159,18 @@ You have two options for developing the UI:
     - `view/src/params.ts`, specifically the `paramToEndpointId` and `endpointIdToParams` functions.
     - `view/src/commands/ParamBuilder.ts` `getConsolidatedParams`
 
-
 ### Troubleshooting
 
 **"Missing script: dev" error**
 
 Make sure you're in the `view` directory:
+
 ```bash
 pwd  # Should show .../percupuff/view
 ```
 
 If you're in the project root, navigate to view:
+
 ```bash
 cd view
 ```
@@ -174,6 +180,7 @@ cd view
 If you see "Vite requires Node.js version 20.19+ or 22.12+":
 
 1. Check your Node version:
+
 ```bash
    node --version
 ```
@@ -181,6 +188,7 @@ If you see "Vite requires Node.js version 20.19+ or 22.12+":
 2. Upgrade Node.js:
    - Download from https://nodejs.org/ (LTS version recommended)
    - Or use nvm (Node Version Manager) to switch versions:
+
 ```bash
      nvm install 22
      nvm use 22
@@ -189,6 +197,7 @@ If you see "Vite requires Node.js version 20.19+ or 22.12+":
 **Changes not appearing in Cmajor patch**
 
 Make sure you've built the view after making changes:
+
 ```bash
 cd view
 npm run build
@@ -216,6 +225,7 @@ npm run build
    - Extract and store the CLAP SDK somewhere on your system
 
 3. Build the plugin:
+
    ```bash
    cd /path/to/exported/plugin/folder
    cmake -B build -DCLAP_INCLUDE_PATH="/path/to/clap/include" -DCMAKE_BUILD_TYPE=Release
@@ -235,55 +245,55 @@ This project attempts to follow this standard. Below is a table showing the stat
 
 Contributions for instruments that are not yet included in the UI are definitely welcome. They do come with the added complexity of needing to rejiggle the UI, but that does not necessarily have to be done in the same PR.
 
-| Note | Instrument         | Included in UI | Implemented | Source File                                  |
-| ---- | ------------------ | -------------- | ----------- | -------------------------------------------- |
-| 35   | Acoustic Bass Drum | ✅             | ✅          | [BassDrum.cmajor](dsp/drums/BassDrum.cmajor) |
-| 36   | Electric Bass Drum | ✅             | ❌          | -                                            |
-| 37   | Side Stick         | ❌             | ❌          | -                                            |
-| 38   | Acoustic Snare     | ✅             | ✅          | [Snare.cmajor](dsp/drums/Snare.cmajor)       |
-| 39   | Hand Clap          | ✅             | ✅          | [Clap.cmajor](dsp/drums/Clap.cmajor)         |
-| 40   | Electric Snare     | ✅             | ❌          | -                                            |
-| 41   | Low Floor Tom      | ✅             | ❌          | -                                            |
-| 42   | Closed Hi-hat      | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)       |
-| 43   | High Floor Tom     | ✅             | ❌          | -                                            |
-| 44   | Pedal Hi-hat       | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)       |
-| 45   | Low Tom            | ✅             | ❌          | -                                            |
-| 46   | Open Hi-hat        | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)       |
-| 47   | Low-Mid Tom        | ✅             | ❌          | -                                            |
-| 48   | High-Mid Tom       | ✅             | ❌          | -                                            |
-| 49   | Crash Cymbal 1     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)       |
-| 50   | High Tom           | ✅             | ❌          | -                                            |
-| 51   | Ride Cymbal 1      | ❌             | ❌          | -                                            |
-| 52   | Chinese Cymbal     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)       |
-| 53   | Ride Bell          | ❌             | ❌          | -                                            |
-| 54   | Tambourine         | ❌             | ❌          | -                                            |
-| 55   | Splash Cymbal      | ❌             | ❌          | -                                            |
-| 56   | Cowbell            | ✅             | ✅          | [Cowbell.cmajor](dsp/drums/Cowbell.cmajor)   |
-| 57   | Crash Cymbal 2     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)       |
-| 58   | Vibraslap          | ❌             | ❌          | -                                            |
-| 59   | Ride Cymbal 2      | ❌             | ❌          | -                                            |
-| 60   | High Bongo         | ✅             | ✅          | [Bongos.cmajor](dsp/drums/Bongos.cmajor)     |
-| 61   | Low Bongo          | ✅             | ✅          | [Bongos.cmajor](dsp/drums/Bongos.cmajor)     |
-| 62   | Mute High Conga    | ❌             | ❌          | -                                            |
-| 63   | Open High Conga    | ❌             | ❌          | -                                            |
-| 64   | Low Conga          | ❌             | ❌          | -                                            |
-| 65   | High Timbale       | ❌             | ❌          | -                                            |
-| 66   | Low Timbale        | ❌             | ❌          | -                                            |
-| 67   | High Agogô         | ❌             | ❌          | -                                            |
-| 68   | Low Agogô          | ❌             | ❌          | -                                            |
-| 69   | Cabasa             | ❌             | ❌          | -                                            |
-| 70   | Maracas            | ❌             | ❌          | -                                            |
-| 71   | Short Whistle      | ❌             | ❌          | -                                            |
-| 72   | Long Whistle       | ❌             | ❌          | -                                            |
-| 73   | Short Güiro        | ❌             | ❌          | -                                            |
-| 74   | Long Güiro         | ❌             | ❌          | -                                            |
-| 75   | Claves             | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)     |
-| 76   | High Woodblock     | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)     |
-| 77   | Low Woodblock      | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)     |
-| 78   | Mute Cuíca         | ❌             | ❌          | -                                            |
-| 79   | Open Cuíca         | ❌             | ❌          | -                                            |
-| 80   | Mute Triangle      | ❌             | ❌          | -                                            |
-| 81   | Open Triangle      | ❌             | ❌          | -                                            |
+| Note | Instrument         | Included in UI | Implemented | Source File                                   |
+| ---- | ------------------ | -------------- | ----------- | --------------------------------------------- |
+| 35   | Acoustic Bass Drum | ✅             | ✅          | [BassDrum.cmajor](dsp/drums/BassDrum.cmajor)  |
+| 36   | Electric Bass Drum | ✅             | ❌          | -                                             |
+| 37   | Side Stick         | ❌             | ❌          | -                                             |
+| 38   | Acoustic Snare     | ✅             | ✅          | [Snare.cmajor](dsp/drums/Snare.cmajor)        |
+| 39   | Hand Clap          | ✅             | ✅          | [Clap.cmajor](dsp/drums/Clap.cmajor)          |
+| 40   | Electric Snare     | ✅             | ✅          | [Clap.cmajor](dsp/drums/ElectricSnare.cmajor) |
+| 41   | Low Floor Tom      | ✅             | ❌          | -                                             |
+| 42   | Closed Hi-hat      | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)        |
+| 43   | High Floor Tom     | ✅             | ❌          | -                                             |
+| 44   | Pedal Hi-hat       | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)        |
+| 45   | Low Tom            | ✅             | ❌          | -                                             |
+| 46   | Open Hi-hat        | ✅             | ✅          | [Hihat.cmajor](dsp/drums/Hihat.cmajor)        |
+| 47   | Low-Mid Tom        | ✅             | ❌          | -                                             |
+| 48   | High-Mid Tom       | ✅             | ❌          | -                                             |
+| 49   | Crash Cymbal 1     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)        |
+| 50   | High Tom           | ✅             | ❌          | -                                             |
+| 51   | Ride Cymbal 1      | ❌             | ❌          | -                                             |
+| 52   | Chinese Cymbal     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)        |
+| 53   | Ride Bell          | ✅             | ✅          | [Crash.cmajor](dsp/drums/RideBell.cmajor)     |
+| 54   | Tambourine         | ❌             | ❌          | -                                             |
+| 55   | Splash Cymbal      | ❌             | ❌          | -                                             |
+| 56   | Cowbell            | ✅             | ✅          | [Cowbell.cmajor](dsp/drums/Cowbell.cmajor)    |
+| 57   | Crash Cymbal 2     | ✅             | ✅          | [Crash.cmajor](dsp/drums/Crash.cmajor)        |
+| 58   | Vibraslap          | ❌             | ❌          | -                                             |
+| 59   | Ride Cymbal 2      | ❌             | ❌          | -                                             |
+| 60   | High Bongo         | ✅             | ✅          | [Bongos.cmajor](dsp/drums/Bongos.cmajor)      |
+| 61   | Low Bongo          | ✅             | ✅          | [Bongos.cmajor](dsp/drums/Bongos.cmajor)      |
+| 62   | Mute High Conga    | ❌             | ❌          | -                                             |
+| 63   | Open High Conga    | ❌             | ❌          | -                                             |
+| 64   | Low Conga          | ❌             | ❌          | -                                             |
+| 65   | High Timbale       | ❌             | ❌          | -                                             |
+| 66   | Low Timbale        | ❌             | ❌          | -                                             |
+| 67   | High Agogô         | ❌             | ❌          | -                                             |
+| 68   | Low Agogô          | ❌             | ❌          | -                                             |
+| 69   | Cabasa             | ❌             | ❌          | -                                             |
+| 70   | Maracas            | ❌             | ❌          | -                                             |
+| 71   | Short Whistle      | ❌             | ❌          | -                                             |
+| 72   | Long Whistle       | ❌             | ❌          | -                                             |
+| 73   | Short Güiro        | ❌             | ❌          | -                                             |
+| 74   | Long Güiro         | ❌             | ❌          | -                                             |
+| 75   | Claves             | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)      |
+| 76   | High Woodblock     | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)      |
+| 77   | Low Woodblock      | ✅             | ✅          | [Claves.cmajor](dsp/drums/Claves.cmajor)      |
+| 78   | Mute Cuíca         | ❌             | ❌          | -                                             |
+| 79   | Open Cuíca         | ❌             | ❌          | -                                             |
+| 80   | Mute Triangle      | ❌             | ❌          | -                                             |
+| 81   | Open Triangle      | ❌             | ❌          | -                                             |
 
 ## Audio Programming / Synthesis
 
