@@ -82,6 +82,10 @@ namespace Percupuff
         float cowbellPanning;
         float cowbellVelocity;
         float cowbellMidi;
+        float rideBellLevel;
+        float rideBellPanning;
+        float rideBellVelocity;
+        float rideBellMidi;
         float sideStickLevel;
         float sideStickPanning;
         float sideStickVelocity;
@@ -165,6 +169,10 @@ namespace Percupuff
         p.cowbellPanning = 0.0f;
         p.cowbellVelocity = 100.0f;
         p.cowbellMidi = 56.0f;
+        p.rideBellLevel = 50.0f;
+        p.rideBellPanning = 0.0f;
+        p.rideBellVelocity = 100.0f;
+        p.rideBellMidi = 53.0f;
         p.sideStickLevel = 50.0f;
         p.sideStickPanning = 0.0f;
         p.sideStickVelocity = 100.0f;
@@ -248,6 +256,10 @@ namespace Percupuff
         input event float cowbellPanning [[ name: "cowbellPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float cowbellVelocity [[ name: "cowbellVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float cowbellMidi [[ name: "cowbellMidi", min: 0, max: 127, init: 56, step: 1 ]];
+        input event float rideBellLevel [[ name: "rideBellLevel", min: 0, max: 100, init: 50, step: 1 ]];
+        input event float rideBellPanning [[ name: "rideBellPanning", min: -100, max: 100, init: 0, step: 5 ]];
+        input event float rideBellVelocity [[ name: "rideBellVelocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float rideBellMidi [[ name: "rideBellMidi", min: 0, max: 127, init: 53, step: 1 ]];
         input event float sideStickLevel [[ name: "sideStickLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float sideStickPanning [[ name: "sideStickPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float sideStickVelocity [[ name: "sideStickVelocity", min: 0, max: 100, init: 100, step: 1 ]];
@@ -334,6 +346,10 @@ namespace Percupuff
         event cowbellPanning (float f) { params.cowbellPanning = f; update(); }
         event cowbellVelocity (float f) { params.cowbellVelocity = f; update(); }
         event cowbellMidi (float f) { params.cowbellMidi = f; update(); }
+        event rideBellLevel (float f) { params.rideBellLevel = f; update(); }
+        event rideBellPanning (float f) { params.rideBellPanning = f; update(); }
+        event rideBellVelocity (float f) { params.rideBellVelocity = f; update(); }
+        event rideBellMidi (float f) { params.rideBellMidi = f; update(); }
         event sideStickLevel (float f) { params.sideStickLevel = f; update(); }
         event sideStickPanning (float f) { params.sideStickPanning = f; update(); }
         event sideStickVelocity (float f) { params.sideStickVelocity = f; update(); }
