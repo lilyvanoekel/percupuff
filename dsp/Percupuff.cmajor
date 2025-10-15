@@ -39,6 +39,7 @@ namespace Percupuff
             bongos = Drums::Bongos;
             sideStick = Drums::SideStick;
             rideBell = Drums::RideBell;
+            maracas = Drums::Maracas;
             gainLimiter = std::levels::ConstantGain (float<2>, 1.0f);
             mpe = std::midi::MPEConverter;
         }
@@ -57,6 +58,7 @@ namespace Percupuff
             p.paramsOut -> electricSnare.paramsIn;
             p.paramsOut -> sideStick.paramsIn;
             p.paramsOut -> rideBell.paramsIn;
+            p.paramsOut -> maracas.paramsIn;
 
             // Send the midi events so the sound processors know when to start playing.
             midiIn -> mpe;
@@ -71,6 +73,7 @@ namespace Percupuff
             mpe -> bongos.eventIn;
             mpe -> sideStick.eventIn;
             mpe -> rideBell.eventIn;
+            mpe -> maracas.eventIn;
             mpe -> noteOn;
 
             // Some sounds use noise.
@@ -94,6 +97,7 @@ namespace Percupuff
             bongos -> gainLimiter;
             sideStick -> gainLimiter;
             rideBell -> gainLimiter;
+            maracas -> gainLimiter;
 
             // Output the result.
             gainLimiter -> out;

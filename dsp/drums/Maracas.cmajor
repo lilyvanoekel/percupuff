@@ -1,0 +1,94 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Maracas {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float<2> out;
+            input event Params paramsIn;
+
+            float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+            float outputLevel = 0.5f;
+            float panning = 0.0f;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.maracasMidi);
+                outputLevel = p.maracasLevel * 0.01f;
+                panning = p.maracasPanning;
+            }
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int(n.pitch) == midiNotePitch)
+                    triggerVelocity = sqrt(n.velocity);
+            }
+
+            node envelope = Envelope;
+            node noise = std::noise::White;
+
+            node hpf = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::highPass, 3000.0f
+            );
+
+            node lpf = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::lowPass, 7500.0f
+            );
+
+            void main()
+            {
+                envelope.attackIn <- 0.001f;
+
+                loop
+                {
+                    while (triggerVelocity == 0)
+                        advance();
+
+                    let vel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+
+                    float burstCount = 10 + (vel * 20);
+                    float burstSpacing = 0.002f + (1.0f - vel) * 0.001f;
+
+                    for (int i = 0; i < int(burstCount); ++i)
+                    {
+                        envelope.releaseIn <- 0.03f + (noise.out * 0.015f);
+                        envelope.triggerIn <- void;
+
+                        envelope.advance();
+                        float gain = envelope.gainOut;
+
+                        // Alternate panning between bursts
+                        float altPan = ((i % 2 == 0) ? -0.6f : 0.6f) + (panning * 0.01f);
+
+                        while (gain > 0.001f)
+                        {
+                            float raw = noise.out * (1.0f + noise.out * 0.2f);
+                            hpf.in <- raw;
+                            lpf.in <- hpf.out;
+                            let filtered = lpf.out;
+
+                            float outSample = filtered * gain * vel * outputLevel;
+
+                            float leftGain  = 0.5f * (1.0f - altPan);
+                            float rightGain = 0.5f * (1.0f + altPan);
+                            out <- (outSample * leftGain, outSample * rightGain);
+
+                            noise.advance();
+                            hpf.advance();
+                            lpf.advance();
+                            envelope.advance();
+                            advance();
+
+                            gain = envelope.gainOut;
+                        }
+
+                        // Silent gap between bursts
+                        int silentSamples = int(burstSpacing * 44100.0f);
+                        for (int s = 0; s < silentSamples; ++s)
+                            advance();
+                    }
+                }
+            }
+        }
+    }
+}
