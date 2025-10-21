@@ -4,6 +4,7 @@ namespace Percupuff
     {
         processor SideStick {
             input event (std::notes::NoteOn) eventIn;
+            input stream float noiseIn;
             output stream float<2> out;
             input event Params paramsIn;
             
@@ -12,7 +13,6 @@ namespace Percupuff
             float outputLevel = 0.5f;
             float panning = 0.0f;
 
-            // Velocity sensitivity is not implemented yet
             float velocitySensitivity = 1.0f;
 
             event paramsIn(Params p) {
@@ -30,11 +30,24 @@ namespace Percupuff
 
             node envelope = Envelope;
             node osc1 = Oscillator(OscillatorShape::triangle);
-            
+            node noise = Oscillator(OscillatorShape::sine);
+
+            node clickEnvelope = Envelope;
+            const float highPassCutoff = 1400.0f;
+            node highpass = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::highPass, highPassCutoff
+            );            
+
             void main()
             {
                 envelope.attackIn <- .001f;
-                osc1.frequencyIn <- 587.0f;
+                osc1.frequencyIn <- 387.0f;
+                noise.frequencyIn <- 0.0f;
+
+                clickEnvelope.attackIn <- .001f;
+
+                let invSampleRate = 1.0f / float(processor.frequency);
+
                 
                 loop
                 {
@@ -47,11 +60,16 @@ namespace Percupuff
 
                     envelope.releaseIn <- .2f + vel * 0.4f;
                     envelope.triggerIn <- void;
+                    clickEnvelope.releaseIn <- .25f;
                     envelope.advance();
+                    clickEnvelope.advance();
                     float gain = envelope.gainOut;
+                    float clickGain = clickEnvelope.gainOut;
                     while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        // Removes frequencies below highPassCutoff.
                         osc1.frequencyModIn <- gain * 0.1f;
-                        let outSample = osc1.out * gain * 0.5f * vel * outputLevel;
+                        highpass.in <- osc1.out;
+                        let outSample = (sin((osc1.out * gain) * (noise.out * clickGain) + highpass.out)) * 0.5f * vel * outputLevel;
 
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
@@ -62,6 +80,9 @@ namespace Percupuff
                         
                         gain = envelope.gainOut;
                         envelope.advance();
+                        clickEnvelope.advance();
+                        noise.advance();
+                        highpass.advance();
                         advance();
                     }
                 }
