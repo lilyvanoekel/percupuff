@@ -19,10 +19,6 @@ namespace Percupuff
         float kick2Panning;
         float kick2Velocity;
         float kick2Midi;
-        float sideStickLevel;
-        float sideStickPanning;
-        float sideStickVelocity;
-        float sideStickMidi;
         float snare1Level;
         float snare1Panning;
         float snare1Velocity;
@@ -90,6 +86,10 @@ namespace Percupuff
         float cowbellPanning;
         float cowbellVelocity;
         float cowbellMidi;
+        float sideStickLevel;
+        float sideStickPanning;
+        float sideStickVelocity;
+        float sideStickMidi;
     }
 
     Params createParams()
@@ -106,10 +106,6 @@ namespace Percupuff
         p.kick2Panning = 0.0f;
         p.kick2Velocity = 100.0f;
         p.kick2Midi = 36.0f;
-        p.sideStickLevel = 50.0f;
-        p.sideStickPanning = 0.0f;
-        p.sideStickVelocity = 100.0f;
-        p.sideStickMidi = 37.0f;
         p.snare1Level = 50.0f;
         p.snare1Panning = 0.0f;
         p.snare1Velocity = 100.0f;
@@ -177,6 +173,10 @@ namespace Percupuff
         p.cowbellPanning = 0.0f;
         p.cowbellVelocity = 100.0f;
         p.cowbellMidi = 56.0f;
+        p.sideStickLevel = 50.0f;
+        p.sideStickPanning = 0.0f;
+        p.sideStickVelocity = 100.0f;
+        p.sideStickMidi = 37.0f;
 
         return p;
     }
@@ -193,10 +193,6 @@ namespace Percupuff
         input event float kick2Panning [[ name: "kick2Panning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float kick2Velocity [[ name: "kick2Velocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float kick2Midi [[ name: "kick2Midi", min: 0, max: 127, init: 36, step: 1 ]];
-        input event float sideStickLevel [[ name: "sideStickLevel", min: 0, max: 100, init: 50, step: 1 ]];
-        input event float sideStickPanning [[ name: "sideStickPanning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float sideStickVelocity [[ name: "sideStickVelocity", min: 0, max: 100, init: 100, step: 1 ]];
-        input event float sideStickMidi [[ name: "sideStickMidi", min: 0, max: 127, init: 37, step: 1 ]];
         input event float snare1Level [[ name: "snare1Level", min: 0, max: 100, init: 50, step: 1 ]];
         input event float snare1Panning [[ name: "snare1Panning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float snare1Velocity [[ name: "snare1Velocity", min: 0, max: 100, init: 100, step: 1 ]];
@@ -264,6 +260,10 @@ namespace Percupuff
         input event float cowbellPanning [[ name: "cowbellPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float cowbellVelocity [[ name: "cowbellVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float cowbellMidi [[ name: "cowbellMidi", min: 0, max: 127, init: 56, step: 1 ]];
+        input event float sideStickLevel [[ name: "sideStickLevel", min: 0, max: 100, init: 50, step: 1 ]];
+        input event float sideStickPanning [[ name: "sideStickPanning", min: -100, max: 100, init: 0, step: 5 ]];
+        input event float sideStickVelocity [[ name: "sideStickVelocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float sideStickMidi [[ name: "sideStickMidi", min: 0, max: 127, init: 37, step: 1 ]];
 
         output event Params paramsOut;
 
@@ -283,10 +283,6 @@ namespace Percupuff
         event kick2Panning (float f) { params.kick2Panning = f; update(); }
         event kick2Velocity (float f) { params.kick2Velocity = f; update(); }
         event kick2Midi (float f) { params.kick2Midi = f; update(); }
-        event sideStickLevel (float f) { params.sideStickLevel = f; update(); }
-        event sideStickPanning (float f) { params.sideStickPanning = f; update(); }
-        event sideStickVelocity (float f) { params.sideStickVelocity = f; update(); }
-        event sideStickMidi (float f) { params.sideStickMidi = f; update(); }
         event snare1Level (float f) { params.snare1Level = f; update(); }
         event snare1Panning (float f) { params.snare1Panning = f; update(); }
         event snare1Velocity (float f) { params.snare1Velocity = f; update(); }
@@ -354,5 +350,9 @@ namespace Percupuff
         event cowbellPanning (float f) { params.cowbellPanning = f; update(); }
         event cowbellVelocity (float f) { params.cowbellVelocity = f; update(); }
         event cowbellMidi (float f) { params.cowbellMidi = f; update(); }
+        event sideStickLevel (float f) { params.sideStickLevel = f; update(); }
+        event sideStickPanning (float f) { params.sideStickPanning = f; update(); }
+        event sideStickVelocity (float f) { params.sideStickVelocity = f; update(); }
+        event sideStickMidi (float f) { params.sideStickMidi = f; update(); }
     }
 }

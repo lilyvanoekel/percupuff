@@ -4,24 +4,24 @@ namespace Percupuff
 {
     namespace Drums
     {
+        // This processor tries to create a realistic side stick sound.
+        // Additive synthesis is used to create the initial impact of the stick on the rim of the snare,
+        // with filtered white noise mixed in for more brightness.
         processor SideStick {
             input event (std::notes::NoteOn) eventIn;
+            input event Params paramsIn;
             input stream float noiseIn;
             output stream float<2> out;
-            input event Params paramsIn;
             
             float triggerVelocity = 0.0f;
             int midiNotePitch = 0;
             float outputLevel = 0.5f;
             float panning = 0.0f;
 
-            float velocitySensitivity = 1.0f;
-
             event paramsIn(Params p) {
                 midiNotePitch = int(p.sideStickMidi);
                 outputLevel = p.sideStickLevel * 0.01f;
                 panning = p.sideStickPanning;
-                velocitySensitivity = p.sideStickVelocity;
             }
 
             event eventIn(std::notes::NoteOn n) {
@@ -31,23 +31,41 @@ namespace Percupuff
             }
 
             node envelope = Envelope;
-            node osc1 = Oscillator(OscillatorShape::triangle);
+            node osc = OscillatorBank(OscillatorShape::triangle);
 
-            node clickEnvelope = Envelope;
-            const float highPassCutoff = 7800.0f;
-            node highpass = std::filters::butterworth::Processor(
-                std::filters::butterworth::Mode::highPass, highPassCutoff
-            );
-            LpfResonant lowpass = (0.0f, 0.0f);
+            // Filters that shape the white noise.
+            Lpf lpf = (0.0f, 0.0f);
+            NotchFilter notch;
 
             void main()
             {
-                envelope.attackIn <- .001f;
-                osc1.frequencyIn <- 120.0f;
-                clickEnvelope.attackIn <- .2f;
+                envelope.releaseIn <- .25f;
+
+                osc.frequencyIn <- float<8>(
+                    676.0f,
+                    724.0f,
+                    987.0f,
+                    1030.0f,
+                    1170.0f,
+                    1224.0f,
+                    1380.0f,
+                    1436.0f
+                );
+
+                osc.levelIn <- float<8>(
+                    0.8f,
+                    0.7f,
+                    0.6f,
+                    0.9f,
+                    0.9f,
+                    0.4f,
+                    0.3f,
+                    0.2f
+                );
 
                 let invSampleRate = 1.0f / float(processor.frequency);
-                
+                notch.setCoefficients(8000.0f, 0.9f, float(processor.frequency));
+
                 loop
                 {
                     while (triggerVelocity == 0) {
@@ -56,33 +74,27 @@ namespace Percupuff
 
                     let vel = triggerVelocity;
                     triggerVelocity = 0.0f;
-
-                    envelope.releaseIn <- .05f + vel * 0.08f; // short release
                     envelope.triggerIn <- void;
-                    // adding this envelope for click gain which makes it sound less like clicking 2 wood blocks together (?)
-                    clickEnvelope.releaseIn <- .15f;
                     envelope.advance();
-                    clickEnvelope.advance();
                     float gain = envelope.gainOut;
-                    float clickGain = clickEnvelope.gainOut;
-                    while (gain > 0.0f && triggerVelocity == 0.0f) {
-                        // Removes frequencies below highPassCutoff.
-                        osc1.frequencyModIn <- gain * 0.15f;
-                        highpass.in <- osc1.out;
-                        float lpSample = lowpass.getSample(highpass.out, 14000.0f, 0.7f, invSampleRate);
 
-                        let outSample = (sin((osc1.out) + (highpass.out * clickGain) + lpSample)) * gain * 0.5f * vel * outputLevel;
+                    while (gain > 0.0f && triggerVelocity == 0.0f) {
+                        osc.frequencyModIn <- gain * 0.01f;
+
+                        float lpSample = lpf.getSample(noiseIn, 4000.0f + vel * 10000.0f, invSampleRate);
+                        float filteredLpSample = notch.getSample(lpSample);
+
+                        let outSample = ((sin(osc.out * (1.0f + vel * 0.5f)) + filteredLpSample * 0.4f) * gain * (0.5f + vel * 0.5f)) * outputLevel;
+
                         float pan = panning * 0.01f;
                         float leftGain  = 0.5f * (1.0f - pan);
                         float rightGain = 0.5f * (1.0f + pan);
                         out <- (outSample * leftGain, outSample * rightGain);
 
-                        osc1.advance();
+                        osc.advance();
                         
                         gain = envelope.gainOut;
                         envelope.advance();
-                        clickEnvelope.advance();
-                        highpass.advance();
                         advance();
                     }
                 }

@@ -4,7 +4,6 @@ export const instruments = {
   kick1: { name: "Acoustic Kick", group: "Kicks", midi: 35 },
   kick2: { name: "Electric Kick", group: "Kicks", midi: 36 },
 
-  sideStick: { name: "Side Stick", group: "Snares", midi: 37 },
   snare1: { name: "Acoustic Snare", group: "Snares", midi: 38 },
   snare2: { name: "Electric Snare", group: "Snares", midi: 40 },
   clap1: { name: "Clap", group: "Snares", midi: 39 },
@@ -37,7 +36,7 @@ export const instruments = {
   cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 
   // Example of adding an instrument without having it show up in the UI yet.
-  // sideStick: { name: "Side Stick", group: null, midi: 37 },
+  sideStick: { name: "Side Stick", group: null, midi: 37 },
 } as const;
 
 export const instrumentGroups = Array.from(
