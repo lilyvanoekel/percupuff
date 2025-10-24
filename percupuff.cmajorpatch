@@ -29,6 +29,7 @@
     "dsp/drums/Bongos.cmajor",
     "dsp/drums/SideStick.cmajor",
     "dsp/drums/RideBell.cmajor",
+    "dsp/drums/Cabasa.cmajor",
     "dsp/Percupuff.cmajor"
   ],
   "view": {

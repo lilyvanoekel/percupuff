@@ -43,6 +43,10 @@ namespace Percupuff
         float crash1Midi;
         float crash2Midi;
         float crash3Midi;
+        float rideBellLevel;
+        float rideBellPanning;
+        float rideBellVelocity;
+        float rideBellMidi;
         float bongoLevel;
         float bongoPanning;
         float bongoVelocity;
@@ -82,10 +86,10 @@ namespace Percupuff
         float cowbellPanning;
         float cowbellVelocity;
         float cowbellMidi;
-        float rideBellLevel;
-        float rideBellPanning;
-        float rideBellVelocity;
-        float rideBellMidi;
+        float cabasaLevel;
+        float cabasaPanning;
+        float cabasaVelocity;
+        float cabasaMidi;
         float sideStickLevel;
         float sideStickPanning;
         float sideStickVelocity;
@@ -130,6 +134,10 @@ namespace Percupuff
         p.crash1Midi = 49.0f;
         p.crash2Midi = 57.0f;
         p.crash3Midi = 52.0f;
+        p.rideBellLevel = 50.0f;
+        p.rideBellPanning = 0.0f;
+        p.rideBellVelocity = 100.0f;
+        p.rideBellMidi = 53.0f;
         p.bongoLevel = 50.0f;
         p.bongoPanning = 0.0f;
         p.bongoVelocity = 100.0f;
@@ -169,10 +177,10 @@ namespace Percupuff
         p.cowbellPanning = 0.0f;
         p.cowbellVelocity = 100.0f;
         p.cowbellMidi = 56.0f;
-        p.rideBellLevel = 50.0f;
-        p.rideBellPanning = 0.0f;
-        p.rideBellVelocity = 100.0f;
-        p.rideBellMidi = 53.0f;
+        p.cabasaLevel = 50.0f;
+        p.cabasaPanning = 0.0f;
+        p.cabasaVelocity = 100.0f;
+        p.cabasaMidi = 69.0f;
         p.sideStickLevel = 50.0f;
         p.sideStickPanning = 0.0f;
         p.sideStickVelocity = 100.0f;
@@ -217,6 +225,10 @@ namespace Percupuff
         input event float crash1Midi [[ name: "crash1Midi", min: 0, max: 127, init: 49, step: 1 ]];
         input event float crash2Midi [[ name: "crash2Midi", min: 0, max: 127, init: 57, step: 1 ]];
         input event float crash3Midi [[ name: "crash3Midi", min: 0, max: 127, init: 52, step: 1 ]];
+        input event float rideBellLevel [[ name: "rideBellLevel", min: 0, max: 100, init: 50, step: 1 ]];
+        input event float rideBellPanning [[ name: "rideBellPanning", min: -100, max: 100, init: 0, step: 5 ]];
+        input event float rideBellVelocity [[ name: "rideBellVelocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float rideBellMidi [[ name: "rideBellMidi", min: 0, max: 127, init: 53, step: 1 ]];
         input event float bongoLevel [[ name: "bongoLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float bongoPanning [[ name: "bongoPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float bongoVelocity [[ name: "bongoVelocity", min: 0, max: 100, init: 100, step: 1 ]];
@@ -256,10 +268,10 @@ namespace Percupuff
         input event float cowbellPanning [[ name: "cowbellPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float cowbellVelocity [[ name: "cowbellVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float cowbellMidi [[ name: "cowbellMidi", min: 0, max: 127, init: 56, step: 1 ]];
-        input event float rideBellLevel [[ name: "rideBellLevel", min: 0, max: 100, init: 50, step: 1 ]];
-        input event float rideBellPanning [[ name: "rideBellPanning", min: -100, max: 100, init: 0, step: 5 ]];
-        input event float rideBellVelocity [[ name: "rideBellVelocity", min: 0, max: 100, init: 100, step: 1 ]];
-        input event float rideBellMidi [[ name: "rideBellMidi", min: 0, max: 127, init: 53, step: 1 ]];
+        input event float cabasaLevel [[ name: "cabasaLevel", min: 0, max: 100, init: 50, step: 1 ]];
+        input event float cabasaPanning [[ name: "cabasaPanning", min: -100, max: 100, init: 0, step: 5 ]];
+        input event float cabasaVelocity [[ name: "cabasaVelocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float cabasaMidi [[ name: "cabasaMidi", min: 0, max: 127, init: 69, step: 1 ]];
         input event float sideStickLevel [[ name: "sideStickLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float sideStickPanning [[ name: "sideStickPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float sideStickVelocity [[ name: "sideStickVelocity", min: 0, max: 100, init: 100, step: 1 ]];
@@ -307,6 +319,10 @@ namespace Percupuff
         event crash1Midi (float f) { params.crash1Midi = f; update(); }
         event crash2Midi (float f) { params.crash2Midi = f; update(); }
         event crash3Midi (float f) { params.crash3Midi = f; update(); }
+        event rideBellLevel (float f) { params.rideBellLevel = f; update(); }
+        event rideBellPanning (float f) { params.rideBellPanning = f; update(); }
+        event rideBellVelocity (float f) { params.rideBellVelocity = f; update(); }
+        event rideBellMidi (float f) { params.rideBellMidi = f; update(); }
         event bongoLevel (float f) { params.bongoLevel = f; update(); }
         event bongoPanning (float f) { params.bongoPanning = f; update(); }
         event bongoVelocity (float f) { params.bongoVelocity = f; update(); }
@@ -346,10 +362,10 @@ namespace Percupuff
         event cowbellPanning (float f) { params.cowbellPanning = f; update(); }
         event cowbellVelocity (float f) { params.cowbellVelocity = f; update(); }
         event cowbellMidi (float f) { params.cowbellMidi = f; update(); }
-        event rideBellLevel (float f) { params.rideBellLevel = f; update(); }
-        event rideBellPanning (float f) { params.rideBellPanning = f; update(); }
-        event rideBellVelocity (float f) { params.rideBellVelocity = f; update(); }
-        event rideBellMidi (float f) { params.rideBellMidi = f; update(); }
+        event cabasaLevel (float f) { params.cabasaLevel = f; update(); }
+        event cabasaPanning (float f) { params.cabasaPanning = f; update(); }
+        event cabasaVelocity (float f) { params.cabasaVelocity = f; update(); }
+        event cabasaMidi (float f) { params.cabasaMidi = f; update(); }
         event sideStickLevel (float f) { params.sideStickLevel = f; update(); }
         event sideStickPanning (float f) { params.sideStickPanning = f; update(); }
         event sideStickVelocity (float f) { params.sideStickVelocity = f; update(); }
