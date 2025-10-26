@@ -35,6 +35,7 @@ export const instruments = {
 
   cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 
+  cabasa: { name: "Cabasa", group: null, midi: 69 },
   maracas: { name: "Maracas", group: null, midi: 70 },
 
   // Example of adding an instrument without having it show up in the UI yet.

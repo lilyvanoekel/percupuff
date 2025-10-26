@@ -1,0 +1,105 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Cabasa {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float<2> out;
+            input event Params paramsIn;
+
+            float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+            float outputLevel = 0.5f;
+            float panning = 0.0f;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.cabasaMidi);
+                outputLevel = p.cabasaLevel * 0.01f;
+                panning = p.cabasaPanning;
+            }
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int(n.pitch) == midiNotePitch)
+                    triggerVelocity = sqrt(n.velocity);
+            }
+
+            node envelope = Envelope;
+            node noise = std::noise::White;
+
+            // Use one resonant SVF, this gives the metallic "clack" sound
+            node filter = std::filters::tpt::svf::Processor(
+                std::filters::tpt::svf::Mode::bandPass, 4000.0f, 5.0f
+            );
+
+            void main()
+            {
+                envelope.attackIn <- 0.0008f;
+                let baseCutoff = 3800.0f; // Metallic "clack" frequency
+                let baseQ = 5.0f;        // This resonance is the "metal" sound
+
+                loop
+                {
+                    while (triggerVelocity == 0)
+                        advance();
+
+                    let baseVel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+
+                    float burstCount   = 4 + (baseVel * 25);
+                    // Slightly increased spacing for a "heavier" bead sound
+                    float burstSpacing = 0.0005f + (1.0f - baseVel) * 0.0045f;
+
+                    for (int i = 0; i < int(burstCount); ++i)
+                    {
+                        float velJitter = 0.8f + (noise.out * 0.2f);
+                        float burstVel = baseVel * velJitter;
+
+                        // Modified release for more "body" on each bead hit
+                        envelope.releaseIn <- 0.004f + (noise.out * 0.001f); 
+                        envelope.triggerIn <- void;
+                        envelope.advance();
+
+                        float gain = envelope.gainOut;
+
+                        // Alternate stereo motion slightly
+                        float altPan = ((i % 2 == 0) ? -0.4f : 0.4f) + (panning * 0.01f);
+                        
+                        // Add jitter to cutoff and Q for a more natural, chaotic sound
+                        filter.frequency <- baseCutoff + (noise.out * 400.0f);
+                        filter.q <- baseQ + (noise.out * 0.5f);
+
+                        while (gain > 0.001f)
+                        {
+                            float raw = noise.out;
+
+                            // Run the noise through the filter
+                            filter.in <- raw;
+                            float filtered = filter.out;
+
+                            float outSample = filtered * gain * burstVel * outputLevel;
+
+                            float leftGain  = 0.5f * (1.0f - altPan);
+                            float rightGain = 0.5f * (1.0f + altPan);
+                            out <- (outSample * leftGain, outSample * rightGain);
+
+                            noise.advance();
+                            filter.advance();
+                            envelope.advance();
+                            advance();
+
+                            gain = envelope.gainOut;
+                        }
+
+                        float jitter = (noise.out * 0.0003f);
+                        int silentSamples = int((burstSpacing + jitter) * float(processor.frequency));
+                        for (int s = 0; s < silentSamples; ++s)
+                        {
+                            out <- (0.0f, 0.0f); // Output silence in stereo
+                            advance();
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
