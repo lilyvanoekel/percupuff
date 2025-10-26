@@ -8,6 +8,7 @@ export const instruments = {
   snare2: { name: "Electric Snare", group: "Snares", midi: 40 },
   clap1: { name: "Clap", group: "Snares", midi: 39 },
 
+
   hihat1: { name: "Closed Hihat", group: "Hihats", midi: 42 },
   hihat2: { name: "Pedal Hihat", group: "Hihats", midi: 44 },
   hihat3: { name: "Open Hihat", group: "Hihats", midi: 46 },
@@ -35,6 +36,7 @@ export const instruments = {
   cowbell: { name: "Cowbell", group: "🐮", midi: 56 },
 
   cabasa: { name: "Cabasa", group: null, midi: 69 },
+  maracas: { name: "Maracas", group: null, midi: 70 },
 
   // Example of adding an instrument without having it show up in the UI yet.
   sideStick: { name: "Side Stick", group: null, midi: 37 },

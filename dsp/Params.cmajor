@@ -90,6 +90,10 @@ namespace Percupuff
         float cabasaPanning;
         float cabasaVelocity;
         float cabasaMidi;
+        float maracasLevel;
+        float maracasPanning;
+        float maracasVelocity;
+        float maracasMidi;
         float sideStickLevel;
         float sideStickPanning;
         float sideStickVelocity;
@@ -181,6 +185,10 @@ namespace Percupuff
         p.cabasaPanning = 0.0f;
         p.cabasaVelocity = 100.0f;
         p.cabasaMidi = 69.0f;
+        p.maracasLevel = 50.0f;
+        p.maracasPanning = 0.0f;
+        p.maracasVelocity = 100.0f;
+        p.maracasMidi = 70.0f;
         p.sideStickLevel = 50.0f;
         p.sideStickPanning = 0.0f;
         p.sideStickVelocity = 100.0f;
@@ -272,6 +280,10 @@ namespace Percupuff
         input event float cabasaPanning [[ name: "cabasaPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float cabasaVelocity [[ name: "cabasaVelocity", min: 0, max: 100, init: 100, step: 1 ]];
         input event float cabasaMidi [[ name: "cabasaMidi", min: 0, max: 127, init: 69, step: 1 ]];
+        input event float maracasLevel [[ name: "maracasLevel", min: 0, max: 100, init: 50, step: 1 ]];
+        input event float maracasPanning [[ name: "maracasPanning", min: -100, max: 100, init: 0, step: 5 ]];
+        input event float maracasVelocity [[ name: "maracasVelocity", min: 0, max: 100, init: 100, step: 1 ]];
+        input event float maracasMidi [[ name: "maracasMidi", min: 0, max: 127, init: 70, step: 1 ]];
         input event float sideStickLevel [[ name: "sideStickLevel", min: 0, max: 100, init: 50, step: 1 ]];
         input event float sideStickPanning [[ name: "sideStickPanning", min: -100, max: 100, init: 0, step: 5 ]];
         input event float sideStickVelocity [[ name: "sideStickVelocity", min: 0, max: 100, init: 100, step: 1 ]];
@@ -366,6 +378,10 @@ namespace Percupuff
         event cabasaPanning (float f) { params.cabasaPanning = f; update(); }
         event cabasaVelocity (float f) { params.cabasaVelocity = f; update(); }
         event cabasaMidi (float f) { params.cabasaMidi = f; update(); }
+        event maracasLevel (float f) { params.maracasLevel = f; update(); }
+        event maracasPanning (float f) { params.maracasPanning = f; update(); }
+        event maracasVelocity (float f) { params.maracasVelocity = f; update(); }
+        event maracasMidi (float f) { params.maracasMidi = f; update(); }
         event sideStickLevel (float f) { params.sideStickLevel = f; update(); }
         event sideStickPanning (float f) { params.sideStickPanning = f; update(); }
         event sideStickVelocity (float f) { params.sideStickVelocity = f; update(); }
