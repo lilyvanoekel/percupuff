@@ -8,6 +8,7 @@ export const instruments = {
   snare2: { name: "Electric Snare", group: "Snares", midi: 40 },
   clap1: { name: "Clap", group: "Snares", midi: 39 },
 
+
   hihat1: { name: "Closed Hihat", group: "Hihats", midi: 42 },
   hihat2: { name: "Pedal Hihat", group: "Hihats", midi: 44 },
   hihat3: { name: "Open Hihat", group: "Hihats", midi: 46 },
