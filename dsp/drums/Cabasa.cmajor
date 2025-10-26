@@ -91,7 +91,7 @@ namespace Percupuff
                         }
 
                         float jitter = (noise.out * 0.0003f);
-                        int silentSamples = int((burstSpacing + jitter) * 44100.0f);
+                        int silentSamples = int((burstSpacing + jitter) * float(processor.frequency));
                         for (int s = 0; s < silentSamples; ++s)
                         {
                             out <- (0.0f, 0.0f); // Output silence in stereo
