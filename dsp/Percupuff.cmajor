@@ -83,6 +83,7 @@ namespace Percupuff
             noise -> clap.noiseIn;
             noise -> crash.noiseIn;
             noise -> claves.noiseIn;
+            noise -> sideStick.noiseIn;
 
             // Take the output from all of our sounds, mix it together and put
             // it into the gain limiter to adjust how loud they are.
