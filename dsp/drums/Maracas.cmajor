@@ -1,0 +1,122 @@
+namespace Percupuff
+{
+    namespace Drums
+    {
+        processor Maracas {
+            input event (std::notes::NoteOn) eventIn;
+            output stream float<2> out;
+            input event Params paramsIn;
+
+            float triggerVelocity = 0.0f;
+            int midiNotePitch = 0;
+            float outputLevel = 0.5f;
+            float panning = 0.0f;
+
+            event paramsIn(Params p) {
+                midiNotePitch = int(p.maracasMidi);
+                outputLevel = p.maracasLevel * 0.01f;
+                panning = p.maracasPanning;
+            }
+
+            event eventIn(std::notes::NoteOn n) {
+                if (int(n.pitch) == midiNotePitch)
+                    triggerVelocity = sqrt(n.velocity);
+            }
+
+            node envelope = Envelope;
+            node noise = std::noise::White;
+
+            // Two fixed filters for "dark" and "bright" tone blending
+            node hpfBright = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::highPass, 5000.0f
+            );
+
+            node lpfBright = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::lowPass, 9000.0f
+            );
+
+            node hpfDark = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::highPass, 3200.0f
+            );
+
+            node lpfDark = std::filters::butterworth::Processor(
+                std::filters::butterworth::Mode::lowPass, 7000.0f
+            );
+
+            void main()
+            {
+                envelope.attackIn <- 0.0008f;  // quicker attack for snappy bursts
+
+                loop
+                {
+                    while (triggerVelocity == 0)
+                        advance();
+
+                    let baseVel = triggerVelocity;
+                    triggerVelocity = 0.0f;
+
+                    float burstCount   = 4 + (baseVel * 25);
+                    float burstSpacing = 0.00008f + (1.0f - baseVel) * 0.0004f;
+
+                    for (int i = 0; i < int(burstCount); ++i)
+                    {
+                        float velJitter = 0.8f + (noise.out * 0.2f);
+                        float burstVel = baseVel * velJitter;
+
+                        // control brightness blend (0 = dark, 1 = bright)
+                        float brightMix = (noise.out * 0.5f + 0.5f);
+
+                        // shorter envelope release for each burst
+                        envelope.releaseIn <- 0.0012f + (noise.out * 0.01f);
+                        envelope.triggerIn <- void;
+                        envelope.advance();
+
+                        float gain = envelope.gainOut;
+
+                        // Alternate stereo motion slightly
+                        float altPan = ((i % 2 == 0) ? -0.4f : 0.4f) + (panning * 0.01f);
+
+                        while (gain > 0.001f)
+                        {
+                            // Slightly “grainy” random noise burst
+                            float raw = noise.out * (2.2f + noise.out * 0.1f);
+
+                            // Process both bright and dark chains
+                            hpfBright.in <- raw;
+                            lpfBright.in <- hpfBright.out;
+                            float bright = lpfBright.out;
+
+                            hpfDark.in <- raw;
+                            lpfDark.in <- hpfDark.out;
+                            float dark = lpfDark.out;
+
+                            // Blend between dark and bright versions
+                            float filtered = dark * (1.0f - brightMix) + bright * brightMix;
+
+                            float outSample = filtered * gain * baseVel * outputLevel;
+
+                            float leftGain  = 0.5f * (1.0f - altPan);
+                            float rightGain = 0.5f * (1.0f + altPan);
+                            out <- (outSample * leftGain, outSample * rightGain);
+
+                            noise.advance();
+                            hpfBright.advance();
+                            lpfBright.advance();
+                            hpfDark.advance();
+                            lpfDark.advance();
+                            envelope.advance();
+                            advance();
+
+                            gain = envelope.gainOut;
+                        }
+
+                        float jitter = (noise.out * 0.0003f);
+                        int silentSamples = int((burstSpacing + jitter) * float(processor.frequency));
+                        for (int s = 0; s < silentSamples; ++s)
+                            advance();
+                    }
+                }
+            }
+        }
+    }
+}
